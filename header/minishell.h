@@ -23,6 +23,13 @@ typedef struct s_list
 	void    		*content;
 	struct s_list	*next;
 }					t_list;
+
+typedef struct s_token
+{
+	int				type; //1-operator, 2-word, 3-ponct, 4-space
+	char			*content;
+	struct s_token	*next;
+}					t_token ;
 //	main.c
 int	main(int argc, char **argv, char **env);
 

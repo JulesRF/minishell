@@ -26,6 +26,47 @@ void	ft_garbage(t_list **bin)
 	*bin = NULL;
 }
 
+////// utils pour token
+
+t_token	*ft_lstnew_token(char *content, int type)
+{
+	t_token	*newcell;
+
+	newcell = malloc(sizeof(t_token));
+	if (!newcell)
+		return (NULL);
+	newcell->content = content;
+	newcell->type = type;
+	newcell->next = NULL;
+	return (newcell);
+}
+
+t_token	*ft_lstlast_token(t_token *lst)
+{
+	if (!lst)
+		return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
+}
+
+void	ft_lstadd_back_token(t_token **alst, t_token *new)
+{
+	t_token	*temp;
+
+	if (!*alst)
+	{
+		*alst = new;
+		return ;
+	}
+	temp = ft_lstlast_token(*alst);
+	temp->next = new;
+}
+
+////// utils pour token
+
+////// utils pour bin
+
 t_list	*ft_lstnew(void *content)
 {
 	t_list	*newcell;
@@ -59,6 +100,8 @@ void	ft_lstadd_back(t_list **alst, t_list *new)
 	temp = ft_lstlast(*alst);
 	temp->next = new;
 }
+
+////// utils pour bin
 
 char	*ft_strdup(const char *s1)
 {
@@ -101,33 +144,90 @@ void	ft_preparse(int argc, char **argv, char **env)
 	(void)env;
 	if (argc != 1)
 	{
-		printf("no need to put arguments, simply type <./minishell>\n");
+		printf("no need to put arguments, simply type: ./minishell\n");
 		exit(1);
 	}
 	return ;
 }
 
+void	ft_print(t_token *token)
+{
+	int	i;
+
+	printf("printing token list...\n");
+	i = 1;
+	while (token)
+	{
+		printf("numero: %d\ntype: %d\ncontent: %s\n", i, token->type, (char *)token->content);
+		printf("---------------\n");
+		i++;
+		token = token->next;
+	}
+}
+
+void	ft_clean_token(t_token **token)
+{
+	t_token *to_suppr;
+
+	while (*token)
+	{
+		to_suppr = *token;
+		*token = to_suppr->next;
+		//free si pas | ou si pas $
+		free(to_suppr);
+	}
+	*token = NULL;
+}
+
+void	ft_parse_operator(t_token **token, t_list **bin, char c)
+{
+	if (c == '|')
+		ft_lstadd_back_token(token, ft_lstnew_token("|", 1));
+	if (c == '$')
+		ft_lstadd_back_token(token, ft_lstnew_token("$", 1));
+}
+void	ft_parse(t_token **token, t_list **bin, char *str)
+{
+	int	i;
+	// int	j;
+	(void)bin;
+
+	i = 0;
+	// j = 0;
+	while (str[i])
+	{
+		if (str[i] == '|' || str[i] == '$')
+			ft_parse_operator;
+		if (str[i] == 39 || str[i] == 34)
+		i++;
+	}
+	ft_print(*token);
+	printf("fin du parsing\n");
+}
+
 int	main(int argc, char **argv, char **env)
 {
-	// char	*str;
+	char	*str;
 	t_list	*bin;
+	t_token	*token;
 
 	ft_preparse(argc, argv, env);
 	bin = NULL;
+	token = NULL;
 
-	ft_lstadd_back(&bin, ft_lstnew(ft_strdup("salut")));
-	ft_lstadd_back(&bin, ft_lstnew(ft_strdup("ca")));
-	ft_lstadd_back(&bin, ft_lstnew(ft_strdup("va ?")));
-	// str = readline("\033[95mminishell$\033[33m ");
-	// while (ft_strcmp(str, "exit") && str != NULL)
-	// {
-	// 	// printf("la string ->%s<-\n", str);
-	// 	if (str[0] != '\0')
-	// 		add_history(str);
-	// 	free (str);
-	// 	str = readline("\033[95mminishell$\033[33m ");
-	// }
-	// free (str);
+	str = readline("\033[95mminishell$\033[33m ");
+	while (ft_strcmp(str, "exit") && str != NULL)
+	{
+		// printf("la string ->%s<-\n", str);
+		if (str[0] != '\0')
+			add_history(str);
+		ft_parse(&token, &bin, str);
+		// envoie des infos a Yassine
+		ft_clean_token(&token);
+		free (str);
+		str = readline("\033[95mminishell$\033[33m ");
+	}
+	free (str);
 	ft_garbage(&bin);
 	exit(0);
 }
