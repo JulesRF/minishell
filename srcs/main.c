@@ -159,6 +159,7 @@ void	ft_print(t_token *token)
 	i = 1;
 	while (token)
 	{
+		printf("---------------\n");
 		printf("numero: %d\ntype: %d\ncontent:->%s<-\n", i, token->type, (char *)token->content);
 		printf("---------------\n");
 		i++;
@@ -166,19 +167,19 @@ void	ft_print(t_token *token)
 	}
 }
 
-// void	ft_clean_token(t_token **token)
-// {
-// 	t_token *to_suppr;
+void	ft_clean_token(t_token **token)
+{
+	// t_token *to_suppr;
 
-// 	while (*token)
-// 	{
-// 		to_suppr = *token;
-// 		*token = to_suppr->next;
-// 		//free si pas | ou si pas $
-// 		free(to_suppr);
-// 	}
-// 	*token = NULL;
-// }
+	// while (*token)
+	// {
+	// 	to_suppr = *token;
+	// 	*token = to_suppr->next;
+	// 	//free si pas | ou si pas $
+	// 	free(to_suppr);
+	// }
+	*token = NULL;
+}
 
 void	ft_parse_operator(t_token **token, t_list **bin, char c)
 {
@@ -196,15 +197,36 @@ void	ft_parse_ponct(t_token **token, t_list **bin, char c)
 		ft_lstadd_back_token(token, ft_lstnew_token(bin, "\"", 3));
 }
 
-void	ft_parse(t_token **token, t_list **bin, char *str)
+int	ft_parse_word(t_token **token, t_list **bin, char *str)
 {
 	int	i;
 	int	j;
-	(void)bin;
+	char *dest;
 
 	i = 0;
-	j = -5;
-	while (str[i])
+	// printf ("la str :%s\n", str);
+	j = 0;
+	while (str[i] != '|' && str[i] != '$' && str[i] != 39 && str[i] != 34
+		&& str[i] != ' ' && str[i])
+		i++;
+	dest = malloc(sizeof(char) * i + 1);
+	ft_lstadd_back(bin, ft_lstnew(dest));
+	while (j < i)
+	{
+		dest[j] = str[j];
+		j++;
+	}
+	dest[j] = '\0';
+	ft_lstadd_back_token(token, ft_lstnew_token(bin, dest, 2));
+	return (i - 1);
+}
+
+void	ft_parse(t_token **token, t_list **bin, char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] != '\0')
 	{
 		if (str[i] == '|' || str[i] == '$')
 			ft_parse_operator(token, bin, str[i]);
@@ -212,8 +234,12 @@ void	ft_parse(t_token **token, t_list **bin, char *str)
 			ft_parse_ponct(token, bin, str[i]);
 		if (str[i] == ' ')
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, " ", 4));
-		else if (j == -5)
-			j = i;
+		else
+		{
+			printf("i avant = %d\n", i);
+			i = i + ft_parse_word(token, bin, str + i);
+			printf("i apres = %d\n", i);
+		}
 		i++;
 	}
 	ft_print(*token);
@@ -238,8 +264,8 @@ int	main(int argc, char **argv, char **env)
 			add_history(str);
 		ft_parse(&token, &bin, str);
 		// envoie des infos a Yassine
-		// ft_clean_token(&token);
 		ft_garbage(&bin);
+		ft_clean_token(&token);
 		free (str);
 		str = readline("\033[95mminishell$\033[33m ");
 	}
