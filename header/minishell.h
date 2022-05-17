@@ -6,7 +6,7 @@
 /*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/05/04 15:31:28 by jroux-fo         ###   ########.fr       */
+/*   Updated: 2022/05/17 16:54:23 by jroux-fo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ typedef struct s_list
 
 typedef struct s_token
 {
-	int				type; //1-operator, 2-word, 3-ponct, 4-space
+	int				type; //1-operator, 2-word, 3-ponct, 4-space, 5-redir
 	char			*content;
 	struct s_token	*next;
 }					t_token ;

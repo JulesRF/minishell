@@ -6,7 +6,7 @@
 /*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/05/04 16:30:20 by jroux-fo         ###   ########.fr       */
+/*   Updated: 2022/05/17 17:17:43 by jroux-fo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,14 @@ void	ft_parse_ponct(t_token **token, t_list **bin, char c)
 		ft_lstadd_back_token(token, ft_lstnew_token(bin, "\"", 3));
 }
 
+void	ft_parse_redir(t_token **token, t_list **bin, char c)
+{
+	if (c == 60)
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, "<", 5));
+	if (c == 62)
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, ">", 5));
+}
+
 int	ft_parse_word(t_token **token, t_list **bin, char *str)
 {
 	int	i;
@@ -232,6 +240,8 @@ void	ft_parse(t_token **token, t_list **bin, char *str)
 			ft_parse_operator(token, bin, str[i]);
 		else if (str[i] == 39 || str[i] == 34)
 			ft_parse_ponct(token, bin, str[i]);
+		else if (str[i] == 60 || str[i] == 62)
+			ft_parse_redir(token, bin, str[i]);
 		else if (str[i] == ' ')
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, " ", 4));
 		else
@@ -240,6 +250,17 @@ void	ft_parse(t_token **token, t_list **bin, char *str)
 	}
 	ft_print(*token);
 	printf("fin du parsing\n");
+}
+
+void	ft_simplify(t_token *token, t_list **bin)
+{
+	(void)bin;
+	while (token)
+	{
+		while (!ft_strcmp(token->content, " ") && !ft_strcmp(token->next->content, " "))
+			token->next = token->next->next;
+		token = token->next;
+	}
 }
 
 int	main(int argc, char **argv, char **env)
@@ -260,6 +281,9 @@ int	main(int argc, char **argv, char **env)
 			add_history(str);
 		//parsing pur et dur (division des elements en tokens)
 		ft_parse(&token, &bin, str);
+		//simplification des tokens
+		ft_simplify(token, &bin);
+		ft_print(token);
 		// envoie des infos a Yassine
 		ft_garbage(&bin);
 		ft_clean_token(&token);
