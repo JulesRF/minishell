@@ -230,16 +230,12 @@ void	ft_parse(t_token **token, t_list **bin, char *str)
 	{
 		if (str[i] == '|' || str[i] == '$')
 			ft_parse_operator(token, bin, str[i]);
-		if (str[i] == 39 || str[i] == 34)
+		else if (str[i] == 39 || str[i] == 34)
 			ft_parse_ponct(token, bin, str[i]);
-		if (str[i] == ' ')
+		else if (str[i] == ' ')
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, " ", 4));
 		else
-		{
-			printf("i avant = %d\n", i);
 			i = i + ft_parse_word(token, bin, str + i);
-			printf("i apres = %d\n", i);
-		}
 		i++;
 	}
 	ft_print(*token);
@@ -262,6 +258,7 @@ int	main(int argc, char **argv, char **env)
 		// printf("la string ->%s<-\n", str);
 		if (str[0] != '\0')
 			add_history(str);
+		//parsing pur et dur (division des elements en tokens)
 		ft_parse(&token, &bin, str);
 		// envoie des infos a Yassine
 		ft_garbage(&bin);
