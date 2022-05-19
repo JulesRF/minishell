@@ -6,11 +6,23 @@
 /*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/05/17 17:17:43 by jroux-fo         ###   ########.fr       */
+/*   Updated: 2022/05/19 18:45:02 by jroux-fo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	ft_strlen(char *str)
+{
+	int i;
+
+	i = 0;
+	if (!str)
+		return (0);
+	while (str[i])
+		i++;
+	return (i);
+}
 
 void	ft_garbage(t_list **bin)
 {
@@ -160,7 +172,7 @@ void	ft_print(t_token *token)
 	while (token)
 	{
 		printf("---------------\n");
-		printf("numero: %d\ntype: %d\ncontent:->%s<-\n", i, token->type, (char *)token->content);
+		printf("numero: %d\ntype: %d\ncontent:\e[38;5;196m->\033[0m%s\e[38;5;196m<-\033[0m\n", i, token->type, (char *)token->content);
 		printf("---------------\n");
 		i++;
 		token = token->next;
@@ -197,12 +209,29 @@ void	ft_parse_ponct(t_token **token, t_list **bin, char c)
 		ft_lstadd_back_token(token, ft_lstnew_token(bin, "\"", 3));
 }
 
-void	ft_parse_redir(t_token **token, t_list **bin, char c)
+int	ft_parse_redir(t_token **token, t_list **bin, char c, char *str)
 {
 	if (c == 60)
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, "<", 5));
+	{
+		if (str[1] == 60)
+		{
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, "<<", 5));
+			return (1);
+		}
+		else
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, "<", 5));
+	}
 	if (c == 62)
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, ">", 5));
+	{
+		if (str[1] == 62)
+		{
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, ">>", 5));
+			return (1);
+		}
+		else
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, ">", 5));
+	}
+	return (0);
 }
 
 int	ft_parse_word(t_token **token, t_list **bin, char *str)
@@ -241,7 +270,7 @@ void	ft_parse(t_token **token, t_list **bin, char *str)
 		else if (str[i] == 39 || str[i] == 34)
 			ft_parse_ponct(token, bin, str[i]);
 		else if (str[i] == 60 || str[i] == 62)
-			ft_parse_redir(token, bin, str[i]);
+			i = i + ft_parse_redir(token, bin, str[i], str + i);
 		else if (str[i] == ' ')
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, " ", 4));
 		else
@@ -252,9 +281,8 @@ void	ft_parse(t_token **token, t_list **bin, char *str)
 	printf("fin du parsing\n");
 }
 
-void	ft_simplify(t_token *token, t_list **bin)
+void	ft_supspace(t_token *token)
 {
-	(void)bin;
 	while (token)
 	{
 		while (!ft_strcmp(token->content, " ") && !ft_strcmp(token->next->content, " "))
@@ -263,9 +291,100 @@ void	ft_simplify(t_token *token, t_list **bin)
 	}
 }
 
-int	main(int argc, char **argv, char **env)
+void	ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 {
 	char	*str;
+	int		i;
+	int		j;
+
+	if (temp == NULL)
+	{
+		temp = ft_lstnew_token(bin, token->content, 5);
+		return ;
+	}
+	str = malloc(sizeof(char) * (ft_strlen(temp->content) + ft_strlen(token->content)) + 1);
+	ft_lstadd_back(bin, ft_lstnew(str));
+	i = 0;
+	j = 0;
+	while (temp->content[i])
+	{
+		str[i] = temp->content[i];
+		i++;
+	}
+	while (token->content[j])
+	{
+		str[i] = temp->content[j];
+		i++;
+		j++;
+	}
+	str[i] = '\0';
+	temp->content = str;
+}
+
+void	ft_doublequotes(t_token *token, t_list **bin)
+{
+	t_token *temp;
+	t_token *stop;
+
+	temp = NULL;
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\""))
+		{
+			stop = token;
+			stop = stop->next;
+			while (ft_strcmp(stop->content, "\""))
+			{
+				ft_joincontent(temp, stop, bin);
+				stop = stop->next;
+			}
+			token->next = temp;
+			temp->next = stop;
+		}
+		else
+			token = token->next;
+	}
+}
+
+void	ft_simplify(t_token **token, t_list **bin)
+{
+	ft_supspace(*token);
+	ft_doublequotes(*token, bin);
+}
+
+// void	ft_catch(int sig)
+// {
+// 	(void)sig;
+// 	printf("ptit ctrl c en legende\n");
+// 	return ;
+// }
+
+void	ft_prompt(t_token **token, t_list **bin)
+{
+	char *str;
+	
+	str = readline("\033[95mminishell$\033[0m ");
+	while (ft_strcmp(str, "exit") && str != NULL)
+	{
+		// printf("la string ->%s<-\n", str);
+		if (str[0] != '\0')
+			add_history(str);
+		//parsing pur et dur (division des elements en tokens)
+		ft_parse(token, bin, str);
+		//simplification des tokens
+		ft_simplify(token, bin);
+		ft_print(*token);
+		// envoie des infos a Yassine
+		ft_garbage(bin);
+		ft_clean_token(token);
+		free (str);
+		str = readline("\033[95mminishell$\033[0m ");
+	}
+	free (str);
+}
+
+int	main(int argc, char **argv, char **env)
+{
 	t_list	*bin;
 	t_token	*token;
 
@@ -273,24 +392,10 @@ int	main(int argc, char **argv, char **env)
 	bin = NULL;
 	token = NULL;
 
-	str = readline("\033[95mminishell$\033[33m ");
-	while (ft_strcmp(str, "exit") && str != NULL)
-	{
-		// printf("la string ->%s<-\n", str);
-		if (str[0] != '\0')
-			add_history(str);
-		//parsing pur et dur (division des elements en tokens)
-		ft_parse(&token, &bin, str);
-		//simplification des tokens
-		ft_simplify(token, &bin);
-		ft_print(token);
-		// envoie des infos a Yassine
-		ft_garbage(&bin);
-		ft_clean_token(&token);
-		free (str);
-		str = readline("\033[95mminishell$\033[33m ");
-	}
-	free (str);
-	// ft_garbage(&bin);
+	// signal(SIGINT, ft_catch);
+	
+	ft_prompt(&token, &bin);
+
+	ft_garbage(&bin);
 	exit(0);
 }
