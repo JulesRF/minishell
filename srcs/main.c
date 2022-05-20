@@ -291,17 +291,14 @@ void	ft_supspace(t_token *token)
 	}
 }
 
-void	ft_joincontent(t_token *temp, t_token *token, t_list **bin)
+t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 {
 	char	*str;
 	int		i;
 	int		j;
 
 	if (temp == NULL)
-	{
-		temp = ft_lstnew_token(bin, token->content, 5);
-		return ;
-	}
+		return (ft_lstnew_token(bin, token->content, 5));
 	str = malloc(sizeof(char) * (ft_strlen(temp->content) + ft_strlen(token->content)) + 1);
 	ft_lstadd_back(bin, ft_lstnew(str));
 	i = 0;
@@ -313,12 +310,25 @@ void	ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 	}
 	while (token->content[j])
 	{
-		str[i] = temp->content[j];
+		// printf("on ajoute ce caractere a la sting ->%c<-\n",)
+		str[i] = token->content[j];
 		i++;
 		j++;
 	}
 	str[i] = '\0';
 	temp->content = str;
+	return (temp);
+}
+
+t_token	*ft_find_quote(t_token *token)
+{
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\""))
+			return(token);
+		token = token->next;
+	}
+	return (token);
 }
 
 void	ft_doublequotes(t_token *token, t_list **bin)
@@ -326,20 +336,23 @@ void	ft_doublequotes(t_token *token, t_list **bin)
 	t_token *temp;
 	t_token *stop;
 
+	// (void)bin;
 	temp = NULL;
 	while (token)
 	{
+		printf("la boucle\n");
 		if (!ft_strcmp(token->content, "\""))
 		{
 			stop = token;
 			stop = stop->next;
 			while (ft_strcmp(stop->content, "\""))
 			{
-				ft_joincontent(temp, stop, bin);
+				temp = ft_joincontent(temp, stop, bin);
+				// printf("content = %s\n", temp->content);
 				stop = stop->next;
 			}
 			token->next = temp;
-			temp->next = stop;
+			temp->next = ft_find_quote(token);
 		}
 		else
 			token = token->next;
