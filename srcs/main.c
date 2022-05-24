@@ -241,7 +241,6 @@ int	ft_parse_word(t_token **token, t_list **bin, char *str)
 	char *dest;
 
 	i = 0;
-	// printf ("la str :%s\n", str);
 	j = 0;
 	while (str[i] != '|' && str[i] != '$' && str[i] != 39 && str[i] != 34
 		&& str[i] != ' ' && str[i])
@@ -310,7 +309,6 @@ t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 	}
 	while (token->content[j])
 	{
-		// printf("on ajoute ce caractere a la sting ->%c<-\n",)
 		str[i] = token->content[j];
 		i++;
 		j++;
@@ -320,7 +318,7 @@ t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 	return (temp);
 }
 
-t_token	*ft_find_quote(t_token *token)
+t_token	*ft_find_dquote(t_token *token)
 {
 	while (token)
 	{
@@ -336,33 +334,71 @@ void	ft_doublequotes(t_token *token, t_list **bin)
 	t_token *temp;
 	t_token *stop;
 
-	// (void)bin;
 	temp = NULL;
 	while (token)
 	{
-		printf("la boucle\n");
 		if (!ft_strcmp(token->content, "\""))
 		{
-			stop = token;
-			stop = stop->next;
-			while (ft_strcmp(stop->content, "\""))
+			stop = token->next;
+			while (stop && ft_strcmp(stop->content, "\""))
 			{
 				temp = ft_joincontent(temp, stop, bin);
-				// printf("content = %s\n", temp->content);
+				printf("temp->content = %s\n", temp->content);
 				stop = stop->next;
 			}
+			temp->next = stop;
 			token->next = temp;
-			temp->next = ft_find_quote(token);
+			token = ft_find_dquote(temp);
+			ft_doublequotes(token->next, bin);
+			return ;
 		}
-		else
-			token = token->next;
+		token = token->next;
+	}
+}
+
+t_token	*ft_find_squote(t_token *token)
+{
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\'"))
+			return(token);
+		token = token->next;
+	}
+	return (token);
+}
+
+void	ft_simplequotes(t_token *token, t_list **bin)
+{
+	t_token *temp;
+	t_token *stop;
+
+	temp = NULL;
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\'"))
+		{
+			stop = token->next;
+			while (stop && ft_strcmp(stop->content, "\'"))
+			{
+				temp = ft_joincontent(temp, stop, bin);
+				printf("temp->content = %s\n", temp->content);
+				stop = stop->next;
+			}
+			temp->next = stop;
+			token->next = temp;
+			token = ft_find_squote(temp);
+			ft_simplequotes(token->next, bin);
+			return ;
+		}
+		token = token->next;
 	}
 }
 
 void	ft_simplify(t_token **token, t_list **bin)
 {
-	ft_supspace(*token);
 	ft_doublequotes(*token, bin);
+	ft_simplequotes(*token, bin);
+	ft_supspace(*token);
 }
 
 // void	ft_catch(int sig)
@@ -382,12 +418,10 @@ void	ft_prompt(t_token **token, t_list **bin)
 		// printf("la string ->%s<-\n", str);
 		if (str[0] != '\0')
 			add_history(str);
-		//parsing pur et dur (division des elements en tokens)
-		ft_parse(token, bin, str);
-		//simplification des tokens
-		ft_simplify(token, bin);
+		ft_parse(token, bin, str); //parsing pur et dur (division des elements en tokens)
+		ft_simplify(token, bin); //simplification des tokens
 		ft_print(*token);
-		// envoie des infos a Yassine
+		// envoie des infos a mon mate
 		ft_garbage(bin);
 		ft_clean_token(token);
 		free (str);
