@@ -38,7 +38,7 @@ void	ft_garbage(t_list **bin)
 	*bin = NULL;
 }
 
-////// utils pour bin
+////// utils pour bin (garbage collector)
 
 t_list	*ft_lstnew(void *content)
 {
@@ -453,13 +453,15 @@ char	*ft_dollarfind(char *to_find, char **env)
 	int	i;
 
 	i = 0;
+	if (!ft_strcmp(to_find, " "))
+		return ("$ ");
 	while (env[i])
 	{
 		if (!ft_strncmp(env[i], to_find, ft_strlen(to_find)))
 			return (env[i] + (ft_strlen(to_find) + 1));
 		i++;
 	}
-	return (NULL);
+	return ("\n");
 }
 
 void	ft_dollar(t_token *token, t_list **bin, char **env)
@@ -476,6 +478,7 @@ void	ft_dollar(t_token *token, t_list **bin, char **env)
 		if (!ft_strcmp(token->content, "$") && token->type == 1)
 		{
 			token->content = ft_dollarfind(token->next->content, env);
+			token->type = 2;
 			token->next = token->next->next;
 		}
 		token = token->next;
@@ -489,10 +492,10 @@ void	ft_simplify(t_token **token, t_list **bin, char **env)
 
 	temp = NULL;
 	stop = NULL;
-	ft_dollar(*token, bin, env);
-	ft_doublequotes(*token, bin, temp, stop);
-	ft_simplequotes(*token, bin, temp, stop);
-	ft_supspace(*token);
+	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
+	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
+	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
+	ft_supspace(*token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
 }
 
 void	ft_prompt(t_token **token, t_list **bin, char **env)
@@ -503,12 +506,12 @@ void	ft_prompt(t_token **token, t_list **bin, char **env)
 	while (ft_strcmp(str, "exit") && str != NULL)
 	{
 		if (str[0] != '\0')
-			add_history(str);
+			add_history(str);   // gere l'historique des commandes, sauf si la commande est un \n
 		if (!ft_syntax(str, bin))
 		{
 			ft_token(token, bin, str); //parsing pur et dur (division des elements en tokens)
 			ft_simplify(token, bin, env); //simplification des tokens
-			ft_print(*token);
+			ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
 			// envoie des infos a mon mate
 		}
 		ft_garbage(bin);
@@ -521,7 +524,7 @@ void	ft_prompt(t_token **token, t_list **bin, char **env)
 
 int	main(int argc, char **argv, char **env)
 {
-	t_list	*bin;
+	t_list	*bin;      // garbage collector, tout ce que je malloc, je le fous dedans
 	t_token	*token;
 
 	ft_preparse(argc, argv, env);
