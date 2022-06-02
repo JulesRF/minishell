@@ -151,6 +151,20 @@ int	ft_strcmp(char *s1, char *s2)
 	return (0);
 }
 
+int	ft_strncmp(const char *s1, const char *s2, int n)
+{
+	int	i;
+
+	i = 0;
+	while (((unsigned char)s1[i] || (unsigned char)s2[i]) && i < n)
+	{
+		if ((unsigned char)s1[i] != (unsigned char)s2[i])
+			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+		i++;
+	}
+	return (0);
+}
+
 void	ft_preparse(int argc, char **argv, char **env)
 {
 	(void)argv;
@@ -191,6 +205,42 @@ void	ft_clean_token(t_token **token)
 	// 	free(to_suppr);
 	// }
 	*token = NULL;
+}
+
+int	ft_closed_quotes(char *str, t_list **bin)
+{
+	int	i;
+
+	(void)bin;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'')
+		{
+			i++;
+			while (str[i] && str[i] != '\'')
+				i++;
+			if (str[i] != '\'')
+				return (printf("SYNTAX ERROR\n"), 1);
+		}
+		if (str[i] == '\"')
+		{
+			i++;
+			while (str[i] && str[i] != '\"')
+				i++;
+			if (str[i] != '\"')
+				return (printf("SYNTAX ERROR\n"), 1);
+		}
+		i++;
+	}
+	return (0);
+}
+
+int	ft_syntax(char *str, t_list **bin)
+{
+	if (ft_closed_quotes(str, bin))
+		return (1);
+	return (0);
 }
 
 void	ft_parse_operator(t_token **token, t_list **bin, char c)
@@ -241,7 +291,6 @@ int	ft_parse_word(t_token **token, t_list **bin, char *str)
 	char *dest;
 
 	i = 0;
-	// printf ("la str :%s\n", str);
 	j = 0;
 	while (str[i] != '|' && str[i] != '$' && str[i] != 39 && str[i] != 34
 		&& str[i] != ' ' && str[i])
@@ -258,7 +307,7 @@ int	ft_parse_word(t_token **token, t_list **bin, char *str)
 	return (i - 1);
 }
 
-void	ft_parse(t_token **token, t_list **bin, char *str)
+void	ft_token(t_token **token, t_list **bin, char *str)
 {
 	int	i;
 
@@ -291,17 +340,14 @@ void	ft_supspace(t_token *token)
 	}
 }
 
-void	ft_joincontent(t_token *temp, t_token *token, t_list **bin)
+t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 {
 	char	*str;
 	int		i;
 	int		j;
 
 	if (temp == NULL)
-	{
-		temp = ft_lstnew_token(bin, token->content, 5);
-		return ;
-	}
+		return (ft_lstnew_token(bin, token->content, 5));
 	str = malloc(sizeof(char) * (ft_strlen(temp->content) + ft_strlen(token->content)) + 1);
 	ft_lstadd_back(bin, ft_lstnew(str));
 	i = 0;
@@ -313,68 +359,158 @@ void	ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 	}
 	while (token->content[j])
 	{
-		str[i] = temp->content[j];
+		str[i] = token->content[j];
 		i++;
 		j++;
 	}
 	str[i] = '\0';
 	temp->content = str;
+	return (temp);
 }
 
-void	ft_doublequotes(t_token *token, t_list **bin)
+t_token	*ft_find_dquote(t_token *token)
 {
-	t_token *temp;
-	t_token *stop;
-
-	temp = NULL;
 	while (token)
 	{
 		if (!ft_strcmp(token->content, "\""))
+			return(token);
+		token = token->next;
+	}
+	return (token);
+}
+
+void	ft_doublequotes(t_token *token, t_list **bin, t_token *temp,
+t_token *stop)
+{
+	temp = NULL;
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\"") && token->type == 3)
 		{
-			stop = token;
-			stop = stop->next;
-			while (ft_strcmp(stop->content, "\""))
+			stop = token->next;
+			if (!ft_strcmp(stop->content, "\"") && stop->type == 3)
+				token = token->next;
+			else
 			{
-				ft_joincontent(temp, stop, bin);
-				stop = stop->next;
+				while (stop && ft_strcmp(stop->content, "\""))
+				{
+					temp = ft_joincontent(temp, stop, bin);
+					stop = stop->next;
+				}
+				temp->next = stop;
+				token->next = temp;
+				token = ft_find_dquote(temp);
+				ft_doublequotes(token->next, bin, temp, stop);
+				return ;
 			}
-			token->next = temp;
-			temp->next = stop;
 		}
-		else
-			token = token->next;
+		token = token->next;
 	}
 }
 
-void	ft_simplify(t_token **token, t_list **bin)
+t_token	*ft_find_squote(t_token *token)
 {
-	ft_supspace(*token);
-	ft_doublequotes(*token, bin);
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\'"))
+			return(token);
+		token = token->next;
+	}
+	return (token);
 }
 
-// void	ft_catch(int sig)
-// {
-// 	(void)sig;
-// 	printf("ptit ctrl c en legende\n");
-// 	return ;
-// }
+void	ft_simplequotes(t_token *token, t_list **bin, t_token *temp,
+t_token *stop)
+{
+	temp = NULL;
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\'") && token->type == 3)
+		{
+			stop = token->next;
+			if (!ft_strcmp(stop->content, "\'") && stop->type == 3)
+				token = token->next;
+			else
+			{
+				while (stop && ft_strcmp(stop->content, "\'"))
+				{
+					temp = ft_joincontent(temp, stop, bin);
+					stop = stop->next;
+				}
+				temp->next = stop;
+				token->next = temp;
+				token = ft_find_squote(temp);
+				ft_simplequotes(token->next, bin, temp, stop);
+				return ;
+			}
+		}
+		token = token->next;
+	}
+}
 
-void	ft_prompt(t_token **token, t_list **bin)
+char	*ft_dollarfind(char *to_find, char **env)
+{
+	int	i;
+
+	i = 0;
+	while (env[i])
+	{
+		if (!ft_strncmp(env[i], to_find, ft_strlen(to_find)))
+			return (env[i] + (ft_strlen(to_find) + 1));
+		i++;
+	}
+	return (NULL);
+}
+
+void	ft_dollar(t_token *token, t_list **bin, char **env)
+{
+	(void)bin;
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\'") && token->type == 3)
+		{
+			token = token->next;
+			while (token && ft_strcmp(token->content, "\'"))
+				token = token->next;
+		}
+		if (!ft_strcmp(token->content, "$") && token->type == 1)
+		{
+			token->content = ft_dollarfind(token->next->content, env);
+			token->next = token->next->next;
+		}
+		token = token->next;
+	}
+}
+
+void	ft_simplify(t_token **token, t_list **bin, char **env)
+{
+	t_token	*temp;
+	t_token	*stop;
+
+	temp = NULL;
+	stop = NULL;
+	ft_dollar(*token, bin, env);
+	ft_doublequotes(*token, bin, temp, stop);
+	ft_simplequotes(*token, bin, temp, stop);
+	ft_supspace(*token);
+}
+
+void	ft_prompt(t_token **token, t_list **bin, char **env)
 {
 	char *str;
 	
 	str = readline("\033[95mminishell$\033[0m ");
 	while (ft_strcmp(str, "exit") && str != NULL)
 	{
-		// printf("la string ->%s<-\n", str);
 		if (str[0] != '\0')
 			add_history(str);
-		//parsing pur et dur (division des elements en tokens)
-		ft_parse(token, bin, str);
-		//simplification des tokens
-		ft_simplify(token, bin);
-		ft_print(*token);
-		// envoie des infos a Yassine
+		if (!ft_syntax(str, bin))
+		{
+			ft_token(token, bin, str); //parsing pur et dur (division des elements en tokens)
+			ft_simplify(token, bin, env); //simplification des tokens
+			ft_print(*token);
+			// envoie des infos a mon mate
+		}
 		ft_garbage(bin);
 		ft_clean_token(token);
 		free (str);
@@ -391,10 +527,8 @@ int	main(int argc, char **argv, char **env)
 	ft_preparse(argc, argv, env);
 	bin = NULL;
 	token = NULL;
-
-	// signal(SIGINT, ft_catch);
 	
-	ft_prompt(&token, &bin);
+	ft_prompt(&token, &bin, env);
 
 	ft_garbage(&bin);
 	exit(0);
