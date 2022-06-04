@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/05/19 16:11:29 by jroux-fo         ###   ########.fr       */
+/*   Updated: 2022/06/04 18:19:10 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,11 @@
 # include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 # include <unistd.h>
 # include <stdlib.h>
-
-typedef struct s_list
-{
-	void    		*content;
-	struct s_list	*next;
-}					t_list;
+# include <../libft/libft.h>
 
 typedef struct s_token
 {
@@ -33,5 +30,8 @@ typedef struct s_token
 }					t_token ;
 //	main.c
 int	main(int argc, char **argv, char **env);
+int search_cmd(t_token *command, char **env);
+void	ft_print(t_token *token);
+int	ft_strcmp(char *s1, char *s2);
 
 #endif

@@ -6,13 +6,13 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/03 15:17:28 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/04 18:14:29 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_strlen(char *str)
+int	ft_strlen2(char *str)
 {
 	int i;
 
@@ -151,7 +151,7 @@ int	ft_strcmp(char *s1, char *s2)
 	return (0);
 }
 
-int	ft_strncmp(const char *s1, const char *s2, int n)
+int	ft_strncmp2(const char *s1, const char *s2, int n)
 {
 	int	i;
 
@@ -327,7 +327,7 @@ void	ft_token(t_token **token, t_list **bin, char *str)
 		i++;
 	}
 	// ft_print(*token);
-	printf("fin du parsing\n");
+	// printf("fin du parsing\n");
 }
 
 void	ft_supspace(t_token *token)
@@ -348,7 +348,7 @@ t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 
 	if (temp == NULL)
 		return (ft_lstnew_token(bin, token->content, 5));
-	str = malloc(sizeof(char) * (ft_strlen(temp->content) + ft_strlen(token->content)) + 1);
+	str = malloc(sizeof(char) * (ft_strlen2(temp->content) + ft_strlen2(token->content)) + 1);
 	ft_lstadd_back(bin, ft_lstnew(str));
 	i = 0;
 	j = 0;
@@ -457,8 +457,8 @@ char	*ft_dollarfind(char *to_find, char **env)
 		return ("$ ");
 	while (env[i])
 	{
-		if (!ft_strncmp(env[i], to_find, ft_strlen(to_find)))
-			return (env[i] + (ft_strlen(to_find) + 1));
+		if (!ft_strncmp2(env[i], to_find, ft_strlen2(to_find)))
+			return (env[i] + (ft_strlen2(to_find) + 1));
 		i++;
 	}
 	return ("\n");
@@ -511,8 +511,10 @@ void	ft_prompt(t_token **token, t_list **bin, char **env)
 		{
 			ft_token(token, bin, str); //parsing pur et dur (division des elements en tokens)
 			ft_simplify(token, bin, env); //simplification des tokens
-			ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
+			// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
 			// envoie des infos a mon mate
+
+			printf("ret search_cmd=%d\n", search_cmd(*token, env));
 		}
 		ft_garbage(bin);
 		ft_clean_token(token);
