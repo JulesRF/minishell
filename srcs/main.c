@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/05/19 18:45:02 by jroux-fo         ###   ########.fr       */
+/*   Updated: 2022/06/03 15:17:28 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,7 +326,7 @@ void	ft_token(t_token **token, t_list **bin, char *str)
 			i = i + ft_parse_word(token, bin, str + i);
 		i++;
 	}
-	ft_print(*token);
+	// ft_print(*token);
 	printf("fin du parsing\n");
 }
 
