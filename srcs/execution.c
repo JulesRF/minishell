@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/04 18:20:03 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/04 19:25:18 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char **cmd_to_strs(t_token *command)
 	if (!args_str)
 		return (NULL);
 	args_str[0] = '\0';
-	while (command && (command->type == 2 || command->type == 3)) //space ou word
+	while (command && (command->type == 2 || command->type == 4)) //space ou word
 	{
 		tmp = args_str;
 		args_str = ft_strjoin(args_str, command->content);
