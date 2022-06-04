@@ -6,11 +6,11 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/18 16:49:35 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/05/30 16:18:14 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/04 12:16:10 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "libft.h"
 
 char	*pop_line(char *s)
 {
