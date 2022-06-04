@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/04 19:25:18 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/04 19:28:26 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char **cmd_to_strs(t_token *command)
 			return (NULL);
 		command = command->next;
 	}
-	args = ft_split(args_str, ' ');
+	args = ft_split(args_str, ' '); //probleme : supprime aussi les espaces volontaires ex: ./a.out "je    suis"
 	free(args_str);
 	return (args);
 }
