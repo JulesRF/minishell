@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/04 19:24:38 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 12:45:38 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,7 +336,8 @@ void	ft_supspace(t_token *token)
 	{
 		if (token->next != NULL && !ft_strcmp(token->content, " ") && !ft_strcmp(token->next->content, " "))
 			token->next = token->next->next;
-		token = token->next;
+		else 
+			token = token->next;
 	}
 }
 
@@ -514,7 +515,9 @@ void	ft_prompt(t_token **token, t_list **bin, char **env)
 			// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
 			// envoie des infos a mon mate
 
-			printf("ret search_cmd=%d\n", search_cmd(*token, env));
+			int ret = search_cmd(*token, env);
+			(void)ret;
+			// printf("ret search_cmd=%d\n", ret);
 		}
 		ft_garbage(bin);
 		ft_clean_token(token);
