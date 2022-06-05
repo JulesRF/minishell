@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/05 11:51:25 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 12:00:13 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int exec_cmd(t_token *command, char **env)
 	if (pid == -1) //fork failed
 		return handle_error("fork failed", -1);
 	else if (pid == 0) //child process
-	{		
+	{
 		execve(args[0], args, env); //check fail ?
 		ft_putendl_fd("execve failed", 1);
 	}
@@ -104,7 +104,7 @@ int check_builtin(t_token *command)
 	
 	cmd_name = command->content; 
 	if (ft_strcmp(cmd_name, "echo") == 0)
-		return 1;
+		return echo(command);
 	if (ft_strcmp(cmd_name, "cd") == 0)
 		return 1;
 	if (ft_strcmp(cmd_name, "pwd") == 0)

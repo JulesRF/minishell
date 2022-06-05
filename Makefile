@@ -6,7 +6,7 @@
 #    By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/04 14:03:48 by jroux-fo          #+#    #+#              #
-#    Updated: 2022/06/04 12:33:15 by vfiszbin         ###   ########.fr        #
+#    Updated: 2022/06/05 12:08:40 by vfiszbin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,7 @@ NAME = minishell
 
 SRCS_FILES	=	main.c	\
 				execution.c\
+				builtins.c\
 
 FLAGS = -Wall -Werror -Wextra -g3
 

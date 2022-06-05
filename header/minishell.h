@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/05 09:15:30 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 12:08:21 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,5 +34,6 @@ int	main(int argc, char **argv, char **env);
 int search_cmd(t_token *command, char **env);
 void	ft_print(t_token *token);
 int	ft_strcmp(char *s1, char *s2);
+int echo(t_token *command);
 
 #endif
