@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/05 15:54:26 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 16:29:48 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <../libft/libft.h>
+# include <errno.h>
 
 # define BUFFER_SIZE 4096
 
@@ -39,5 +40,6 @@ int	ft_strcmp(char *s1, char *s2);
 int echo(t_token *command);
 int handle_error(char *error_msg, int ret_value);
 int pwd();
+int cd(t_token *command);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/05 15:54:41 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 17:04:21 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ int check_builtin(t_token *command)
 	if (ft_strcmp(cmd_name, "echo") == 0)
 		return echo(command);
 	if (ft_strcmp(cmd_name, "cd") == 0)
-		return 1;
+		return cd(command);
 	if (ft_strcmp(cmd_name, "pwd") == 0)
 		return pwd();
 	if (ft_strcmp(cmd_name, "export") == 0)
@@ -159,7 +159,6 @@ int check_path(t_token *command, char **env)
 		return (-1);
 	(void)cmd_name;
 	path = getenv("PATH"); //protect ?
-	printf("%s\n", path);
 	paths = ft_split(path, ':');
 	if (!paths)
 		return (-1); // and free path ?
@@ -202,7 +201,7 @@ int search_cmd(t_token *command, char **env)
 		ret = check_path(command, env);
 		if (ret != -1)
 			return ret;
-		return cmd_not_found(command);
+		return cmd_not_found(command); //apparait même quand il ne fautdrait pas
 	}
 	else
 	{

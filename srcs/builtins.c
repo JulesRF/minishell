@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/05 15:54:18 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 17:18:25 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ int check_n_option(char *s, int *n_option)
 	return (1);
 }
 
-
 /**
  * @brief Write command args to stdout.
  * -n option : do not output the trailing newline
@@ -62,6 +61,11 @@ int echo(t_token *command)
 	return (0);
 }
 
+/**
+ * @brief Print the name of the current/working directory
+ * 
+ * @return int -1 in case of failure, 0 otherwise
+ */
 int pwd()
 {
 	char buffer[BUFFER_SIZE];
@@ -72,4 +76,54 @@ int pwd()
 		return handle_error("getcwd failed", -1);
 	ft_putendl_fd(ret, 1);
 	return (0);
+}
+
+char *cmd_to_str(t_token *command)
+{
+	char *args_str;
+	char *tmp;
+	
+	args_str = malloc(1);
+	if (!args_str)
+		return (NULL);
+	args_str[0] = '\0';
+	while (command && (command->type == 2 || command->type == 4)) //space ou word
+	{
+		tmp = args_str;
+		args_str = ft_strjoin(args_str, command->content);
+		free(tmp);
+		if (!args_str)
+			return (NULL);
+		command = command->next;
+	}
+	return (args_str);
+}
+
+
+/**
+ * @brief 
+ * 
+ * @param command 
+ * @return int 0 on success, -1 on error
+ */
+int cd(t_token *command)
+{
+	//too many arguments
+	int ret;
+	
+	if (command != NULL) //necessaire ?
+		command = command->next;
+	while (command && (command->type == 4)) //jump all spaces
+		command = command->next;
+
+	if (command == NULL)
+		return handle_error("cd: no argument", -1);
+	else if (command->next != NULL && command->next->next != NULL)
+		return handle_error("cd: too many arguments", -1);
+	
+	ret = chdir(command->content);
+	if (ret == -1)
+		printf("%s: %s\n", command->content, strerror(errno));
+
+	return ret;
 }
