@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/05 12:41:36 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 12:50:26 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,13 @@ int check_n_option(char *s, int *n_option)
 	return (1);
 }
 
+
+/**
+ * @brief Write command args to stdout.
+ * -n option : do not output the trailing newline
+ * @param command Linked list of command (name) and arguments
+ * @return int 0 when done
+ */
 int echo(t_token *command)
 {
 	int n_option;
@@ -45,7 +52,6 @@ int echo(t_token *command)
 		command = command->next;
 	while (command && (command->type == 4 || check_n_option(command->content, &n_option))) //check for -n options
 		command = command->next;
-	
 	while (command && (command->type == 2 || command->type == 4)) //space ou word
 	{
 		ft_putstr_fd(command->content, 1);
