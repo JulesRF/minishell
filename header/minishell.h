@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/04 18:19:10 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 09:15:30 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <readline/history.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+ #include <sys/stat.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <../libft/libft.h>

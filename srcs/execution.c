@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/04 19:28:26 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 10:07:00 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,15 +64,16 @@ int exec_cmd(t_token *command, char **env)
 	if (pid == -1) //fork failed
 		return handle_error("fork failed", -1);
 	else if (pid == 0) //child process
-	{
+	{		
 		execve(args[0], args, env); //check fail ?
 		ft_putendl_fd("execve failed", 1);
 	}
 	else //parent process
 	{
 		wait(&status); //recup valeur retour ?
+		//free ?
 	}
-	return (0);
+	return (0); //?
 }
 
 int check_builtin(t_token *command)
@@ -97,6 +98,59 @@ int check_builtin(t_token *command)
 	return -1;
 }
 
+/**
+ * @brief Free an array of strings
+ *
+ * @param strs Array of strings that must end with NULL pointer
+ */
+void free_strs(char **strs)
+{
+	int i;
+
+	i = 0;
+	while (strs[i])
+	{
+		free(strs[i]);
+		i++;
+	}
+	free(strs);
+}
+
+int check_path(t_token *command, char **env)
+{
+	char *cmd_name;
+	char *path;
+	char *path_to_cmd;
+	char **paths;
+	struct stat sb;
+	int i;
+	
+	cmd_name = ft_strjoin("/", command->content);
+	if (!cmd_name)
+		return (-1);
+	(void)cmd_name;
+	path = getenv("PATH"); //protect ?
+	printf("%s\n", path);
+	paths = ft_split(path, ':');
+	if (!paths)
+		return (-1); // and free path ?
+	i = 0;
+	while (paths[i])
+	{
+		path_to_cmd = ft_strjoin(paths[i], cmd_name);
+		if ((stat(path_to_cmd, &sb) == 0 && sb.st_mode & S_IXUSR)) //check if executable
+		{
+			// free(command->content);
+			command->content = path_to_cmd; //ATTENTION AUX FREE/BIN ICI
+			free_strs(paths);
+			return exec_cmd(command, env);
+		}
+		i++;
+	}
+	free_strs(paths);
+	return (-1);
+}
+
 
 int search_cmd(t_token *command, char **env)
 {
@@ -109,9 +163,9 @@ int search_cmd(t_token *command, char **env)
 		ret = check_builtin(command);
 		if (ret != -1)
 			return ret;
-		// ret = check_path(command);
-		// if (ret != -1)
-		// 	return ret;
+		ret = check_path(command, env);
+		if (ret != -1)
+			return ret;
 		return cmd_not_found(command);
 	}
 	else
@@ -119,5 +173,5 @@ int search_cmd(t_token *command, char **env)
 		exec_cmd(command, env);
 	}
 	
-	return 0;
+	return -1;
 }
