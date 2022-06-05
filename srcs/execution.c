@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/05 12:00:13 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 15:54:41 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ int check_builtin(t_token *command)
 	if (ft_strcmp(cmd_name, "cd") == 0)
 		return 1;
 	if (ft_strcmp(cmd_name, "pwd") == 0)
-		return 1;
+		return pwd();
 	if (ft_strcmp(cmd_name, "export") == 0)
 		return 1;
 	if (ft_strcmp(cmd_name, "unset") == 0)

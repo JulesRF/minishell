@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/05 12:08:21 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 15:54:26 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 # include <stdlib.h>
 # include <../libft/libft.h>
 
+# define BUFFER_SIZE 4096
+
 typedef struct s_token
 {
 	int				type; //1-operator, 2-word, 3-ponct, 4-space, 5-redir
@@ -35,5 +37,7 @@ int search_cmd(t_token *command, char **env);
 void	ft_print(t_token *token);
 int	ft_strcmp(char *s1, char *s2);
 int echo(t_token *command);
+int handle_error(char *error_msg, int ret_value);
+int pwd();
 
 #endif

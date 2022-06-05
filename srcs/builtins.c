@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/05 12:50:26 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 15:54:18 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,5 +59,17 @@ int echo(t_token *command)
 	}
 	if (n_option == 0)
 		ft_putchar_fd('\n', 1);
+	return (0);
+}
+
+int pwd()
+{
+	char buffer[BUFFER_SIZE];
+	char *ret;
+	
+	ret = getcwd(buffer, BUFFER_SIZE);
+	if (ret == NULL)
+		return handle_error("getcwd failed", -1);
+	ft_putendl_fd(ret, 1);
 	return (0);
 }
