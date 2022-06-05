@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/05 10:07:00 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/05 11:51:25 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,13 @@ int handle_error(char *error_msg, int ret_value)
 	return (ret_value);
 }
 
+/**
+ * @brief Return the command and its arguments as an array of strings
+ * 
+ * @param command Linked list of command (path) and arguments
+ * @return char** Array of strings of the command and its arguments,
+ * NULL in case of error
+ */
 char **cmd_to_strs(t_token *command)
 {
 	char *args_str;
@@ -51,6 +58,14 @@ char **cmd_to_strs(t_token *command)
 	return (args);
 }
 
+/**
+ * @brief Execute the executable file named after command in a child process.
+ * The parent process waits for the child to die
+ * 
+ * @param command Linked list of command (path) and arguments
+ * @param env Environment variables
+ * @return int -1 if execution fails
+ */
 int exec_cmd(t_token *command, char **env)
 {
 	pid_t	pid;
@@ -76,6 +91,13 @@ int exec_cmd(t_token *command, char **env)
 	return (0); //?
 }
 
+
+/**
+ * @brief Check if the command name is a builtin function
+ * 
+ * @param command Linked list of command (name) and arguments
+ * @return int -1 if the search or execution fails
+ */
 int check_builtin(t_token *command)
 {
 	char *cmd_name;
@@ -116,6 +138,13 @@ void free_strs(char **strs)
 	free(strs);
 }
 
+/**
+ * @brief Check if an executable whose name is that of command exists in
+ * one the PATH directories. If an executable is found, it is executed
+ * @param command Linked list of command (name) and arguments
+ * @param env Environment variables
+ * @return int -1 if the search or execution fails
+ */
 int check_path(t_token *command, char **env)
 {
 	char *cmd_name;
@@ -152,6 +181,13 @@ int check_path(t_token *command, char **env)
 }
 
 
+/**
+ * @brief Search the command executable and try execute it
+ * 
+ * @param command Linked list of command (path or name) and arguments
+ * @param env Environment variables
+ * @return int -1 if the search or execution fails
+ */
 int search_cmd(t_token *command, char **env)
 {
 	char *cmd_name;
