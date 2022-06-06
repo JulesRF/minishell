@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/06 12:03:54 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/06 12:30:37 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ char **cmd_to_strs(t_token *command)
  * 
  * @param command Linked list of command (path) and arguments
  * @param env Environment variables
- * @return int -1 if execution fails
+ * @return int 1 if execution fails, 0 if no error
  */
 int exec_cmd(t_token *command, char **env)
 {
@@ -186,7 +186,7 @@ int check_path(t_token *command, char **env)
  * 
  * @param command Linked list of command (path or name) and arguments
  * @param env Environment variables
- * @return int -1 if the search or execution fails
+ * @return int -1 if the search fails, 1 if execution fails, 0 if no error
  */
 int search_cmd(t_token *command, char **env)
 {
@@ -202,7 +202,7 @@ int search_cmd(t_token *command, char **env)
 		ret = check_path(command, env);
 		if (ret != -1)
 			return ret;
-		return cmd_not_found(command); //apparait même quand il ne fautdrait pas
+		return cmd_not_found(command);
 	}
 	else
 	{

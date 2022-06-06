@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/06 11:40:26 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/06 12:35:15 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -520,6 +520,7 @@ int	ft_prompt(t_token **token, t_list **bin, char **env, char *tester_cmd)
 
 			ret = search_cmd(*token, env);
 			// printf("ret search_cmd=%d\n", ret);
+			// return ret;
 		}
 		ft_garbage(bin);
 		ft_clean_token(token);
