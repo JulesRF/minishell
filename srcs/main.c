@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/06 12:35:15 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/06 18:46:59 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -499,7 +499,7 @@ void	ft_simplify(t_token **token, t_list **bin, char **env)
 	ft_supspace(*token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
 }
 
-int	ft_prompt(t_token **token, t_list **bin, char **env, char *tester_cmd)
+int	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
 {
 	char *str;
 	
@@ -514,7 +514,7 @@ int	ft_prompt(t_token **token, t_list **bin, char **env, char *tester_cmd)
 		if (!ft_syntax(str, bin))
 		{
 			ft_token(token, bin, str); //parsing pur et dur (division des elements en tokens)
-			ft_simplify(token, bin, env); //simplification des tokens
+			ft_simplify(token, bin, *env); //simplification des tokens
 			// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
 			// envoie des infos a mon mate
 
@@ -531,23 +531,87 @@ int	ft_prompt(t_token **token, t_list **bin, char **env, char *tester_cmd)
 	return ret;
 }
 
-int	main(int argc, char **argv, char **env)
+
+/**
+ * @brief Duplicate the environment variables into an allocated array of strings
+ * 
+ * @param envp Environment variables
+ * @return char** NULL if malloc fails, the duplicated array of strings otherwise
+ */
+char **dup_env(char **envp)
+{
+	int		i;
+	int		j;
+	char	**env;
+
+	i = 0;
+	while (envp[i])
+		i++;
+	env = malloc(sizeof(char *) * (i + 1));
+	if (!env)
+		return (NULL);
+	i = 0;
+	while (envp[i])
+	{
+		env[i] = ft_strdup(envp[i]);
+		if (!env[i])
+		{
+			j = 0;
+			while (j < i)
+			{
+				free(env[j]);
+				j++;
+			}
+			free(env);
+			return (NULL);
+		}
+		i++;
+	}
+	env[i] = NULL;
+	return (env);
+}
+
+/**
+ * @brief Free an array of strings
+ * 
+ * @param strs Allocated array of strings
+ */
+void free_strs_array(char **strs)
+{
+	int i;
+
+	i = 0;
+	while (strs[i])
+	{
+		free(strs[i]);
+		i++;
+	}
+	free(strs);
+}
+
+int	main(int argc, char **argv, char **envp)
 {
 	t_list	*bin;      // garbage collector, tout ce que je malloc, je le fous dedans
 	t_token	*token;
+	char **env;
 
-	ft_preparse(argc, argv, env);
+	ft_preparse(argc, argv, envp);
 	bin = NULL;
 	token = NULL;
-	
+
+	env = dup_env(envp);
+	if (!env)
+		exit(1); // ?
+
 	// if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
 	// {
 	// 	int exit_status = ft_prompt(&token, &bin, env, argv[2]);
 	// 	exit(exit_status);
 	// }
 	
-	ft_prompt(&token, &bin, env, argv[2]);
-
+	ft_prompt(&token, &bin, &env, argv[2]);
+	
+	free_strs_array(env);
 	ft_garbage(&bin);
 	exit(0);
 }

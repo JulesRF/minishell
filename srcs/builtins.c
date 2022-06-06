@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/06 12:05:08 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/06 18:46:07 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,4 +128,169 @@ int cd(t_token *command)
 		return 1;
 	}
 	return 0;
+}
+
+
+/**
+ * @brief Check if the env var name is valid
+ * env var name format : [a-zA-Z_]+[a-zA-Z0-9_]*
+ * Also calculate the length of said var name
+ * @param s arg string
+ * @return int 1 if valid, 0 if not
+ */
+int var_name_is_valid(char *s, int *name_len)
+{
+	*name_len = 0;
+	if (s && (ft_isalpha(s[0]) == 0 && s[0] != '_'))
+	{
+		ft_putstr_fd("export: ", 2);
+		ft_putstr_fd(s, 2);
+		ft_putendl_fd(": not a valid identifier1", 2);
+		return 0;
+	}
+	*name_len = 1;
+	while (s && s[*name_len] && s[*name_len] != '=')
+	{
+		if (ft_isalnum(s[*name_len]) == 0 && s[*name_len] != '_')
+		{
+			ft_putstr_fd("export: ", 2);
+			ft_putstr_fd(s, 2);
+			ft_putendl_fd(": not a valid identifier2", 2);
+			return 0;
+		}
+		*name_len = *name_len + 1;
+	}
+	return 1;
+}
+
+
+/**
+ * @brief Get the var name in the arg string
+ * 
+ * @param s arg string
+ * @param name_len 
+ * @return char* NULL if malloc fails, the malloc'ed var name string otherwise
+ */
+char *get_var_name(char *s, int name_len)
+{
+	char *var_name;
+
+	var_name = malloc(sizeof(char) * (name_len + 1));
+	if (!var_name)
+		return NULL;
+	ft_strlcpy(var_name, s, name_len); //size correcte ?
+	return var_name;
+}
+
+
+void set_var_in_env(char *s, char *var_name, int name_len, char ***env)
+{
+	int i;
+	int j;
+	char **envv;
+
+	envv = *env;
+	i = 0;
+	while (env && env[i])
+	{
+		j = 0;
+		while (envv[i][j] && envv[i][j] != '=' && envv[i][j] == var_name[j])
+			j++;
+		if (j == name_len && envv[i][j] == '=') //we found the matching key in env
+		{
+			free(envv[i]);
+			envv[i] = ft_strdup(s); //ATTENTION fuites memoires possibles ici !
+			return ;
+		}
+		i++;
+	}
+}
+
+int add_var_to_env(char *s, char ***env)
+{
+	int		i;
+	int		j;
+	char	**new_env;
+	char	**tmp;
+
+	i = 0;
+	tmp = *env;
+	while (tmp[i])
+		i++;
+	new_env = malloc(sizeof(char *) * (i + 2));
+	if (!new_env)
+		return (1);
+	i = 0;
+	while (tmp[i])
+	{
+		new_env[i] = ft_strdup(tmp[i]);
+		if (!new_env[i])
+		{
+			j = 0;
+			while (j < i)
+			{
+				free(new_env[j]);
+				j++;
+			}
+			free(new_env);
+			return (1);
+		}
+		i++;
+	}
+	new_env[i] = ft_strdup(s);
+	if (!new_env[i])
+	{
+		new_env[i] = NULL;
+		free_strs_array(new_env);
+	}
+	i++;
+	new_env[i] = NULL;
+	*env = new_env;
+	free_strs_array(tmp);
+	return (0);
+}
+
+/**
+ * @brief 
+ * 
+ * @param command 
+ * @return int 
+ */
+int export(t_token *command, char ***env)
+{
+	int ret;
+	int name_len;
+	char *var_name;
+
+	if (command != NULL) //necessaire ?
+		command = command->next;
+	//export with no argument
+	ret = 0;
+	while (command)
+	{
+		if (command->type == 2)
+		{
+			if (var_name_is_valid(command->content, &name_len) == 1)
+			{
+				if (command->content[name_len] != '=')
+					return 0;
+				var_name = get_var_name(command->content, name_len);
+				if (!var_name)
+					return 1;
+				if (getenv(var_name) == NULL)
+				{
+					
+					add_var_to_env(command->content, env);
+				}
+				else
+				{
+					set_var_in_env(command->content,var_name, name_len, env);
+				}
+			}
+			else
+				ret = 1;
+		}
+		command = command->next;
+	}
+	return ret;
 }

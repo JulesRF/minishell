@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/06 12:30:37 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/06 18:47:50 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int cmd_not_found(t_token *command)
 	
 	cmd_name = command->content; 
 	ft_putstr_fd(cmd_name, 2);
-	ft_putendl_fd("command not found", 2);
+	ft_putendl_fd(": command not found", 2);
 	return 127;
 }
 
@@ -99,10 +99,11 @@ int exec_cmd(t_token *command, char **env)
  * @param command Linked list of command (name) and arguments
  * @return int -1 if the search fails, 1 if execution fails, 0 if no error
  */
-int check_builtin(t_token *command)
+int check_builtin(t_token *command, char ***env)
 {
 	char *cmd_name;
 	
+	(void)env;
 	cmd_name = command->content; 
 	if (ft_strcmp(cmd_name, "echo") == 0)
 		return echo(command);
@@ -111,7 +112,7 @@ int check_builtin(t_token *command)
 	if (ft_strcmp(cmd_name, "pwd") == 0)
 		return pwd();
 	if (ft_strcmp(cmd_name, "export") == 0)
-		return 1;
+		return (export(command, env));
 	if (ft_strcmp(cmd_name, "unset") == 0)
 		return 1;
 	if (ft_strcmp(cmd_name, "env") == 0)
@@ -188,7 +189,7 @@ int check_path(t_token *command, char **env)
  * @param env Environment variables
  * @return int -1 if the search fails, 1 if execution fails, 0 if no error
  */
-int search_cmd(t_token *command, char **env)
+int search_cmd(t_token *command, char ***env)
 {
 	char *cmd_name;
 	int ret;
@@ -196,17 +197,17 @@ int search_cmd(t_token *command, char **env)
 	cmd_name = command->content; 
 	if (ft_strchr(cmd_name, '/') == NULL) //check if cmd_name == NULL ?
 	{
-		ret = check_builtin(command);
+		ret = check_builtin(command, env);
 		if (ret != -1)
 			return ret;
-		ret = check_path(command, env);
+		ret = check_path(command, *env);
 		if (ret != -1)
 			return ret;
 		return cmd_not_found(command);
 	}
 	else
 	{
-		exec_cmd(command, env);
+		exec_cmd(command, *env);
 	}
 	
 	return -1;

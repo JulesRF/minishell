@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/05 16:29:48 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/06 18:47:33 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,14 @@ typedef struct s_token
 }					t_token ;
 //	main.c
 int	main(int argc, char **argv, char **env);
-int search_cmd(t_token *command, char **env);
+int search_cmd(t_token *command, char ***env);
 void	ft_print(t_token *token);
 int	ft_strcmp(char *s1, char *s2);
 int echo(t_token *command);
 int handle_error(char *error_msg, int ret_value);
 int pwd();
 int cd(t_token *command);
+int export(t_token *command, char ***env);
+void free_strs_array(char **strs);
 
 #endif
