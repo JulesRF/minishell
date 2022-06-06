@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/05 17:18:25 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/06 12:05:08 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int echo(t_token *command)
 /**
  * @brief Print the name of the current/working directory
  * 
- * @return int -1 in case of failure, 0 otherwise
+ * @return int 1 in case of failure, 0 otherwise
  */
 int pwd()
 {
@@ -73,7 +73,7 @@ int pwd()
 	
 	ret = getcwd(buffer, BUFFER_SIZE);
 	if (ret == NULL)
-		return handle_error("getcwd failed", -1);
+		return handle_error("getcwd failed", 1);
 	ft_putendl_fd(ret, 1);
 	return (0);
 }
@@ -104,7 +104,7 @@ char *cmd_to_str(t_token *command)
  * @brief 
  * 
  * @param command 
- * @return int 0 on success, -1 on error
+ * @return int 0 on success, 1 on error
  */
 int cd(t_token *command)
 {
@@ -117,13 +117,15 @@ int cd(t_token *command)
 		command = command->next;
 
 	if (command == NULL)
-		return handle_error("cd: no argument", -1);
+		return handle_error("cd: no argument", 1);
 	else if (command->next != NULL && command->next->next != NULL)
-		return handle_error("cd: too many arguments", -1);
+		return handle_error("cd: too many arguments", 1);
 	
 	ret = chdir(command->content);
 	if (ret == -1)
-		printf("%s: %s\n", command->content, strerror(errno));
-
-	return ret;
+	{
+		perror(command->content);
+		return 1;
+	}
+	return 0;
 }

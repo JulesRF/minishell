@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/05 17:04:21 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/06 12:03:54 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,14 @@ int cmd_not_found(t_token *command)
 	char *cmd_name;
 	
 	cmd_name = command->content; 
-	printf("%s : command not found\n", cmd_name);
+	ft_putstr_fd(cmd_name, 2);
+	ft_putendl_fd("command not found", 2);
 	return 127;
 }
 
 int handle_error(char *error_msg, int ret_value)
 {
-	ft_putendl_fd(error_msg, 1);
+	ft_putendl_fd(error_msg, 2);
 	return (ret_value);
 }
 
@@ -74,14 +75,14 @@ int exec_cmd(t_token *command, char **env)
 	
 	args = cmd_to_strs(command);
 	if (!args)
-		return handle_error("cmd_to_str failed", -1);
+		return handle_error("cmd_to_str failed", 1);
 	pid = fork();
 	if (pid == -1) //fork failed
-		return handle_error("fork failed", -1);
+		return handle_error("fork failed", 1);
 	else if (pid == 0) //child process
 	{
 		execve(args[0], args, env); //check fail ?
-		ft_putendl_fd("execve failed", 1);
+		ft_putendl_fd("execve failed", 2);
 	}
 	else //parent process
 	{
@@ -96,7 +97,7 @@ int exec_cmd(t_token *command, char **env)
  * @brief Check if the command name is a builtin function
  * 
  * @param command Linked list of command (name) and arguments
- * @return int -1 if the search or execution fails
+ * @return int -1 if the search fails, 1 if execution fails, 0 if no error
  */
 int check_builtin(t_token *command)
 {

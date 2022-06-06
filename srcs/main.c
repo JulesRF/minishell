@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/05 12:45:38 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/06 11:40:26 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -499,11 +499,14 @@ void	ft_simplify(t_token **token, t_list **bin, char **env)
 	ft_supspace(*token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
 }
 
-void	ft_prompt(t_token **token, t_list **bin, char **env)
+int	ft_prompt(t_token **token, t_list **bin, char **env, char *tester_cmd)
 {
 	char *str;
 	
 	str = readline("\033[95mminishell$\033[0m ");
+	int ret = 0;
+	(void)tester_cmd;
+	// str = tester_cmd;
 	while (ft_strcmp(str, "exit") && str != NULL)
 	{
 		if (str[0] != '\0')
@@ -515,16 +518,16 @@ void	ft_prompt(t_token **token, t_list **bin, char **env)
 			// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
 			// envoie des infos a mon mate
 
-			int ret = search_cmd(*token, env);
-			(void)ret;
+			ret = search_cmd(*token, env);
 			// printf("ret search_cmd=%d\n", ret);
 		}
 		ft_garbage(bin);
 		ft_clean_token(token);
-		free (str);
+		// free (str);
 		str = readline("\033[95mminishell$\033[0m ");
 	}
-	free (str);
+	// free (str);
+	return ret;
 }
 
 int	main(int argc, char **argv, char **env)
@@ -536,7 +539,13 @@ int	main(int argc, char **argv, char **env)
 	bin = NULL;
 	token = NULL;
 	
-	ft_prompt(&token, &bin, env);
+	// if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
+	// {
+	// 	int exit_status = ft_prompt(&token, &bin, env, argv[2]);
+	// 	exit(exit_status);
+	// }
+	
+	ft_prompt(&token, &bin, env, argv[2]);
 
 	ft_garbage(&bin);
 	exit(0);
