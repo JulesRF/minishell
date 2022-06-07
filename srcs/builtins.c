@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/07 12:00:43 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/07 14:16:24 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,12 +178,12 @@ char *get_var_name(char *s, int name_len)
 	var_name = malloc(sizeof(char) * (name_len + 1));
 	if (!var_name)
 		return NULL;
-	ft_strlcpy(var_name, s, name_len); //size correcte ?
+	ft_strlcpy(var_name, s, name_len + 1); //size correcte ?
 	return var_name;
 }
 
 
-void set_var_in_env(char *s, char *var_name, int name_len, char ***env)
+int set_var_in_env(char *s, char *var_name, int name_len, char ***env)
 {
 	int i;
 	int j;
@@ -191,19 +191,22 @@ void set_var_in_env(char *s, char *var_name, int name_len, char ***env)
 
 	envv = *env;
 	i = 0;
-	while (env && env[i])
+	while (envv && envv[i])
 	{
 		j = 0;
-		while (envv[i][j] && envv[i][j] != '=' && envv[i][j] == var_name[j])
+		while (envv[i][j] && var_name[j] && envv[i][j] == var_name[j])
 			j++;
 		if (j == name_len && envv[i][j] == '=') //we found the matching key in env
 		{
 			free(envv[i]);
 			envv[i] = ft_strdup(s); //ATTENTION fuites memoires possibles ici !
-			return ;
+			if (!envv[i])
+				return 1;
+			return 0;
 		}
 		i++;
 	}
+	return 1;
 }
 
 int add_var_to_env(char *s, char ***env)
@@ -261,6 +264,7 @@ int export(t_token *command, char ***env)
 	int ret;
 	int name_len;
 	char *var_name;
+	char *value;
 
 	if (command != NULL) //necessaire ?
 		command = command->next;
@@ -277,15 +281,17 @@ int export(t_token *command, char ***env)
 				var_name = get_var_name(command->content, name_len);
 				if (!var_name)
 					return 1;
-				if (getenv(var_name) == NULL)
+				value = get_env_value(var_name, *env);
+				if (value == NULL)
 				{
-					
-					add_var_to_env(command->content, env);
+					if (add_var_to_env(command->content, env) == 1)
+						ret = 1;
 				}
 				else
-				{
-					set_var_in_env(command->content,var_name, name_len, env);
-				}
+					if (set_var_in_env(command->content,var_name, name_len, env) == 1)
+						ret = 1;
+				free(var_name);
+				free(value);
 			}
 			else
 				ret = 1;

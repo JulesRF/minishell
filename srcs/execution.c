@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/07 12:14:10 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/07 14:08:04 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,9 @@ char *get_env_value(char *key, char **env)
 	while (env && env[i])
 	{
 		j = 0;
-		while (env[i][j] && env[i][j] != '=' && env[i][j] == key[j])
+		while (env[i][j] && key[j] && env[i][j] == key[j])
 			j++;
+
 		if (j == key_len && env[i][j] == '=') //we found the matching key in env
 		{
 			value = ft_strdup(&env[i][j + 1]);
@@ -195,11 +196,13 @@ int check_path(t_token *command, char **env)
 	cmd_name = ft_strjoin("/", command->content);
 	if (!cmd_name)
 		return (-1);
-	(void)cmd_name;
-	path = getenv("PATH"); //protect ?
+	path = get_env_value("PATH", env); //protect ?
+	if (!path)
+		return (-1);
 	paths = ft_split(path, ':');
+	free(path);
 	if (!paths)
-		return (-1); // and free path ?
+		return (-1);
 	i = 0;
 	while (paths[i])
 	{
