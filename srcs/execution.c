@@ -6,11 +6,48 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/07 11:59:02 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/07 12:14:10 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+/**
+ * @brief Get the env value for key
+ * 
+ * @param key key to search
+ * @param env environment variables
+ * @return char* NULL if not found, the allocated value otherwise
+ */
+char *get_env_value(char *key, char **env)
+{
+	int i;
+	int j;
+	int key_len;
+	char *value;
+
+	key_len = ft_strlen(key);
+	i = 0;
+	while (env && env[i])
+	{
+		j = 0;
+		while (env[i][j] && env[i][j] != '=' && env[i][j] == key[j])
+			j++;
+		if (j == key_len && env[i][j] == '=') //we found the matching key in env
+		{
+			value = ft_strdup(&env[i][j + 1]);
+			if (!value)
+			{
+				ft_putendl_fd("Memory allocation error", 2);
+				return (NULL);
+				
+			}
+			return value;
+		}
+		i++;
+	}
+	return (NULL);
+}
 
 int cmd_not_found(t_token *command)
 {
