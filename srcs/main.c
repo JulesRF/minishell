@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/06 18:46:59 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/07 15:28:17 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -586,7 +586,7 @@ void free_strs_array(char **strs)
 		free(strs[i]);
 		i++;
 	}
-	free(strs);
+	free(strs); //est ce qu'on ne devrait pas avoir char ***strs pour ici ?
 }
 
 int	main(int argc, char **argv, char **envp)

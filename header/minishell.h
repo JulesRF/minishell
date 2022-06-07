@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/07 13:25:04 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/07 15:28:58 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,6 @@ int export(t_token *command, char ***env);
 int env_builtin(char **env);
 void free_strs_array(char **strs);
 char *get_env_value(char *key, char **env);
+int unset(t_token *command, char ***env);
 
 #endif

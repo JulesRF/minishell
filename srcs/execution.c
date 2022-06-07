@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/07 14:08:04 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/07 15:29:22 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char *get_env_value(char *key, char **env)
 	while (env && env[i])
 	{
 		j = 0;
-		while (env[i][j] && key[j] && env[i][j] == key[j])
+		while (env[i][j] && key[j] && env[i][j] == key[j]) //peut remplacer ca par ft_strncmp ?
 			j++;
 
 		if (j == key_len && env[i][j] == '=') //we found the matching key in env
@@ -151,7 +151,7 @@ int check_builtin(t_token *command, char ***env)
 	if (ft_strcmp(cmd_name, "export") == 0)
 		return (export(command, env));
 	if (ft_strcmp(cmd_name, "unset") == 0)
-		return 1;
+		return unset(command, env);
 	if (ft_strcmp(cmd_name, "env") == 0)
 		return (env_builtin(*env));
 	if (ft_strcmp(cmd_name, "exit") == 0)

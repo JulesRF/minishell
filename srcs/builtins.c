@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/07 14:40:36 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/07 16:11:09 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ int var_name_is_valid(char *s, int *name_len)
 	{
 		ft_putstr_fd("export: ", 2);
 		ft_putstr_fd(s, 2);
-		ft_putendl_fd(": not a valid identifier1", 2);
+		ft_putendl_fd(": not a valid identifier", 2);
 		return 0;
 	}
 	*name_len = 1;
@@ -154,7 +154,7 @@ int var_name_is_valid(char *s, int *name_len)
 		{
 			ft_putstr_fd("export: ", 2);
 			ft_putstr_fd(s, 2);
-			ft_putendl_fd(": not a valid identifier2", 2);
+			ft_putendl_fd(": not a valid identifier", 2);
 			return 0;
 		}
 		*name_len = *name_len + 1;
@@ -202,7 +202,7 @@ int set_var_in_env(char *s, char *var_name, int name_len, char ***env)
 	while (envv && envv[i])
 	{
 		j = 0;
-		while (envv[i][j] && var_name[j] && envv[i][j] == var_name[j])
+		while (envv[i][j] && var_name[j] && envv[i][j] == var_name[j]) //peut remplacer ca par ft_strncmp ?
 			j++;
 		if (j == name_len && envv[i][j] == '=') //we found the matching key in env
 		{
@@ -258,8 +258,8 @@ int add_var_to_env(char *s, char ***env)
 	new_env[i] = ft_strdup(s);
 	if (!new_env[i])
 	{
-		new_env[i] = NULL;
 		free_strs_array(new_env);
+		return (1);
 	}
 	i++;
 	new_env[i] = NULL;
@@ -331,4 +331,115 @@ int env_builtin(char **env)
 		i++;
 	}
 	return 0;
+}
+
+int rm_var_from_env(char *s, char ***env)
+{
+	int		i;
+	int		j;
+	int		k;
+	char	**new_env;
+	char	**tmp;
+	int key_len;
+
+	key_len = ft_strlen(s);
+	i = 0;
+	tmp = *env;
+	while (tmp[i])
+		i++;
+	new_env = malloc(sizeof(char *) * (i + 2));
+	if (!new_env)
+		return (1);
+	i = 0;
+	j = 0;
+	while (tmp[i])
+	{
+		k = 0;
+		while (tmp[i][k] && s[k] && tmp[i][k] == s[k])
+			k++;
+		if (k != key_len || tmp[i][k] != '=') //s'il ne s'agit pas de la key qu'on rm
+		{
+			new_env[j] = ft_strdup(tmp[i]);
+			if (!new_env[j])
+			{
+				free_strs_array(new_env);
+				return (1);
+			}
+			j++;
+		}
+		i++;
+	}
+	new_env[j] = NULL;
+	*env = new_env;
+	free_strs_array(tmp);
+	return (0);
+}
+
+/**
+ * @brief Check if the argument is a valid parameter for unset
+ * env var name format : [a-zA-Z_]+[a-zA-Z0-9_]*
+ * Also calculate the length of said var name
+ * @param s arg string
+ * @return int 1 if valid, 0 if not
+ */
+int parameter_is_valid(char *s)
+{
+	int i;
+	
+	if (s && (ft_isalpha(s[0]) == 0 && s[0] != '_'))
+	{
+		ft_putstr_fd("unset: ", 2);
+		ft_putstr_fd(s, 2);
+		ft_putendl_fd(": invalid parameter name", 2);
+		return 0;
+	}
+	i = 1;
+	while (s && s[i])
+	{
+		if (ft_isalnum(s[i]) == 0 && s[i] != '_')
+		{
+			ft_putstr_fd("unset: ", 2);
+			ft_putstr_fd(s, 2);
+			ft_putendl_fd(": invalid parameter name", 2);
+			return 0;
+		}
+		i++;
+	}
+	return 1;
+}
+
+int unset(t_token *command, char ***env)
+{
+	int ret;
+	char *value;
+	
+	ret = 0;
+	if (command != NULL) //necessaire ?
+		command = command->next;
+	while (command && (command->type == 4)) //jump all spaces
+		command = command->next;
+	if (command == NULL)
+		return handle_error("unset: not enough arguments", 1);
+	
+	while (command)
+	{
+		if (command->type == 2)
+		{
+			if (parameter_is_valid(command->content) == 1)
+			{
+				value = get_env_value(command->content, *env);
+				if (value != NULL)
+					if (rm_var_from_env(command->content, env) == 1)
+					{
+						free(value);
+						return (1);
+					}
+				free(value);
+			}
+			else
+				ret = 1;
+		}
+		command = command->next;
+	}
+	return (ret);
 }
