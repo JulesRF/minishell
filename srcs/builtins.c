@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/06 18:46:07 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/07 12:00:43 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,4 +293,21 @@ int export(t_token *command, char ***env)
 		command = command->next;
 	}
 	return ret;
+}
+
+/**
+ * @brief Print environment variables
+ * 
+ * @param env environment variables
+ * @return int 0 when done
+ */
+int env_builtin(char **env)
+{
+	int i = 0;
+	while (env && env[i])
+	{
+		ft_putendl_fd(env[i], 1);
+		i++;
+	}
+	return 0;
 }

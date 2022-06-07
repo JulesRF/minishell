@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/06 18:47:50 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/07 11:59:02 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ int check_builtin(t_token *command, char ***env)
 {
 	char *cmd_name;
 	
-	(void)env;
 	cmd_name = command->content; 
 	if (ft_strcmp(cmd_name, "echo") == 0)
 		return echo(command);
@@ -116,7 +115,7 @@ int check_builtin(t_token *command, char ***env)
 	if (ft_strcmp(cmd_name, "unset") == 0)
 		return 1;
 	if (ft_strcmp(cmd_name, "env") == 0)
-		return 1;
+		return (env_builtin(*env));
 	if (ft_strcmp(cmd_name, "exit") == 0)
 		return 1;
 	return -1;
