@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/07 14:16:24 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/07 14:40:36 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,14 +101,13 @@ char *cmd_to_str(t_token *command)
 
 
 /**
- * @brief 
+ * @brief Change the working directory to the given path
  * 
- * @param command 
+ * @param command path
  * @return int 0 on success, 1 on error
  */
 int cd(t_token *command)
 {
-	//too many arguments
 	int ret;
 	
 	if (command != NULL) //necessaire ?
@@ -183,6 +182,15 @@ char *get_var_name(char *s, int name_len)
 }
 
 
+/**
+ * @brief Modify the value of a given environment variable
+ * 
+ * @param s arg string
+ * @param var_name the key of the environment variable
+ * @param name_len 
+ * @param env environment variables
+ * @return int 1 in case of failure, 0 otherwise
+ */
 int set_var_in_env(char *s, char *var_name, int name_len, char ***env)
 {
 	int i;
@@ -209,6 +217,13 @@ int set_var_in_env(char *s, char *var_name, int name_len, char ***env)
 	return 1;
 }
 
+/**
+ * @brief Add a new variable to the environment
+ * 
+ * @param s arg string
+ * @param env environment variables
+ * @return int 1 in case of failure, 0 otherwise
+ */
 int add_var_to_env(char *s, char ***env)
 {
 	int		i;
@@ -254,10 +269,10 @@ int add_var_to_env(char *s, char ***env)
 }
 
 /**
- * @brief 
- * 
- * @param command 
- * @return int 
+ * @brief Add a variable to the environment or change its value
+ * if a variable with the same key already exists
+ * @param command
+ * @return int 1 in case of failure, 0 otherwise
  */
 int export(t_token *command, char ***env)
 {
