@@ -38,7 +38,7 @@ void	ft_garbage(t_list **bin)
 	*bin = NULL;
 }
 
-////// utils pour bin
+////// utils pour bin (garbage collector)
 
 t_list	*ft_lstnew(void *content)
 {
@@ -151,6 +151,20 @@ int	ft_strcmp(char *s1, char *s2)
 	return (0);
 }
 
+int	ft_strncmp(const char *s1, const char *s2, int n)
+{
+	int	i;
+
+	i = 0;
+	while (((unsigned char)s1[i] || (unsigned char)s2[i]) && i < n)
+	{
+		if ((unsigned char)s1[i] != (unsigned char)s2[i])
+			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+		i++;
+	}
+	return (0);
+}
+
 void	ft_preparse(int argc, char **argv, char **env)
 {
 	(void)argv;
@@ -191,6 +205,42 @@ void	ft_clean_token(t_token **token)
 	// 	free(to_suppr);
 	// }
 	*token = NULL;
+}
+
+int	ft_closed_quotes(char *str, t_list **bin)
+{
+	int	i;
+
+	(void)bin;
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'')
+		{
+			i++;
+			while (str[i] && str[i] != '\'')
+				i++;
+			if (str[i] != '\'')
+				return (printf("SYNTAX ERROR\n"), 1);
+		}
+		if (str[i] == '\"')
+		{
+			i++;
+			while (str[i] && str[i] != '\"')
+				i++;
+			if (str[i] != '\"')
+				return (printf("SYNTAX ERROR\n"), 1);
+		}
+		i++;
+	}
+	return (0);
+}
+
+int	ft_syntax(char *str, t_list **bin)
+{
+	if (ft_closed_quotes(str, bin))
+		return (1);
+	return (0);
 }
 
 void	ft_parse_operator(t_token **token, t_list **bin, char c)
@@ -241,7 +291,6 @@ int	ft_parse_word(t_token **token, t_list **bin, char *str)
 	char *dest;
 
 	i = 0;
-	// printf ("la str :%s\n", str);
 	j = 0;
 	while (str[i] != '|' && str[i] != '$' && str[i] != 39 && str[i] != 34
 		&& str[i] != ' ' && str[i])
@@ -258,7 +307,7 @@ int	ft_parse_word(t_token **token, t_list **bin, char *str)
 	return (i - 1);
 }
 
-void	ft_parse(t_token **token, t_list **bin, char *str)
+void	ft_token(t_token **token, t_list **bin, char *str)
 {
 	int	i;
 
@@ -310,7 +359,6 @@ t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 	}
 	while (token->content[j])
 	{
-		// printf("on ajoute ce caractere a la sting ->%c<-\n",)
 		str[i] = token->content[j];
 		i++;
 		j++;
@@ -320,7 +368,7 @@ t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 	return (temp);
 }
 
-t_token	*ft_find_quote(t_token *token)
+t_token	*ft_find_dquote(t_token *token)
 {
 	while (token)
 	{
@@ -331,63 +379,141 @@ t_token	*ft_find_quote(t_token *token)
 	return (token);
 }
 
-void	ft_doublequotes(t_token *token, t_list **bin)
+void	ft_doublequotes(t_token *token, t_list **bin, t_token *temp,
+t_token *stop)
 {
-	t_token *temp;
-	t_token *stop;
-
-	// (void)bin;
 	temp = NULL;
 	while (token)
 	{
-		printf("la boucle\n");
-		if (!ft_strcmp(token->content, "\""))
+		if (!ft_strcmp(token->content, "\"") && token->type == 3)
 		{
-			stop = token;
-			stop = stop->next;
-			while (ft_strcmp(stop->content, "\""))
+			stop = token->next;
+			if (!ft_strcmp(stop->content, "\"") && stop->type == 3)
+				token = token->next;
+			else
 			{
-				temp = ft_joincontent(temp, stop, bin);
-				// printf("content = %s\n", temp->content);
-				stop = stop->next;
+				while (stop && ft_strcmp(stop->content, "\""))
+				{
+					temp = ft_joincontent(temp, stop, bin);
+					stop = stop->next;
+				}
+				temp->next = stop;
+				token->next = temp;
+				token = ft_find_dquote(temp);
+				ft_doublequotes(token->next, bin, temp, stop);
+				return ;
 			}
-			token->next = temp;
-			temp->next = ft_find_quote(token);
 		}
-		else
-			token = token->next;
+		token = token->next;
 	}
 }
 
-void	ft_simplify(t_token **token, t_list **bin)
+t_token	*ft_find_squote(t_token *token)
 {
-	ft_supspace(*token);
-	ft_doublequotes(*token, bin);
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\'"))
+			return(token);
+		token = token->next;
+	}
+	return (token);
 }
 
-// void	ft_catch(int sig)
-// {
-// 	(void)sig;
-// 	printf("ptit ctrl c en legende\n");
-// 	return ;
-// }
+void	ft_simplequotes(t_token *token, t_list **bin, t_token *temp,
+t_token *stop)
+{
+	temp = NULL;
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\'") && token->type == 3)
+		{
+			stop = token->next;
+			if (!ft_strcmp(stop->content, "\'") && stop->type == 3)
+				token = token->next;
+			else
+			{
+				while (stop && ft_strcmp(stop->content, "\'"))
+				{
+					temp = ft_joincontent(temp, stop, bin);
+					stop = stop->next;
+				}
+				temp->next = stop;
+				token->next = temp;
+				token = ft_find_squote(temp);
+				ft_simplequotes(token->next, bin, temp, stop);
+				return ;
+			}
+		}
+		token = token->next;
+	}
+}
 
-void	ft_prompt(t_token **token, t_list **bin)
+char	*ft_dollarfind(char *to_find, char **env)
+{
+	int	i;
+
+	i = 0;
+	if (!ft_strcmp(to_find, " "))
+		return ("$ ");
+	while (env[i])
+	{
+		if (!ft_strncmp(env[i], to_find, ft_strlen(to_find)))
+			return (env[i] + (ft_strlen(to_find) + 1));
+		i++;
+	}
+	return ("\n");
+}
+
+void	ft_dollar(t_token *token, t_list **bin, char **env)
+{
+	(void)bin;
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\'") && token->type == 3)
+		{
+			token = token->next;
+			while (token && ft_strcmp(token->content, "\'"))
+				token = token->next;
+		}
+		if (!ft_strcmp(token->content, "$") && token->type == 1)
+		{
+			token->content = ft_dollarfind(token->next->content, env);
+			token->type = 2;
+			token->next = token->next->next;
+		}
+		token = token->next;
+	}
+}
+
+void	ft_simplify(t_token **token, t_list **bin, char **env)
+{
+	t_token	*temp;
+	t_token	*stop;
+
+	temp = NULL;
+	stop = NULL;
+	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
+	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
+	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
+	ft_supspace(*token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
+}
+
+void	ft_prompt(t_token **token, t_list **bin, char **env)
 {
 	char *str;
 	
 	str = readline("\033[95mminishell$\033[0m ");
 	while (ft_strcmp(str, "exit") && str != NULL)
 	{
-		// printf("la string ->%s<-\n", str);
 		if (str[0] != '\0')
-			add_history(str);
-		//parsing pur et dur (division des elements en tokens)
-		ft_parse(token, bin, str);
-		//simplification des tokens
-		ft_simplify(token, bin);
-		ft_print(*token);
-		// envoie des infos a Yassine
+			add_history(str);   // gere l'historique des commandes, sauf si la commande est un \n
+		if (!ft_syntax(str, bin))
+		{
+			ft_token(token, bin, str); //parsing pur et dur (division des elements en tokens)
+			ft_simplify(token, bin, env); //simplification des tokens
+			ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
+			// envoie des infos a mon mate
+		}
 		ft_garbage(bin);
 		ft_clean_token(token);
 		free (str);
@@ -398,16 +524,14 @@ void	ft_prompt(t_token **token, t_list **bin)
 
 int	main(int argc, char **argv, char **env)
 {
-	t_list	*bin;
+	t_list	*bin;      // garbage collector, tout ce que je malloc, je le fous dedans
 	t_token	*token;
 
 	ft_preparse(argc, argv, env);
 	bin = NULL;
 	token = NULL;
-
-	// signal(SIGINT, ft_catch);
 	
-	ft_prompt(&token, &bin);
+	ft_prompt(&token, &bin, env);
 
 	ft_garbage(&bin);
 	exit(0);
