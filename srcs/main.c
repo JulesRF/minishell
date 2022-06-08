@@ -355,9 +355,15 @@ void	ft_supspace(t_token *token)
 {
 	while (token)
 	{
-			while (!ft_strcmp(token->content, " ") && !ft_strcmp(token->next->content, " "))
-				token->next = token->next->next;
-		token = token->next;
+		if (!token->next || !token->next->next)
+			return;
+		if (!ft_strcmp(token->content, " ")
+			&& !ft_strcmp(token->next->content, " "))
+		{
+			token->next = token->next->next;
+		}
+		else
+			token = token->next;
 	}
 }
 
@@ -547,7 +553,12 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
 	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
+<<<<<<< HEAD
+	printf("ca dit quoi l'equipe\n");
+	ft_supspace(*token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
+=======
 	// ft_supspace(*token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
+>>>>>>> f15901ec5cf19ed9eae6d975df5ebebceee7b8f4
 	if (ft_piperedir(*token, bin))
 		return (1);
 	return (0);
