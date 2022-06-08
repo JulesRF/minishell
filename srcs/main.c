@@ -236,6 +236,27 @@ int	ft_closed_quotes(char *str, t_list **bin)
 	return (0);
 }
 
+// int	ft_piperedir(char *str, t_list **bin)
+// {
+// 	int i;
+
+// 	(void)bin;
+// 	i = 0;
+// 	while (str[i])
+// 	{
+// 		if (str[i] == '|' || str[i] == '<' || str[i] == '>')
+// 		{
+// 			while (str[i] || str[i] == '|')
+// 			{
+// 				if (str[i] == ' ')
+// 			}
+// 		}
+// 		if ((str[i] == '>' && str[i + 1] == '>') ||
+// 			(str[i] == '<' && str[i + 1] == '>'))
+// 		i++;
+// 	}
+// }
+
 int	ft_syntax(char *str, t_list **bin)
 {
 	if (ft_closed_quotes(str, bin))
@@ -334,8 +355,8 @@ void	ft_supspace(t_token *token)
 {
 	while (token)
 	{
-		while (!ft_strcmp(token->content, " ") && !ft_strcmp(token->next->content, " "))
-			token->next = token->next->next;
+			while (!ft_strcmp(token->content, " ") && !ft_strcmp(token->next->content, " "))
+				token->next = token->next->next;
 		token = token->next;
 	}
 }
@@ -485,7 +506,38 @@ void	ft_dollar(t_token *token, t_list **bin, char **env)
 	}
 }
 
-void	ft_simplify(t_token **token, t_list **bin, char **env)
+int	ft_piperedir(t_token *token, t_list **bin)
+{
+	(void)bin;
+	while (token)
+	{
+		if ((!ft_strcmp(token->content, "|") && token->type == 1)
+			|| (token->type == 5))
+		{
+			if (!token->next)
+			{
+				printf("SYNTAX ERROR\n");
+				return (1);
+			}
+			if (token->next->type == 4)
+				token = token->next;
+			if (!token->next)
+			{
+				printf("SYNTAX ERROR\n");
+				return (1);
+			}
+			if (token->next->type != 2 && token->next->type != 3)
+			{
+				printf("SYNTAX ERROR\n");
+				return (1);
+			}
+		}
+		token = token->next;
+	}
+	return (0);
+}
+
+int	ft_simplify(t_token **token, t_list **bin, char **env)
 {
 	t_token	*temp;
 	t_token	*stop;
@@ -495,7 +547,11 @@ void	ft_simplify(t_token **token, t_list **bin, char **env)
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
 	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
-	ft_supspace(*token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
+	printf("ca dit quoi l'equipe\n");
+	// ft_supspace(*token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
+	if (ft_piperedir(*token, bin))
+		return (1);
+	return (0);
 }
 
 void	ft_prompt(t_token **token, t_list **bin, char **env)
@@ -510,9 +566,11 @@ void	ft_prompt(t_token **token, t_list **bin, char **env)
 		if (!ft_syntax(str, bin))
 		{
 			ft_token(token, bin, str); //parsing pur et dur (division des elements en tokens)
-			ft_simplify(token, bin, env); //simplification des tokens
-			ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
-			// envoie des infos a mon mate
+			if (!ft_simplify(token, bin, env)) //simplification des tokens
+			{
+				ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
+				// envoie des infos a mon mate
+			}
 		}
 		ft_garbage(bin);
 		ft_clean_token(token);
