@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/07 16:11:09 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/08 17:26:59 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,11 @@ int echo(t_token *command)
 		command = command->next;
 	while (command && (command->type == 4 || check_n_option(command->content, &n_option))) //check for -n options
 		command = command->next;
-	while (command && (command->type == 2 || command->type == 4)) //space ou word
+	while (command && (command->type == 2))
 	{
 		ft_putstr_fd(command->content, 1);
+		if (command->next != NULL)
+			write(1, " ", 1);
 		command = command->next;
 	}
 	if (n_option == 0)

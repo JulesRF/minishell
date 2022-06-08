@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/07 15:28:17 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/08 14:54:19 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,28 @@ void	ft_lstadd_back_token(t_token **alst, t_token *new)
 	}
 	temp = ft_lstlast_token(*alst);
 	temp->next = new;
+}
+
+void ft_delete_token(t_token **alst, t_token *to_del)
+{
+    t_token *tmp; 
+	t_token *prev;
+
+	tmp = *alst;
+    if (tmp == to_del) {
+        *alst = tmp->next;
+        return; //free deleted token ?
+    }
+    // Search for the key to be deleted, keep track of the
+    // previous node as we need to change 'prev->next'
+    while (tmp && tmp != to_del) {
+        prev = tmp;
+        tmp = tmp->next;
+    }
+    if (tmp == NULL)
+        return;
+    prev->next = tmp->next;
+    //free deleted token ?
 }
 
 ////// utils pour token
@@ -246,7 +268,7 @@ int	ft_syntax(char *str, t_list **bin)
 void	ft_parse_operator(t_token **token, t_list **bin, char c)
 {
 	if (c == '|')
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, "|", 1));
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, "|", 5));
 	if (c == '$')
 		ft_lstadd_back_token(token, ft_lstnew_token(bin, "$", 1));
 }
@@ -330,14 +352,16 @@ void	ft_token(t_token **token, t_list **bin, char *str)
 	// printf("fin du parsing\n");
 }
 
-void	ft_supspace(t_token *token)
+void	ft_supspace(t_token **token)
 {
-	while (token)
+	t_token *cur;
+
+	cur = *token;
+	while (cur)
 	{
-		if (token->next != NULL && !ft_strcmp(token->content, " ") && !ft_strcmp(token->next->content, " "))
-			token->next = token->next->next;
-		else 
-			token = token->next;
+		if (!ft_strcmp(cur->content, " "))
+			ft_delete_token(token, cur);
+		cur = cur->next;
 	}
 }
 
@@ -496,7 +520,7 @@ void	ft_simplify(t_token **token, t_list **bin, char **env)
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
 	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
-	ft_supspace(*token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
+	ft_supspace(token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
 }
 
 int	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
@@ -518,8 +542,10 @@ int	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
 			// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
 			// envoie des infos a mon mate
 
-			ret = search_cmd(*token, env);
+			// ret = search_cmd(*token, env);
 			// printf("ret search_cmd=%d\n", ret);
+			
+			ret = redir_and_exec(token, env);
 			// return ret;
 		}
 		ft_garbage(bin);

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/07 15:28:58 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/08 14:55:24 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <stdlib.h>
 # include <../libft/libft.h>
 # include <errno.h>
+# include <fcntl.h>
 
 # define BUFFER_SIZE 4096
 
@@ -46,5 +47,8 @@ int env_builtin(char **env);
 void free_strs_array(char **strs);
 char *get_env_value(char *key, char **env);
 int unset(t_token *command, char ***env);
+void	ft_lstadd_back_token(t_token **alst, t_token *new);
+int redir_and_exec(t_token **commands, char ***env);
+void ft_delete_token(t_token **alst, t_token *to_del);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/07 15:29:22 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/08 16:32:26 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ int exec_cmd(t_token *command, char **env)
 	{
 		execve(args[0], args, env); //check fail ?
 		ft_putendl_fd("execve failed", 2);
+		exit(1); //code d'erreur spécial ?
 	}
 	else //parent process
 	{
@@ -251,3 +252,5 @@ int search_cmd(t_token *command, char ***env)
 	
 	return -1;
 }
+
+
