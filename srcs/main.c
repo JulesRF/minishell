@@ -601,9 +601,7 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 
 	temp = NULL;
 	stop = NULL;
-	printf("Salut la mif\n");
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
-	printf("ca dit quoi\n");
 	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
 	ft_rmvquotes(token, bin);
