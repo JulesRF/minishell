@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/09 14:02:14 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/09 16:40:26 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -605,7 +605,7 @@ void	ft_prompt(t_token **token, t_list **bin, char ***env, int *exit_status, cha
 				// ret = search_cmd(*token, env);
 				// printf("ret search_cmd=%d\n", ret);
 				
-				*exit_status = redir_and_exec(token, env);	
+				*exit_status = redir_and_exec(token, env, bin);	
 			}
 		}
 		ft_garbage(bin);
@@ -613,7 +613,8 @@ void	ft_prompt(t_token **token, t_list **bin, char ***env, int *exit_status, cha
 		free (str);
 		str = readline("\033[95mminishell$\033[0m ");
 	}
-	free (str);;
+	free (str);
+	rl_clear_history();
 }
 
 

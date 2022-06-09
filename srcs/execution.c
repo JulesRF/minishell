@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/09 09:30:00 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/09 16:44:05 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,10 @@ int exec_cmd(t_token *command, char **env)
 		return handle_error("cmd_to_str failed", 1);
 	pid = fork();
 	if (pid == -1) //fork failed
+	{
+		free_strs(args);
 		return handle_error("fork failed", 1);
+	}
 	else if (pid == 0) //child process
 	{
 		execve(args[0], args, env); //check fail ?
@@ -128,6 +131,7 @@ int exec_cmd(t_token *command, char **env)
 		wait(&status); //recup valeur retour ?
 		//free ?
 	}
+	free_strs(args);
 	return (0); //?
 }
 
@@ -185,7 +189,7 @@ void free_strs(char **strs)
  * @param env Environment variables
  * @return int -1 if the search or execution fails
  */
-int check_path(t_token *command, char **env)
+int check_path(t_token *command, char **env, t_list **bin)
 {
 	char *cmd_name;
 	char *path;
@@ -199,24 +203,33 @@ int check_path(t_token *command, char **env)
 		return (-1);
 	path = get_env_value("PATH", env); //protect ?
 	if (!path)
+	{
+		free(cmd_name);
 		return (-1);
+	}
 	paths = ft_split(path, ':');
 	free(path);
 	if (!paths)
+	{
+		free(cmd_name);
 		return (-1);
+	}
 	i = 0;
 	while (paths[i])
 	{
 		path_to_cmd = ft_strjoin(paths[i], cmd_name);
 		if ((stat(path_to_cmd, &sb) == 0 && sb.st_mode & S_IXUSR)) //check if executable
 		{
-			// free(command->content);
+			ft_lstadd_back(bin, ft_lstnew(path_to_cmd));//prot
 			command->content = path_to_cmd; //ATTENTION AUX FREE/BIN ICI
+			free(cmd_name);
 			free_strs(paths);
 			return exec_cmd(command, env);
 		}
 		i++;
+		free(path_to_cmd);
 	}
+	free(cmd_name);
 	free_strs(paths);
 	return (-1);
 }
@@ -229,7 +242,7 @@ int check_path(t_token *command, char **env)
  * @param env Environment variables
  * @return int -1 if the search fails, 1 if execution fails, 0 if no error
  */
-int search_cmd(t_token *command, char ***env)
+int search_cmd(t_token *command, char ***env, t_list **bin)
 {
 	char *cmd_name;
 	int ret;
@@ -242,7 +255,7 @@ int search_cmd(t_token *command, char ***env)
 		ret = check_builtin(command, env);
 		if (ret != -1)
 			return ret;
-		ret = check_path(command, *env);
+		ret = check_path(command, *env, bin);
 		if (ret != -1)
 			return ret;
 		return cmd_not_found(command);

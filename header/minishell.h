@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/08 14:55:24 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/09 16:44:27 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ typedef struct s_token
 }					t_token ;
 //	main.c
 int	main(int argc, char **argv, char **env);
-int search_cmd(t_token *command, char ***env);
+int search_cmd(t_token *command, char ***env, t_list **bin);
 void	ft_print(t_token *token);
 int	ft_strcmp(char *s1, char *s2);
 int echo(t_token *command);
@@ -48,7 +48,8 @@ void free_strs_array(char **strs);
 char *get_env_value(char *key, char **env);
 int unset(t_token *command, char ***env);
 void	ft_lstadd_back_token(t_token **alst, t_token *new);
-int redir_and_exec(t_token **commands, char ***env);
+int redir_and_exec(t_token **commands, char ***env, t_list **bin);
 void ft_delete_token(t_token **alst, t_token *to_del);
+void free_strs(char **strs);
 
 #endif

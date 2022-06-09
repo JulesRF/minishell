@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/09 13:49:32 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/09 16:32:42 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,10 @@ t_token **split_commands(t_token *commands, int nb_cmd)
 	return cmd_table;
 }
 
-int handle_errno(char *error_msg, int ret)
+int handle_errno(char *error_msg, int ret, t_token **cmd_table)
 {
+	if (cmd_table != NULL)
+		free(cmd_table);
 	perror(error_msg);
 	return ret;
 }
@@ -93,7 +95,7 @@ void find_input_and_output_files(t_token **commands, char **input_file, char **o
 	}
 }
 
-int redir_and_exec(t_token **commands, char ***env)
+int redir_and_exec(t_token **commands, char ***env, t_list **bin)
 {
 	int tmpin;
 	int tmpout;
@@ -116,30 +118,32 @@ int redir_and_exec(t_token **commands, char ***env)
 	tmpin = dup(0);
 	tmpout = dup(1);
 	if (tmpin == -1 || tmpout == -1)
-		return handle_errno("dup",-1);
+		return handle_errno("dup",-1, NULL);
 
 	//set initial input
 	if (input_file != NULL)
 	{
 		fdin = open(input_file, O_RDONLY);
 		if (fdin == -1)
-			return handle_errno("open", -1);
+			return handle_errno("open", -1, NULL);
 	}
 	else
 	{
 		fdin = dup(tmpin); //default in
 		if (fdin == -1)
-			return handle_errno("dup", -1);
+			return handle_errno("dup", -1, NULL);
 	}
 		
 	nb_cmd = get_nb_cmd(*commands);
 	cmd_table = split_commands(*commands, nb_cmd);
+	if (!cmd_table)
+		return (-1);
 	i = 0;
 	while (i < nb_cmd)
 	{
 		//redirect input to fdin
 		if (dup2(fdin, 0) == -1)
-			return handle_errno("dup2", -1); //éviter de sortir de la boucle ?
+			return handle_errno("dup2", -1, cmd_table); //éviter de sortir de la boucle ?
 		close(fdin); //bc not needed yet
 
 		//set output
@@ -149,44 +153,45 @@ int redir_and_exec(t_token **commands, char ***env)
 			{
 				fdout = open(output_file, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
 				if (fdout == -1)
-					return handle_errno("open", -1); //éviter de sortir de la boucle ?
+					return handle_errno("open", -1, cmd_table); //éviter de sortir de la boucle ?
 			}
 			else
 			{
 				fdout = dup(tmpout); //default out
 				if (fdout == -1)
-					return handle_errno("dup", -1); //éviter de sortir de la boucle ?
+					return handle_errno("dup", -1, cmd_table); //éviter de sortir de la boucle ?
 			}
 		}
 		else //not last cmd
 		{
 			//create pipe
 			if (pipe(fdpipe) == -1)
-				return handle_errno("pipe", -1); //éviter de sortir de la boucle ?
+				return handle_errno("pipe", -1, cmd_table); //éviter de sortir de la boucle ?
 			fdin = fdpipe[0]; //sera l'input lors de la prochaine itération
 			fdout = fdpipe[1];
 		}
 		
 		//redirect ouput to fdout
 		if (dup2(fdout, 1) == -1)
-			return handle_errno("dup2", -1); //éviter de sortir de la boucle ?
+			return handle_errno("dup2", -1, cmd_table); //éviter de sortir de la boucle ?
 		close(fdout);
 
-		ret = search_cmd(cmd_table[i], env);
+		ret = search_cmd(cmd_table[i], env, bin);
 		
 		i++;
 	}
 	
+	free(cmd_table);
+
 	//restore default in/out fd of parent process
 	if (dup2(tmpin, 0) == -1)
-		return handle_errno("dup2", -1);
+		return handle_errno("dup2", -1, NULL);
 	if (dup2(tmpout, 1) == -1)
-		return handle_errno("dup2", -1);
+		return handle_errno("dup2", -1, NULL);
 	close(tmpin);
 	close(tmpout);
 		
 	// waitpid (dernier pid) ici plutot que dans exec_cmd ?
-
 	
 	return ret;
 
