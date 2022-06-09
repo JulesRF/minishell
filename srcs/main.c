@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/08 14:54:19 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/09 09:19:15 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,6 +258,27 @@ int	ft_closed_quotes(char *str, t_list **bin)
 	return (0);
 }
 
+// int	ft_piperedir(char *str, t_list **bin)
+// {
+// 	int i;
+
+// 	(void)bin;
+// 	i = 0;
+// 	while (str[i])
+// 	{
+// 		if (str[i] == '|' || str[i] == '<' || str[i] == '>')
+// 		{
+// 			while (str[i] || str[i] == '|')
+// 			{
+// 				if (str[i] == ' ')
+// 			}
+// 		}
+// 		if ((str[i] == '>' && str[i + 1] == '>') ||
+// 			(str[i] == '<' && str[i + 1] == '>'))
+// 		i++;
+// 	}
+// }
+
 int	ft_syntax(char *str, t_list **bin)
 {
 	if (ft_closed_quotes(str, bin))
@@ -482,8 +503,8 @@ char	*ft_dollarfind(char *to_find, char **env)
 		return ("$ ");
 	while (env[i])
 	{
-		if (!ft_strncmp2(env[i], to_find, ft_strlen2(to_find)))
-			return (env[i] + (ft_strlen2(to_find) + 1));
+		if (!ft_strncmp2(env[i], to_find, ft_strlen(to_find)))
+			return (env[i] + (ft_strlen(to_find) + 1));
 		i++;
 	}
 	return ("\n");
@@ -510,7 +531,38 @@ void	ft_dollar(t_token *token, t_list **bin, char **env)
 	}
 }
 
-void	ft_simplify(t_token **token, t_list **bin, char **env)
+int	ft_piperedir(t_token *token, t_list **bin)
+{
+	(void)bin;
+	while (token)
+	{
+		if ((!ft_strcmp(token->content, "|") && token->type == 1)
+			|| (token->type == 5))
+		{
+			if (!token->next)
+			{
+				printf("SYNTAX ERROR\n");
+				return (1);
+			}
+			if (token->next->type == 4)
+				token = token->next;
+			if (!token->next)
+			{
+				printf("SYNTAX ERROR\n");
+				return (1);
+			}
+			if (token->next->type != 2 && token->next->type != 3)
+			{
+				printf("SYNTAX ERROR\n");
+				return (1);
+			}
+		}
+		token = token->next;
+	}
+	return (0);
+}
+
+int	ft_simplify(t_token **token, t_list **bin, char **env)
 {
 	t_token	*temp;
 	t_token	*stop;
@@ -521,6 +573,9 @@ void	ft_simplify(t_token **token, t_list **bin, char **env)
 	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
 	ft_supspace(token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
+	if (ft_piperedir(*token, bin))
+		return (1);
+	return (0);
 }
 
 int	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
@@ -538,22 +593,24 @@ int	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
 		if (!ft_syntax(str, bin))
 		{
 			ft_token(token, bin, str); //parsing pur et dur (division des elements en tokens)
-			ft_simplify(token, bin, *env); //simplification des tokens
-			// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
-			// envoie des infos a mon mate
+			if (!ft_simplify(token, bin, *env)) //simplification des tokens
+			{
+				// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
+				// envoie des infos a mon mate
 
-			// ret = search_cmd(*token, env);
-			// printf("ret search_cmd=%d\n", ret);
-			
-			ret = redir_and_exec(token, env);
-			// return ret;
+				// ret = search_cmd(*token, env);
+				// printf("ret search_cmd=%d\n", ret);
+				
+				ret = redir_and_exec(token, env);
+				// return ret;				
+			}
 		}
 		ft_garbage(bin);
 		ft_clean_token(token);
-		// free (str);
+		free (str);
 		str = readline("\033[95mminishell$\033[0m ");
 	}
-	// free (str);
+	free (str);
 	return ret;
 }
 
@@ -627,7 +684,7 @@ int	main(int argc, char **argv, char **envp)
 
 	env = dup_env(envp);
 	if (!env)
-		exit(1); // ?
+		exit(1); // exit code ?
 
 	// if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
 	// {

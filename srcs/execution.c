@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/08 16:32:26 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/09 09:30:00 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,9 @@ int search_cmd(t_token *command, char ***env)
 {
 	char *cmd_name;
 	int ret;
-
+	
+	if (command == NULL)
+		return (-1);
 	cmd_name = command->content; 
 	if (ft_strchr(cmd_name, '/') == NULL) //check if cmd_name == NULL ?
 	{

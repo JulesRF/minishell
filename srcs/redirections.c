@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/08 16:55:54 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/09 08:52:14 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ int redir_and_exec(t_token **commands, char ***env)
 		{
 			if (output_file != NULL)
 			{
-				fdout = fdin = open(output_file, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
+				fdout = open(output_file, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
 				if (fdout == -1)
 					return handle_errno("open", -1); //éviter de sortir de la boucle ?
 			}
@@ -162,7 +162,7 @@ int redir_and_exec(t_token **commands, char ***env)
 			//create pipe
 			if (pipe(fdpipe) == -1)
 				return handle_errno("pipe", -1); //éviter de sortir de la boucle ?
-			fdin = fdpipe[0];
+			fdin = fdpipe[0]; //sera l'input lors de la prochaine itération
 			fdout = fdpipe[1];
 		}
 		
@@ -186,8 +186,7 @@ int redir_and_exec(t_token **commands, char ***env)
 		
 	// waitpid (dernier pid) ici plutot que dans exec_cmd ?
 
-	(void)ret;
 	
-	return 0;
+	return ret;
 
 }
