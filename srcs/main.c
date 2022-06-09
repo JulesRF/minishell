@@ -393,7 +393,7 @@ t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 	int		j;
 
 	if (temp == NULL)
-		return (ft_lstnew_token(bin, token->content, 5));
+		return (ft_lstnew_token(bin, token->content, 2));
 	str = malloc(sizeof(char) * (ft_strlen2(temp->content) + ft_strlen2(token->content)) + 1);
 	ft_lstadd_back(bin, ft_lstnew(str));
 	i = 0;
@@ -541,25 +541,56 @@ int	ft_piperedir(t_token *token, t_list **bin)
 		{
 			if (!token->next)
 			{
-				printf("SYNTAX ERROR\n");
+				printf("SYNTAX ERROR1\n");
 				return (1);
 			}
 			if (token->next->type == 4)
 				token = token->next;
 			if (!token->next)
 			{
-				printf("SYNTAX ERROR\n");
+				printf("SYNTAX ERROR2\n");
 				return (1);
 			}
 			if (token->next->type != 2 && token->next->type != 3)
 			{
-				printf("SYNTAX ERROR\n");
+				printf("SYNTAX ERROR3\n");
 				return (1);
 			}
 		}
 		token = token->next;
 	}
 	return (0);
+}
+
+void	ft_rmvquotes(t_token **token, t_list **bin)
+{
+	t_token	*tmp;
+
+	(void)bin;
+	tmp = *token;
+	while (tmp)
+	{
+		if ((!ft_strcmp(tmp->content, "\"") && tmp->type == 3)
+			|| (!ft_strcmp(tmp->content, "\'") && tmp->type == 3))
+			ft_delete_token(token, tmp);
+		tmp = tmp->next;
+	}
+}
+
+void	ft_joinwords(t_token **token, t_list **bin)
+{
+	t_token	*tmp;
+
+	tmp = *token;
+	while (tmp)
+	{
+		if (tmp->type == 2 && tmp->next && tmp->next->type == 2)
+		{
+			tmp = ft_joincontent(tmp, tmp->next, bin);
+			tmp->next = tmp->next->next;
+		}
+		tmp = tmp->next;
+	}
 }
 
 int	ft_simplify(t_token **token, t_list **bin, char **env)
@@ -572,6 +603,8 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
 	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
+	ft_rmvquotes(token, bin);
+	ft_joinwords(token, bin);
 	ft_supspace(token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
 	if (ft_piperedir(*token, bin))
 		return (1);
