@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/05/19 18:45:02 by jroux-fo         ###   ########.fr       */
+/*   Updated: 2022/06/09 09:19:15 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_strlen(char *str)
+int	ft_strlen2(char *str)
 {
 	int i;
 
@@ -114,6 +114,28 @@ void	ft_lstadd_back_token(t_token **alst, t_token *new)
 	temp->next = new;
 }
 
+void ft_delete_token(t_token **alst, t_token *to_del)
+{
+    t_token *tmp; 
+	t_token *prev;
+
+	tmp = *alst;
+    if (tmp == to_del) {
+        *alst = tmp->next;
+        return; //free deleted token ?
+    }
+    // Search for the key to be deleted, keep track of the
+    // previous node as we need to change 'prev->next'
+    while (tmp && tmp != to_del) {
+        prev = tmp;
+        tmp = tmp->next;
+    }
+    if (tmp == NULL)
+        return;
+    prev->next = tmp->next;
+    //free deleted token ?
+}
+
 ////// utils pour token
 
 char	*ft_strdup(const char *s1)
@@ -151,7 +173,7 @@ int	ft_strcmp(char *s1, char *s2)
 	return (0);
 }
 
-int	ft_strncmp(const char *s1, const char *s2, int n)
+int	ft_strncmp2(const char *s1, const char *s2, int n)
 {
 	int	i;
 
@@ -267,7 +289,7 @@ int	ft_syntax(char *str, t_list **bin)
 void	ft_parse_operator(t_token **token, t_list **bin, char c)
 {
 	if (c == '|')
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, "|", 1));
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, "|", 5));
 	if (c == '$')
 		ft_lstadd_back_token(token, ft_lstnew_token(bin, "$", 1));
 }
@@ -347,23 +369,20 @@ void	ft_token(t_token **token, t_list **bin, char *str)
 			i = i + ft_parse_word(token, bin, str + i);
 		i++;
 	}
-	ft_print(*token);
-	printf("fin du parsing\n");
+	// ft_print(*token);
+	// printf("fin du parsing\n");
 }
 
-void	ft_supspace(t_token *token)
+void	ft_supspace(t_token **token)
 {
-	while (token)
+	t_token *cur;
+
+	cur = *token;
+	while (cur)
 	{
-		if (!token->next || !token->next->next)
-			return;
-		if (!ft_strcmp(token->content, " ")
-			&& !ft_strcmp(token->next->content, " "))
-		{
-			token->next = token->next->next;
-		}
-		else
-			token = token->next;
+		if (!ft_strcmp(cur->content, " "))
+			ft_delete_token(token, cur);
+		cur = cur->next;
 	}
 }
 
@@ -375,7 +394,7 @@ t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 
 	if (temp == NULL)
 		return (ft_lstnew_token(bin, token->content, 5));
-	str = malloc(sizeof(char) * (ft_strlen(temp->content) + ft_strlen(token->content)) + 1);
+	str = malloc(sizeof(char) * (ft_strlen2(temp->content) + ft_strlen2(token->content)) + 1);
 	ft_lstadd_back(bin, ft_lstnew(str));
 	i = 0;
 	j = 0;
@@ -484,7 +503,7 @@ char	*ft_dollarfind(char *to_find, char **env)
 		return ("$ ");
 	while (env[i])
 	{
-		if (!ft_strncmp(env[i], to_find, ft_strlen(to_find)))
+		if (!ft_strncmp2(env[i], to_find, ft_strlen(to_find)))
 			return (env[i] + (ft_strlen(to_find) + 1));
 		i++;
 	}
@@ -553,22 +572,20 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
 	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
-<<<<<<< HEAD
-	printf("ca dit quoi l'equipe\n");
-	ft_supspace(*token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
-=======
-	// ft_supspace(*token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
->>>>>>> f15901ec5cf19ed9eae6d975df5ebebceee7b8f4
+	ft_supspace(token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
 	if (ft_piperedir(*token, bin))
 		return (1);
 	return (0);
 }
 
-void	ft_prompt(t_token **token, t_list **bin, char **env)
+int	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
 {
 	char *str;
 	
 	str = readline("\033[95mminishell$\033[0m ");
+	int ret = 0;
+	(void)tester_cmd;
+	// str = tester_cmd;
 	while (ft_strcmp(str, "exit") && str != NULL)
 	{
 		if (str[0] != '\0')
@@ -576,10 +593,16 @@ void	ft_prompt(t_token **token, t_list **bin, char **env)
 		if (!ft_syntax(str, bin))
 		{
 			ft_token(token, bin, str); //parsing pur et dur (division des elements en tokens)
-			if (!ft_simplify(token, bin, env)) //simplification des tokens
+			if (!ft_simplify(token, bin, *env)) //simplification des tokens
 			{
-				ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
+				// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
 				// envoie des infos a mon mate
+
+				// ret = search_cmd(*token, env);
+				// printf("ret search_cmd=%d\n", ret);
+				
+				ret = redir_and_exec(token, env);
+				// return ret;				
 			}
 		}
 		ft_garbage(bin);
@@ -588,19 +611,90 @@ void	ft_prompt(t_token **token, t_list **bin, char **env)
 		str = readline("\033[95mminishell$\033[0m ");
 	}
 	free (str);
+	return ret;
 }
 
-int	main(int argc, char **argv, char **env)
+
+/**
+ * @brief Duplicate the environment variables into an allocated array of strings
+ * 
+ * @param envp Environment variables
+ * @return char** NULL if malloc fails, the duplicated array of strings otherwise
+ */
+char **dup_env(char **envp)
+{
+	int		i;
+	int		j;
+	char	**env;
+
+	i = 0;
+	while (envp[i])
+		i++;
+	env = malloc(sizeof(char *) * (i + 1));
+	if (!env)
+		return (NULL);
+	i = 0;
+	while (envp[i])
+	{
+		env[i] = ft_strdup(envp[i]);
+		if (!env[i])
+		{
+			j = 0;
+			while (j < i)
+			{
+				free(env[j]);
+				j++;
+			}
+			free(env);
+			return (NULL);
+		}
+		i++;
+	}
+	env[i] = NULL;
+	return (env);
+}
+
+/**
+ * @brief Free an array of strings
+ * 
+ * @param strs Allocated array of strings
+ */
+void free_strs_array(char **strs)
+{
+	int i;
+
+	i = 0;
+	while (strs[i])
+	{
+		free(strs[i]);
+		i++;
+	}
+	free(strs); //est ce qu'on ne devrait pas avoir char ***strs pour ici ?
+}
+
+int	main(int argc, char **argv, char **envp)
 {
 	t_list	*bin;      // garbage collector, tout ce que je malloc, je le fous dedans
 	t_token	*token;
+	char **env;
 
-	ft_preparse(argc, argv, env);
+	ft_preparse(argc, argv, envp);
 	bin = NULL;
 	token = NULL;
-	
-	ft_prompt(&token, &bin, env);
 
+	env = dup_env(envp);
+	if (!env)
+		exit(1); // exit code ?
+
+	// if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
+	// {
+	// 	int exit_status = ft_prompt(&token, &bin, env, argv[2]);
+	// 	exit(exit_status);
+	// }
+	
+	ft_prompt(&token, &bin, &env, argv[2]);
+	
+	free_strs_array(env);
 	ft_garbage(&bin);
 	exit(0);
 }
