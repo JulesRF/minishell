@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/09 08:52:14 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/09 13:49:32 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,12 +101,13 @@ int redir_and_exec(t_token **commands, char ***env)
 	int fdout;
 	char *input_file;
 	char *output_file;
-	int ret;
 	int nb_cmd;
+	int ret;
 	int i;
 	t_token **cmd_table;
 	int fdpipe[2];
 
+	ret = 0;
 	input_file = NULL;
 	output_file = NULL;
 	find_input_and_output_files(commands, &input_file, &output_file);
@@ -115,7 +116,7 @@ int redir_and_exec(t_token **commands, char ***env)
 	tmpin = dup(0);
 	tmpout = dup(1);
 	if (tmpin == -1 || tmpout == -1)
-		return handle_errno("dup", -1);
+		return handle_errno("dup",-1);
 
 	//set initial input
 	if (input_file != NULL)
