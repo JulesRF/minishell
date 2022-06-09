@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/09 16:32:42 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/09 18:27:04 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,11 @@ int handle_errno(char *error_msg, int ret, t_token **cmd_table)
  * @param commands 
  * @return char* NULL if not found, the input file name otherwise
  */
-void find_input_and_output_files(t_token **commands, char **input_file, char **output_file)
+void find_input_and_output_files(t_token **commands, char **input_file, char **output_file, int *append)
 {
 	t_token *cur;
-
+	
+	*append = 0;
 	cur = *commands;
 	while (cur)
 	{
@@ -87,6 +88,13 @@ void find_input_and_output_files(t_token **commands, char **input_file, char **o
 		}
 		else if (cur->type == 5 && ft_strcmp(cur->content, ">") == 0)
 		{
+			*output_file = cur->next->content; //check if next NULL ? devrait pas l'etre apres parsing
+			ft_delete_token(commands, cur->next);
+			ft_delete_token(commands, cur);
+		}
+		else if (cur->type == 5 && ft_strcmp(cur->content, ">>") == 0)
+		{
+			*append = 1;
 			*output_file = cur->next->content; //check if next NULL ? devrait pas l'etre apres parsing
 			ft_delete_token(commands, cur->next);
 			ft_delete_token(commands, cur);
@@ -103,6 +111,7 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin)
 	int fdout;
 	char *input_file;
 	char *output_file;
+	int append;
 	int nb_cmd;
 	int ret;
 	int i;
@@ -112,7 +121,7 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin)
 	ret = 0;
 	input_file = NULL;
 	output_file = NULL;
-	find_input_and_output_files(commands, &input_file, &output_file);
+	find_input_and_output_files(commands, &input_file, &output_file, &append);
 
 	//store default in/out fd of parent process for later reset
 	tmpin = dup(0);
@@ -151,7 +160,10 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin)
 		{
 			if (output_file != NULL)
 			{
-				fdout = open(output_file, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
+				if (append == 1)
+					fdout = open(output_file, O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
+				else
+					fdout = open(output_file, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
 				if (fdout == -1)
 					return handle_errno("open", -1, cmd_table); //éviter de sortir de la boucle ?
 			}

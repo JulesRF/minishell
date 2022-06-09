@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/09 16:57:17 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/09 18:04:24 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,17 +289,17 @@ int	ft_syntax(char *str, t_list **bin)
 void	ft_parse_operator(t_token **token, t_list **bin, char c)
 {
 	if (c == '|')
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, "|", 5));
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, "|", 5));//PROTECT
 	if (c == '$')
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, "$", 1));
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, "$", 1));//PROTECT
 }
 
 void	ft_parse_ponct(t_token **token, t_list **bin, char c)
 {
 	if (c == 39)
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, "\'", 3));
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, "\'", 3));//PROTECT
 	if (c == 34)
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, "\"", 3));
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, "\"", 3));//PROTECT
 }
 
 int	ft_parse_redir(t_token **token, t_list **bin, char c, char *str)
@@ -308,21 +308,21 @@ int	ft_parse_redir(t_token **token, t_list **bin, char c, char *str)
 	{
 		if (str[1] == 60)
 		{
-			ft_lstadd_back_token(token, ft_lstnew_token(bin, "<<", 5));
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, "<<", 5));//PROTECT
 			return (1);
 		}
 		else
-			ft_lstadd_back_token(token, ft_lstnew_token(bin, "<", 5));
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, "<", 5));//PROTECT
 	}
 	if (c == 62)
 	{
 		if (str[1] == 62)
 		{
-			ft_lstadd_back_token(token, ft_lstnew_token(bin, ">>", 5));
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, ">>", 5));//PROTECT
 			return (1);
 		}
 		else
-			ft_lstadd_back_token(token, ft_lstnew_token(bin, ">", 5));
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, ">", 5));//PROTECT
 	}
 	return (0);
 }
@@ -346,7 +346,7 @@ int	ft_parse_word(t_token **token, t_list **bin, char *str)
 		j++;
 	}
 	dest[j] = '\0';
-	ft_lstadd_back_token(token, ft_lstnew_token(bin, dest, 2));
+	ft_lstadd_back_token(token, ft_lstnew_token(bin, dest, 2));//PROTECT
 	return (i - 1);
 }
 
@@ -364,7 +364,7 @@ void	ft_token(t_token **token, t_list **bin, char *str)
 		else if (str[i] == 60 || str[i] == 62)
 			i = i + ft_parse_redir(token, bin, str[i], str + i);
 		else if (str[i] == ' ')
-			ft_lstadd_back_token(token, ft_lstnew_token(bin, " ", 4));
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, " ", 4));//PROTECT
 		else
 			i = i + ft_parse_word(token, bin, str + i);
 		i++;
@@ -393,9 +393,9 @@ t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 	int		j;
 
 	if (temp == NULL)
-		return (ft_lstnew_token(bin, token->content, 5));
+		return (ft_lstnew_token(bin, token->content, 5));//PROTECT
 	str = malloc(sizeof(char) * (ft_strlen2(temp->content) + ft_strlen2(token->content)) + 1);
-	ft_lstadd_back(bin, ft_lstnew(str));
+	ft_lstadd_back(bin, ft_lstnew(str));//PROTECT
 	i = 0;
 	j = 0;
 	while (temp->content[i])
