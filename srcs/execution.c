@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/09 16:44:05 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/09 16:56:14 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,8 +220,8 @@ int check_path(t_token *command, char **env, t_list **bin)
 		path_to_cmd = ft_strjoin(paths[i], cmd_name);
 		if ((stat(path_to_cmd, &sb) == 0 && sb.st_mode & S_IXUSR)) //check if executable
 		{
-			ft_lstadd_back(bin, ft_lstnew(path_to_cmd));//prot
-			command->content = path_to_cmd; //ATTENTION AUX FREE/BIN ICI
+			ft_lstadd_back(bin, ft_lstnew(path_to_cmd));//PROTECT
+			command->content = path_to_cmd;
 			free(cmd_name);
 			free_strs(paths);
 			return exec_cmd(command, env);

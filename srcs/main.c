@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/09 16:40:26 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/09 16:57:17 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -524,7 +524,12 @@ void	ft_dollar(t_token *token, t_list **bin, char **env, int *exit_status)
 		if (!ft_strcmp(token->content, "$") && token->type == 1)
 		{
 			if (token->next && ft_strcmp(token->next->content, "?") == 0)
+			{
 				token->content = ft_itoa(*exit_status);
+				if (!token->content)
+					return ; //PROTECT
+				ft_lstadd_back(bin, ft_lstnew(token->content));//PROTECT
+			}
 			else
 				token->content = ft_dollarfind(token->next->content, env);
 			token->type = 2;
