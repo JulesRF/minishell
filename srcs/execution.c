@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/10 10:20:02 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/10 14:07:55 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,25 +75,29 @@ int handle_error(char *error_msg, int ret_value)
  */
 char **cmd_to_strs(t_token *command)
 {
-	char *args_str;
-	char *tmp;
 	char **args;
+	t_token *cur;
+	int i;
 	
-	args_str = malloc(1);
-	if (!args_str)
-		return (NULL);
-	args_str[0] = '\0';
-	while (command && (command->type == 2 || command->type == 4)) //space ou word
+	cur = command;
+	i = 0;
+	while(cur)
 	{
-		tmp = args_str;
-		args_str = ft_strjoin(args_str, command->content);
-		free(tmp);
-		if (!args_str)
-			return (NULL);
-		command = command->next;
+		i++;
+		cur = cur->next;
 	}
-	args = ft_split(args_str, ' '); //probleme : supprime aussi les espaces volontaires ex: ./a.out "je    suis"
-	free(args_str);
+	args = malloc(sizeof(char *) * (i + 1));
+	if (!args)
+		return (NULL);
+	cur = command;
+	i = 0;
+	while (cur)
+	{
+		args[i] = cur->content;
+		i++;
+		cur = cur->next;
+	}
+	args[i] = NULL;
 	return (args);
 }
 
@@ -113,11 +117,21 @@ int exec_cmd(t_token *command, char **env)
 	
 	args = cmd_to_strs(command);
 	if (!args)
+		return 1;
+
+	int i = 0;
+	while(args[i])
+	{
+		printf("%s\n", args[i]);
+		i++;
+	}
+
+	if (!args)
 		return handle_error("cmd_to_str failed", 1);
 	pid = fork();
 	if (pid == -1) //fork failed
 	{
-		free_strs(args);
+		free(args);
 		return handle_error("fork failed", 1);
 	}
 	else if (pid == 0) //child process
@@ -131,7 +145,7 @@ int exec_cmd(t_token *command, char **env)
 		wait(&status); //recup valeur retour ?
 		//free ?
 	}
-	free_strs(args);
+	free(args);
 	return (0); //?
 }
 
