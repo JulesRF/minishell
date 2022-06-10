@@ -289,7 +289,7 @@ int	ft_syntax(char *str, t_list **bin)
 void	ft_parse_operator(t_token **token, t_list **bin, char c)
 {
 	if (c == '|')
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, "|", 5));
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, "|", 1));
 	if (c == '$')
 		ft_lstadd_back_token(token, ft_lstnew_token(bin, "$", 1));
 }
@@ -510,6 +510,21 @@ char	*ft_dollarfind(char *to_find, char **env)
 	return ("\n");
 }
 
+
+t_token	*ft_isdollar(t_token *token, t_list **bin, char **env)
+{
+	(void)bin;
+	if (!ft_strcmp(token->content, "$") && token->type == 1)
+	{
+		if (!token->next || token->next->type != 2)
+			return (token);
+		token->content = ft_dollarfind(token->next->content, env);
+		token->type = 2;
+		token->next = token->next->next;
+	}
+	return (token);
+}
+
 void	ft_dollar(t_token *token, t_list **bin, char **env)
 {
 	(void)bin;
@@ -518,16 +533,31 @@ void	ft_dollar(t_token *token, t_list **bin, char **env)
 		if (!ft_strcmp(token->content, "\'") && token->type == 3)
 		{
 			token = token->next;
+			if (!token)
+				return ;
 			while (token && (ft_strcmp(token->content, "\'")
-				&& token->type == 3))
+				&& token->type != 3))
+			{
+				// printf("on sort des egouts c'est pas les lols\n");
 				token = token->next;
+				// printf("on sort du caniveau c'est pas des blagues\n");
+			}
 		}
-		if (!ft_strcmp(token->content, "$") && token->type == 1)
+		if (!token)
+			return ;
+		if (!ft_strcmp(token->content, "\"") && token->type == 3)
 		{
-			token->content = ft_dollarfind(token->next->content, env);
-			token->type = 2;
-			token->next = token->next->next;
+			token = token->next;
+			if (!token)
+				return ;
+			while (token && (ft_strcmp(token->content, "\"")
+				&& token->type != 3))
+			{
+				token = ft_isdollar(token, bin, env);
+				token = token->next;
+			}
 		}
+		token = ft_isdollar(token, bin, env);
 		token = token->next;
 	}
 }
@@ -603,7 +633,9 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 	stop = NULL;
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
 	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
+	// printf("ca dit quoi le sang\n");
 	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
+	// ft_print(*token);
 	ft_rmvquotes(token, bin);
 	ft_joinwords(token, bin);
 	ft_supspace(token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
