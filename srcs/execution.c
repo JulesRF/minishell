@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/10 14:07:55 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/10 15:18:18 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,13 +118,6 @@ int exec_cmd(t_token *command, char **env)
 	args = cmd_to_strs(command);
 	if (!args)
 		return 1;
-
-	int i = 0;
-	while(args[i])
-	{
-		printf("%s\n", args[i]);
-		i++;
-	}
 
 	if (!args)
 		return handle_error("cmd_to_str failed", 1);
