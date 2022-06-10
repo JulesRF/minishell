@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/09 18:27:04 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/10 11:32:36 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,22 +66,56 @@ int handle_errno(char *error_msg, int ret, t_token **cmd_table)
 	return ret;
 }
 
+
+void	write_heredoc(int pipe_fd[2], char *line)
+{
+	write(pipe_fd[1], line, ft_strlen(line));
+	write(pipe_fd[1], "\n", 1);
+}
+
+void heredoc(char *heredoc_eof)
+{
+	char	*line;
+	int		pipe_fd[2];
+
+	pipe(pipe_fd); //PROTECT
+
+	while (1)
+	{
+		line = readline("> ");
+		if (line && (ft_strcmp(line, heredoc_eof) == 0))
+			break ;
+		//line = dollar substitution ?
+		write_heredoc(pipe_fd, line);
+		free (line);
+	}
+	free(line);
+	dup2(pipe_fd[0], 0);
+	close(pipe_fd[1]);
+	close(pipe_fd[0]);
+}
+
+
 /**
  * @brief Check if the commands contain an input file of the form
  * "command < input file"
  * @param commands 
  * @return char* NULL if not found, the input file name otherwise
  */
-void find_input_and_output_files(t_token **commands, char **input_file, char **output_file, int *append)
+void find_input_and_output_files(t_token **commands, char **input_file, char **output_file, int *append, char **heredoc_eof)
 {
 	t_token *cur;
 	
+	*input_file = NULL;
+	*output_file = NULL;
+	*heredoc_eof = NULL;
 	*append = 0;
 	cur = *commands;
 	while (cur)
 	{
 		if (cur->type == 5 && ft_strcmp(cur->content, "<") == 0)
 		{
+			*heredoc_eof = NULL;
 			*input_file = cur->next->content; //check if next NULL ? devrait pas l'etre apres parsing
 			ft_delete_token(commands, cur->next);
 			ft_delete_token(commands, cur);
@@ -99,6 +133,14 @@ void find_input_and_output_files(t_token **commands, char **input_file, char **o
 			ft_delete_token(commands, cur->next);
 			ft_delete_token(commands, cur);
 		}
+		else if (cur->type == 5 && ft_strcmp(cur->content, "<<") == 0)
+		{
+			*output_file = NULL;
+			*heredoc_eof = cur->next->content;
+			ft_delete_token(commands, cur->next);
+			ft_delete_token(commands, cur);
+			heredoc(*heredoc_eof);
+		}
 		cur = cur->next;
 	}
 }
@@ -111,6 +153,7 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin)
 	int fdout;
 	char *input_file;
 	char *output_file;
+	char *heredoc_eof;
 	int append;
 	int nb_cmd;
 	int ret;
@@ -119,9 +162,6 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin)
 	int fdpipe[2];
 
 	ret = 0;
-	input_file = NULL;
-	output_file = NULL;
-	find_input_and_output_files(commands, &input_file, &output_file, &append);
 
 	//store default in/out fd of parent process for later reset
 	tmpin = dup(0);
@@ -129,12 +169,20 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin)
 	if (tmpin == -1 || tmpout == -1)
 		return handle_errno("dup",-1, NULL);
 
+	find_input_and_output_files(commands, &input_file, &output_file, &append, &heredoc_eof);
+
 	//set initial input
 	if (input_file != NULL)
 	{
 		fdin = open(input_file, O_RDONLY);
 		if (fdin == -1)
 			return handle_errno("open", -1, NULL);
+	}
+	else if (heredoc_eof != NULL)
+	{
+		fdin = dup(0);
+		if (fdin == -1)
+			return handle_errno("dup", -1, NULL);
 	}
 	else
 	{
