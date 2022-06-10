@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/09 18:06:07 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/10 10:20:02 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,6 +258,9 @@ int search_cmd(t_token *command, char ***env, t_list **bin)
 		ret = check_path(command, *env, bin);
 		if (ret != -1)
 			return ret;
+		// ret = check_heredoc(command);
+		// if (ret != -1)
+		// 	return ret;
 		return cmd_not_found(command);
 	}
 	else

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/10 11:49:04 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/10 11:54:19 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,8 +124,6 @@ void ft_delete_token(t_token **alst, t_token *to_del)
         *alst = tmp->next;
         return; //free deleted token ?
     }
-    // Search for the key to be deleted, keep track of the
-    // previous node as we need to change 'prev->next'
     while (tmp && tmp != to_del) {
         prev = tmp;
         tmp = tmp->next;
