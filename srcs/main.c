@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/11 09:10:00 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/11 13:07:01 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -650,16 +650,19 @@ int	ft_simplify(t_token **token, t_list **bin, char **env, int *exit_status)
 	return (0);
 }
 
+
 void	ft_prompt(t_token **token, t_list **bin, char ***env, int *exit_status, char *tester_cmd)
 {
 	char *str;
 	
+	signal(SIGQUIT, handle_sigquit);
+	signal(SIGINT, handle_sigint);
 	str = readline("\033[95mminishell$\033[0m ");
 
 	(void)tester_cmd;
 	// str = tester_cmd;
 	
-	while (ft_strcmp(str, "exit") && str != NULL)
+	while (str != NULL && ft_strcmp(str, "exit"))
 	{
 		if (str[0] != '\0')
 			add_history(str);   // gere l'historique des commandes, sauf si la commande est un \n
@@ -684,6 +687,8 @@ void	ft_prompt(t_token **token, t_list **bin, char ***env, int *exit_status, cha
 	}
 	free (str);
 	rl_clear_history();
+	if (str == NULL)
+		write(1, "\n", 1);
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/11 10:18:27 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/11 13:03:25 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,9 @@ int exec_cmd(t_token *command, char **env)
 	}
 	else //parent process
 	{
+		signal(SIGINT, handle_sigint_no_prompt);
 		wait(&status); //recup valeur retour ?
+		signal(SIGINT, handle_sigint);
 		//free ?
 	}
 	free(args);

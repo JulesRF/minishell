@@ -1,0 +1,34 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signals.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/06/11 11:26:25 by vfiszbin          #+#    #+#             */
+/*   Updated: 2022/06/11 13:03:14 by vfiszbin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+void handle_sigquit(int code)
+{
+	(void)code;
+	//réécrire le buffer d'avant signal pour effacer ^\ ?
+}
+
+void handle_sigint(int code)
+{
+	(void)code;
+	rl_replace_line("", 0);
+	write(1, "\n", 1);
+	rl_on_new_line();
+	rl_redisplay();
+}
+
+void handle_sigint_no_prompt(int code)
+{
+	(void)code;
+	write(1, "\n", 1);
+}

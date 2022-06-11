@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/11 10:18:16 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/11 13:03:19 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,8 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin);
 void ft_delete_token(t_token **alst, t_token *to_del);
 void free_strs(char **strs);
 char **dup_env(char **envp);
+void handle_sigquit(int code);
+void handle_sigint(int code);
+void handle_sigint_no_prompt(int code);
 
 #endif

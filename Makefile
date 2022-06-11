@@ -6,7 +6,7 @@
 #    By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/04 14:03:48 by jroux-fo          #+#    #+#              #
-#    Updated: 2022/06/08 10:51:19 by vfiszbin         ###   ########.fr        #
+#    Updated: 2022/06/11 11:31:02 by vfiszbin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,7 @@ SRCS_FILES	=	main.c	\
 				execution.c\
 				builtins.c\
 				redirections.c\
+				signals.c\
 
 FLAGS = -Wall -Werror -Wextra -g3
 
