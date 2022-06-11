@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/11 09:59:55 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/11 10:31:41 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,26 +108,35 @@ char *cmd_to_str(t_token *command)
  * @param command path
  * @return int 0 on success, 1 on error
  */
-int cd(t_token *command)
+int cd(t_token *command, char **env)
 {
 	int ret;
+	char *path;
+	int path_allocated;
 	
+	path_allocated = 0;
 	if (command != NULL) //necessaire ?
 		command = command->next;
-	while (command && (command->type == 4)) //jump all spaces
-		command = command->next;
-
 	if (command == NULL)
-		return handle_error("cd: no argument", 1);
+	{
+		path = get_env_value("HOME", env);
+		if (!path)
+			return handle_error("cd: HOME not set", 1);
+		path_allocated = 1;
+	}
 	else if (command->next != NULL && command->next->next != NULL)
 		return handle_error("cd: too many arguments", 1);
-	
-	ret = chdir(command->content);
+	else
+		path = command->content;
+
+	ret = chdir(path);
 	if (ret == -1)
 	{
-		perror(command->content);
-		return 1;
+		perror(path);
+		return (1);
 	}
+	if (path_allocated)
+		free(path);
 	return 0;
 }
 
