@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/11 08:57:24 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/11 09:10:00 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -509,14 +509,23 @@ char	*ft_dollarfind(char *to_find, char **env)
 }
 
 
-t_token	*ft_isdollar(t_token *token, t_list **bin, char **env)
+t_token	*ft_isdollar(t_token *token, t_list **bin, char **env, int *exit_status)
 {
 	(void)bin;
 	if (!ft_strcmp(token->content, "$") && token->type == 1)
 	{
 		if (!token->next || token->next->type != 2)
 			return (token);
-		token->content = ft_dollarfind(token->next->content, env);
+		if (ft_strcmp(token->next->content, "?") == 0)
+		{
+			token->content = ft_itoa(*exit_status);
+			if (!token->content)
+					return NULL; 
+			ft_lstadd_back(bin, ft_lstnew(token->content));//PROTECT
+		}
+		else
+			token->content = ft_dollarfind(token->next->content, env);
+
 		token->type = 2;
 		token->next = token->next->next;
 	}
@@ -525,8 +534,6 @@ t_token	*ft_isdollar(t_token *token, t_list **bin, char **env)
 
 void	ft_dollar(t_token *token, t_list **bin, char **env, int *exit_status)
 {
-	(void)bin;
-	(void)exit_status;
 	while (token)
 	{
 		if (!ft_strcmp(token->content, "\'") && token->type == 3)
@@ -552,11 +559,11 @@ void	ft_dollar(t_token *token, t_list **bin, char **env, int *exit_status)
 			while (token && (ft_strcmp(token->content, "\"")
 				&& token->type != 3))
 			{
-				token = ft_isdollar(token, bin, env);
+				token = ft_isdollar(token, bin, env, exit_status);//PROTECT
 				token = token->next;
 			}
 		}
-		token = ft_isdollar(token, bin, env);
+		token = ft_isdollar(token, bin, env, exit_status);//PROTECT
 		token = token->next;
 	}
 }
