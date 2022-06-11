@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/08 17:26:59 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/11 09:59:55 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,9 +271,53 @@ int add_var_to_env(char *s, char ***env)
 }
 
 /**
+ * @brief Print the environment variables in ascending order
+ * 
+ * @param env environment variables
+ * @return int 1 if fail, 0 otherwise
+ */
+int print_sorted_env(char **env)
+{
+	char **sorted_env;
+	char *tmp;
+	int i;
+	int j;
+
+	sorted_env = dup_env(env);
+	if (!sorted_env)
+		return (1);
+	i = 0;
+	while (sorted_env[i])
+	{
+		j = i + 1;
+		while (sorted_env[j])
+		{
+			if (ft_strcmp(sorted_env[i], sorted_env[j]) > 0)
+			{
+				tmp = sorted_env[i];
+				sorted_env[i] = sorted_env[j];
+				sorted_env[j] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
+	i = 0;
+	while (sorted_env[i])
+	{
+		ft_putstr_fd("declare -x ", 1);
+		ft_putendl_fd(sorted_env[i], 1);
+		i++;
+	}
+	free_strs_array(sorted_env);
+	return (0);
+}
+
+/**
  * @brief Add a variable to the environment or change its value
  * if a variable with the same key already exists
  * @param command
+ * @param env
  * @return int 1 in case of failure, 0 otherwise
  */
 int export(t_token *command, char ***env)
@@ -285,7 +329,8 @@ int export(t_token *command, char ***env)
 
 	if (command != NULL) //necessaire ?
 		command = command->next;
-	//export with no argument
+	if (command == NULL)
+		return print_sorted_env(*env);
 	ret = 0;
 	while (command)
 	{
