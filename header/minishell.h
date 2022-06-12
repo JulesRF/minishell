@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/11 13:03:19 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/11 19:48:44 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 # include <errno.h>
 # include <fcntl.h>
 
+#include <dirent.h>
+
 # define BUFFER_SIZE 4096
 
 typedef struct s_token
@@ -33,6 +35,9 @@ typedef struct s_token
 	char			*content;
 	struct s_token	*next;
 }					t_token ;
+
+extern int g_exit_status;
+
 //	main.c
 int	main(int argc, char **argv, char **env);
 int search_cmd(t_token *command, char ***env, t_list **bin);
@@ -55,5 +60,6 @@ char **dup_env(char **envp);
 void handle_sigquit(int code);
 void handle_sigint(int code);
 void handle_sigint_no_prompt(int code);
+int handle_errno(char *error_msg, int ret, t_token **cmd_table);
 
 #endif

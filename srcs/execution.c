@@ -6,11 +6,14 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/11 13:03:25 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/12 08:25:35 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+
+int g_exit_status;
 
 /**
  * @brief Get the env value for key
@@ -101,6 +104,25 @@ char **cmd_to_strs(t_token *command)
 	return (args);
 }
 
+
+int			find_error_status(char *path)
+{
+	DIR	*folder;
+	int	f;
+	int	ret;
+
+	f = open(path, O_WRONLY);
+	folder = opendir(path);
+	if (f == -1 && folder == NULL)
+		ret = 127;
+	else
+		ret = 126;
+	if (folder)
+		closedir(folder);
+	close(f);
+	return (ret);
+}
+
 /**
  * @brief Execute the executable file named after command in a child process.
  * The parent process waits for the child to die
@@ -113,8 +135,10 @@ int exec_cmd(t_token *command, char **env)
 {
 	pid_t	pid;
 	int status;
+	int ret;
 	char **args;
 	
+	ret = 0;
 	args = cmd_to_strs(command);
 	if (!args)
 		return 1;
@@ -129,19 +153,22 @@ int exec_cmd(t_token *command, char **env)
 	}
 	else if (pid == 0) //child process
 	{
-		execve(args[0], args, env); //check fail ?
-		ft_putendl_fd("execve failed", 2);
-		exit(1); //code d'erreur spécial ?
+		execve(args[0], args, env);
+		handle_errno(args[0], 1, NULL);
+		ret = find_error_status(args[0]);
+		exit(ret);
 	}
 	else //parent process
 	{
 		signal(SIGINT, handle_sigint_no_prompt);
-		wait(&status); //recup valeur retour ?
+		if (waitpid(pid, &status, 0) == -1)
+			return handle_errno("wait failed", 1, NULL);
+		if (WIFEXITED(status))
+			ret = WEXITSTATUS(status);
 		signal(SIGINT, handle_sigint);
-		//free ?
 	}
 	free(args);
-	return (0); //?
+	return (ret);
 }
 
 
@@ -256,6 +283,7 @@ int search_cmd(t_token *command, char ***env, t_list **bin)
 	char *cmd_name;
 	int ret;
 	
+	ret = 0;
 	if (command == NULL)
 		return (-1);
 	cmd_name = command->content; 
@@ -274,10 +302,10 @@ int search_cmd(t_token *command, char ***env, t_list **bin)
 	}
 	else
 	{
-		exec_cmd(command, *env);
+		ret = exec_cmd(command, *env);
 	}
 	
-	return -1;
+	return ret;
 }
 
 

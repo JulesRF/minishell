@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:26:25 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/11 13:03:14 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/12 07:50:31 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void handle_sigquit(int code)
 {
 	(void)code;
+	g_exit_status = 131;
 	//réécrire le buffer d'avant signal pour effacer ^\ ?
 }
 
@@ -25,10 +26,12 @@ void handle_sigint(int code)
 	write(1, "\n", 1);
 	rl_on_new_line();
 	rl_redisplay();
+	g_exit_status = 130;
 }
 
 void handle_sigint_no_prompt(int code)
 {
 	(void)code;
 	write(1, "\n", 1);
+	g_exit_status = 130;
 }
