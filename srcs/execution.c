@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/12 10:01:57 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/12 10:27:31 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,7 +242,7 @@ int check_path(t_token *command, char **env, t_list **bin)
 	cmd_name = ft_strjoin("/", command->content);
 	if (!cmd_name)
 		return (-1);
-	path = get_env_value("PATH", env); //protect ?
+	path = get_env_value("PATH", env);
 	if (!path)
 	{
 		free(cmd_name);
