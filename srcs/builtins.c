@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/11 10:31:41 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/12 10:02:02 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ int cd(t_token *command, char **env)
 			return handle_error("cd: HOME not set", 1);
 		path_allocated = 1;
 	}
-	else if (command->next != NULL && command->next->next != NULL)
+	else if (command != NULL && command->next != NULL)
 		return handle_error("cd: too many arguments", 1);
 	else
 		path = command->content;
@@ -498,4 +498,53 @@ int unset(t_token *command, char ***env)
 		command = command->next;
 	}
 	return (ret);
+}
+
+
+int	ft_isnum(char *s)
+{
+	int	i;
+
+	if (s == NULL)
+		return (0);
+	i = 0;
+	if (s[0] == '-')
+		i++;
+	while (s[i])
+	{
+		if (ft_isdigit(s[i]) == 0)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void exit_prog(char *msg, char ***env, t_list **bin, int exit_status)
+{
+	free_strs_array(*env);
+	ft_garbage(bin);
+	if (msg != NULL)
+		ft_putendl_fd(msg, 2);
+	exit(exit_status);
+}
+
+int exit_builtin(t_token *command, char ***env, t_list **bin)
+{
+	if (command != NULL) //necessaire ?
+		command = command->next;
+	if (command == NULL)
+		exit_prog("exit", env, bin, 0);
+	if (command != NULL && command->next != NULL)
+	{
+		if (ft_isnum(command->content) == 1)
+		{
+			ft_putendl_fd("exit\nminishell: exit: too many arguments", 2);
+			return (1);
+		}
+		exit_prog("exit\nminishell: exit: too many arguments", env, bin, 2);
+	}
+	if (ft_isnum(command->content) == 0)
+		exit_prog("exit\nminishell: exit: numeric argument required", env, bin, 2);
+	exit_prog("exit", env, bin, ft_atoi(command->content));
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/11 19:48:44 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/12 09:59:55 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,5 +61,7 @@ void handle_sigquit(int code);
 void handle_sigint(int code);
 void handle_sigint_no_prompt(int code);
 int handle_errno(char *error_msg, int ret, t_token **cmd_table);
+int exit_builtin(t_token *command, char ***env, t_list **bin);
+void	ft_garbage(t_list **bin);
 
 #endif

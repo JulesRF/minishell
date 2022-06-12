@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/12 08:46:05 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/12 10:01:57 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ int exec_cmd(t_token *command, char **env)
  * @param command Linked list of command (name) and arguments
  * @return int -1 if the search fails, 1 if execution fails, 0 if no error
  */
-int check_builtin(t_token *command, char ***env)
+int check_builtin(t_token *command, char ***env, t_list **bin)
 {
 	char *cmd_name;
 	
@@ -201,7 +201,7 @@ int check_builtin(t_token *command, char ***env)
 	if (ft_strcmp(cmd_name, "env") == 0)
 		return (env_builtin(*env));
 	if (ft_strcmp(cmd_name, "exit") == 0)
-		return 1;
+		return (exit_builtin(command, env, bin));
 	return -1;
 }
 
@@ -294,15 +294,12 @@ int search_cmd(t_token *command, char ***env, t_list **bin)
 	cmd_name = command->content; 
 	if (ft_strchr(cmd_name, '/') == NULL) //check if cmd_name == NULL ?
 	{
-		ret = check_builtin(command, env);
+		ret = check_builtin(command, env, bin);
 		if (ret != -1)
 			return ret;
 		ret = check_path(command, *env, bin);
 		if (ret != -1)
 			return ret;
-		// ret = check_heredoc(command);
-		// if (ret != -1)
-		// 	return ret;
 		return cmd_not_found(command);
 	}
 	else
