@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/12 08:25:35 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/12 08:46:05 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,6 +165,11 @@ int exec_cmd(t_token *command, char **env)
 			return handle_errno("wait failed", 1, NULL);
 		if (WIFEXITED(status))
 			ret = WEXITSTATUS(status);
+		if (WIFSIGNALED(status))
+		{
+			ret = WTERMSIG(status);
+			ret += 128;
+		}
 		signal(SIGINT, handle_sigint);
 	}
 	free(args);
