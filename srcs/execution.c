@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/12 10:27:31 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/12 17:40:12 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,48 +131,59 @@ int			find_error_status(char *path)
  * @param env Environment variables
  * @return int 1 if execution fails, 0 if no error
  */
-int exec_cmd(t_token *command, char **env)
+int exec_cmd(t_token *command, char **env, pid_t pid)
 {
-	pid_t	pid;
 	int status;
 	int ret;
 	char **args;
-	
+
 	ret = 0;
 	args = cmd_to_strs(command);
 	if (!args)
 		return 1;
-
 	if (!args)
 		return handle_error("cmd_to_str failed", 1);
-	pid = fork();
-	if (pid == -1) //fork failed
+
+	
+	if (pid == -1) //if there is no pipe
 	{
-		free(args);
-		return handle_error("fork failed", 1);
+		pid = fork();
+		if (pid == -1) //fork failed
+		{
+			free(args);
+			return handle_errno("fork failed", 1, NULL);
+		}
+		else if (pid == 0) //child process
+		{
+			execve(args[0], args, env);
+			handle_errno(args[0], 1, NULL);
+			ret = find_error_status(args[0]);
+			exit(ret);
+		}
+		else //parent process
+		{
+			signal(SIGINT, handle_sigint_no_prompt);
+			if (waitpid(pid, &status, 0) == -1)
+				return handle_errno("waitpid", 1, NULL);
+			if (WIFEXITED(status))
+				ret = WEXITSTATUS(status);
+			if (WIFSIGNALED(status))
+			{
+				ret = WTERMSIG(status);
+				ret += 128;
+			}
+			signal(SIGINT, handle_sigint);
+		}
 	}
-	else if (pid == 0) //child process
+	else
 	{
 		execve(args[0], args, env);
 		handle_errno(args[0], 1, NULL);
 		ret = find_error_status(args[0]);
 		exit(ret);
 	}
-	else //parent process
-	{
-		signal(SIGINT, handle_sigint_no_prompt);
-		if (waitpid(pid, &status, 0) == -1)
-			return handle_errno("wait failed", 1, NULL);
-		if (WIFEXITED(status))
-			ret = WEXITSTATUS(status);
-		if (WIFSIGNALED(status))
-		{
-			ret = WTERMSIG(status);
-			ret += 128;
-		}
-		signal(SIGINT, handle_sigint);
-	}
-	free(args);
+
+	free(args); // check leak
 	return (ret);
 }
 
@@ -230,7 +241,7 @@ void free_strs(char **strs)
  * @param env Environment variables
  * @return int -1 if the search or execution fails
  */
-int check_path(t_token *command, char **env, t_list **bin)
+int check_path(t_token *command, char **env, t_list **bin, pid_t pid)
 {
 	char *cmd_name;
 	char *path;
@@ -265,7 +276,7 @@ int check_path(t_token *command, char **env, t_list **bin)
 			command->content = path_to_cmd;
 			free(cmd_name);
 			free_strs(paths);
-			return exec_cmd(command, env);
+			return exec_cmd(command, env, pid);
 		}
 		i++;
 		free(path_to_cmd);
@@ -283,7 +294,7 @@ int check_path(t_token *command, char **env, t_list **bin)
  * @param env Environment variables
  * @return int -1 if the search fails, 1 if execution fails, 0 if no error
  */
-int search_cmd(t_token *command, char ***env, t_list **bin)
+int search_cmd(t_token *command, char ***env, t_list **bin, pid_t pid)
 {
 	char *cmd_name;
 	int ret;
@@ -297,14 +308,14 @@ int search_cmd(t_token *command, char ***env, t_list **bin)
 		ret = check_builtin(command, env, bin);
 		if (ret != -1)
 			return ret;
-		ret = check_path(command, *env, bin);
+		ret = check_path(command, *env, bin, pid);
 		if (ret != -1)
 			return ret;
 		return cmd_not_found(command);
 	}
 	else
 	{
-		ret = exec_cmd(command, *env);
+		ret = exec_cmd(command, *env, pid);
 	}
 	
 	return ret;

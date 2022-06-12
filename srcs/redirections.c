@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/12 10:46:01 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/12 18:51:06 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,9 @@ t_token **split_commands(t_token *commands, int nb_cmd)
 
 int handle_errno(char *error_msg, int ret, t_token **cmd_table)
 {
+	perror(error_msg);
 	if (cmd_table != NULL)
 		free(cmd_table);
-	perror(error_msg);
 	return ret;
 }
 
@@ -174,9 +174,11 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin)
 	int output_redir;
 	int nb_cmd;
 	int ret;
+	pid_t pid;
 	int i;
 	t_token **cmd_table;
 	int fdpipe[2];
+	int status;
 
 	//store default in/out fd of parent process for later reset
 	tmpin = dup(0);
@@ -230,13 +232,29 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin)
 			fdin = fdpipe[0]; //sera l'input lors de la prochaine itération
 			fdout = fdpipe[1];
 		}
+
 		
 		//redirect ouput to fdout
 		if (dup2(fdout, 1) == -1)
 			return handle_errno("dup2", 1, cmd_table); //éviter de sortir de la boucle ?
 		close(fdout);
 
-		ret = search_cmd(cmd_table[i], env, bin);
+		pid = -1;
+		if (nb_cmd > 1) //if there are pipes
+		{
+			pid = fork();
+			if (pid == -1) //fork failed
+				return handle_errno("fork failed", 1, cmd_table);
+			if (pid==0)
+			{
+				//g_exit_status
+				close(fdin);
+				ret = search_cmd(cmd_table[i], env, bin, pid);
+				exit(0);
+			}
+		}
+		else		
+			ret = search_cmd(cmd_table[i], env, bin, pid);
 		
 		i++;
 	}
@@ -250,9 +268,23 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin)
 		return handle_errno("dup2", 1, NULL);
 	close(tmpin);
 	close(tmpout);
-		
-	// waitpid (dernier pid) ici plutot que dans exec_cmd ?
 	
-	return ret;
+	if (nb_cmd > 1)
+	{
+		signal(SIGINT, handle_sigint_no_prompt);
+		if (waitpid(pid, &status, 0) == -1)
+			return handle_errno("waitpid", 1, NULL);
+		if (WIFEXITED(status))
+			ret = WEXITSTATUS(status);
 
+		if (WIFSIGNALED(status))
+		{
+			ret = WTERMSIG(status);
+			ret += 128;
+		}
+		signal(SIGINT, handle_sigint);
+		while (waitpid(-1, &status, 0) != -1);		
+	}
+
+	return ret;
 }

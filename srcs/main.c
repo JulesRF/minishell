@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/12 10:40:41 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/12 18:23:10 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -657,6 +657,9 @@ void	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
 	
 	signal(SIGQUIT, handle_sigquit);
 	signal(SIGINT, handle_sigint);
+
+	rl_outstream = stderr; //RETIRER
+
 	str = readline("\033[95mminishell$\033[0m ");
 
 	(void)tester_cmd;
