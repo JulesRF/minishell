@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/13 11:50:45 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/13 15:55:02 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,18 @@ char *cmd_to_str(t_token *command)
 	return (args_str);
 }
 
+//ret 2 si bad usage
+int	cd_oldpwd(char **path, char **env)
+{
+	char *oldpwd;
+	
+	oldpwd = get_env_value("OLDPWD", env);
+	if (!oldpwd)
+		return handle_error("cd: OLDPWD not set", 1);
+	*path = oldpwd;
+	printf("%s\n", *path);
+	return (0);
+}
 
 /**
  * @brief Change the working directory to the given path
@@ -108,26 +120,51 @@ char *cmd_to_str(t_token *command)
  * @param command path
  * @return int 0 on success, 1 on error
  */
-int cd(t_token *command, char **env)
+int cd(t_token *command, char ***env)
 {
 	int ret;
 	char *path;
+	char *new_str;
+	char *old_str;
 	int path_allocated;
+	char	buffer[BUFFER_SIZE];
 	
 	path_allocated = 0;
 	if (command != NULL) //necessaire ?
 		command = command->next;
 	if (command == NULL)
 	{
-		path = get_env_value("HOME", env);
+		path = get_env_value("HOME", *env);
 		if (!path)
 			return handle_error("cd: HOME not set", 1);
 		path_allocated = 1;
 	}
 	else if (command != NULL && command->next != NULL)
 		return handle_error("cd: too many arguments", 1);
+	else if (ft_strcmp(command->content, "-") == 0)
+	{
+		if (cd_oldpwd(&path, *env) == 1)
+			return (1);
+	}
 	else
 		path = command->content;
+
+	if (getcwd(buffer, BUFFER_SIZE) == NULL)
+		handle_errno("getcwd", 1, NULL);
+	new_str = ft_strjoin("OLDPWD=", buffer);
+	if (!new_str)
+		return handle_error("Memory allocation error", 1);
+	old_str = get_env_value("OLDPWD", *env);
+	if (!old_str)
+	{
+		if (add_var_to_env(new_str, env) == 1)
+			return handle_error("Memory allocation error", 1);
+	}
+	else
+	{
+		if (set_var_in_env(new_str, "OLDPWD", 6, env) == 1)
+			return handle_error("Memory allocation error", 1);
+	}
 
 	ret = chdir(path);
 	if (ret == -1)
@@ -137,6 +174,24 @@ int cd(t_token *command, char **env)
 	}
 	if (path_allocated)
 		free(path);
+
+	if (getcwd(buffer, BUFFER_SIZE) == NULL)
+		handle_errno("getcwd", 1, NULL);
+	new_str = ft_strjoin("PWD=", buffer);
+	if (!new_str)
+		return handle_error("Memory allocation error", 1);
+	old_str = get_env_value("PWD", *env);
+	if (!old_str)
+	{
+		if (add_var_to_env(new_str, env) == 1)
+			return handle_error("Memory allocation error", 1);
+	}
+	else
+	{
+		if (set_var_in_env(new_str, "PWD", 3, env) == 1)
+			return handle_error("Memory allocation error", 1);
+	}
+	
 	return 0;
 }
 
@@ -218,7 +273,7 @@ int set_var_in_env(char *s, char *var_name, int name_len, char ***env)
 		if (j == name_len && envv[i][j] == '=') //we found the matching key in env
 		{
 			free(envv[i]);
-			envv[i] = ft_strdup(s); //ATTENTION fuites memoires possibles ici !
+			envv[i] = ft_strdup(s); //ATTENTION fuites memoire possibles ici !
 			if (!envv[i])
 				return 1;
 			return 0;
@@ -374,7 +429,7 @@ int export(t_token *command, char ***env)
 						ret = 1;
 				}
 				else
-					if (set_var_in_env(command->content,var_name, name_len, env) == 1)
+					if (set_var_in_env(command->content, var_name, name_len, env) == 1)
 						ret = 1;
 				free(var_name);
 				free(value);

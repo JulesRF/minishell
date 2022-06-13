@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/13 11:49:54 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/13 15:32:28 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	ft_strcmp(char *s1, char *s2);
 int echo(t_token *command);
 int handle_error(char *error_msg, int ret_value);
 int pwd();
-int cd(t_token *command, char **env);
+int cd(t_token *command, char ***env);
 int export(t_token *command, char ***env);
 int env_builtin(char **env);
 void free_strs_array(char **strs);
@@ -63,5 +63,7 @@ void handle_sigint_no_prompt(int code);
 int handle_errno(char *error_msg, int ret, t_token **cmd_table);
 int exit_builtin(t_token *command, char ***env, t_list **bin, char *cmd_line);
 void	ft_garbage(t_list **bin);
+int add_var_to_env(char *s, char ***env);
+int set_var_in_env(char *s, char *var_name, int name_len, char ***env);
 
 #endif
