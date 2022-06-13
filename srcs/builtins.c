@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/13 10:18:48 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/13 11:24:54 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,6 +291,7 @@ int print_sorted_env(char **env)
 	char *tmp;
 	int i;
 	int j;
+	int endquotes;
 
 	sorted_env = dup_env(env);
 	if (!sorted_env)
@@ -315,7 +316,21 @@ int print_sorted_env(char **env)
 	while (sorted_env[i])
 	{
 		ft_putstr_fd("declare -x ", 1);
-		ft_putendl_fd(sorted_env[i], 1);
+		j = 0;
+		endquotes = 0;
+		while (sorted_env[i][j])
+		{
+			ft_putchar_fd(sorted_env[i][j], 1);
+			if (sorted_env[i][j] == '=')
+			{
+				ft_putchar_fd('"', 1);
+				endquotes = 1;;
+			}
+			j++;
+		}
+		if (endquotes == 1)
+			ft_putchar_fd('"', 1);
+		ft_putchar_fd('\n', 1);
 		i++;
 	}
 	free_strs_array(sorted_env);
