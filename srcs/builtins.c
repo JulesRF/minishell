@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/12 10:02:02 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/13 10:18:48 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -347,8 +347,8 @@ int export(t_token *command, char ***env)
 		{
 			if (var_name_is_valid(command->content, &name_len) == 1)
 			{
-				if (command->content[name_len] != '=')
-					return 0;
+				// if (command->content[name_len] != '=')
+				// 	return 0;
 				var_name = get_var_name(command->content, name_len);
 				if (!var_name)
 					return 1;
@@ -383,7 +383,8 @@ int env_builtin(char **env)
 	int i = 0;
 	while (env && env[i])
 	{
-		ft_putendl_fd(env[i], 1);
+		if (ft_strchr(env[i], '=') != NULL)
+			ft_putendl_fd(env[i], 1);
 		i++;
 	}
 	return 0;
@@ -413,7 +414,7 @@ int rm_var_from_env(char *s, char ***env)
 		k = 0;
 		while (tmp[i][k] && s[k] && tmp[i][k] == s[k])
 			k++;
-		if (k != key_len || tmp[i][k] != '=') //s'il ne s'agit pas de la key qu'on rm
+		if (k != key_len || (tmp[i][k] != '=' && tmp[i][k] != '\0')) //s'il ne s'agit pas de la key qu'on rm
 		{
 			new_env[j] = ft_strdup(tmp[i]);
 			if (!new_env[j])

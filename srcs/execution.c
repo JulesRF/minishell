@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/12 17:40:12 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/13 10:08:55 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char *get_env_value(char *key, char **env)
 		while (env[i][j] && key[j] && env[i][j] == key[j]) //peut remplacer ca par ft_strncmp ?
 			j++;
 
-		if (j == key_len && env[i][j] == '=') //we found the matching key in env
+		if (j == key_len && (env[i][j] == '=' || env[i][j] == '\0')) //we found the matching key in env
 		{
 			value = ft_strdup(&env[i][j + 1]);
 			if (!value)
