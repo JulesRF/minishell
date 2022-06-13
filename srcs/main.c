@@ -542,7 +542,7 @@ void	ft_dollar(t_token *token, t_list **bin, char **env)
 			if (!token)
 				return ;
 			while (token && (ft_strcmp(token->content, "\'")
-				&& token->type != 3))
+				|| token->type != 3))
 			{
 				// printf("on sort des egouts c'est pas les lols\n");
 				token = token->next;
@@ -553,12 +553,15 @@ void	ft_dollar(t_token *token, t_list **bin, char **env)
 			return ;
 		if (!ft_strcmp(token->content, "\"") && token->type == 3)
 		{
+			// printf("i just want the piece, it's still lambo over mercedes\n");
 			token = token->next;
 			if (!token)
 				return ;
+			// printf("Life is just a maze, going through my phases\n");
 			while (token && (ft_strcmp(token->content, "\"")
-				&& token->type != 3))
+				|| token->type != 3))
 			{
+				// printf("nobody can press me but depress\n");
 				token = ft_isdollar(token, bin, env);//PROTECT
 				token = token->next;
 			}
@@ -630,6 +633,19 @@ void	ft_joinwords(t_token **token, t_list **bin)
 	}
 }
 
+int	ft_first_quote(t_token *token)
+{
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\"") && token->type == 3)
+			return (1);
+		if (!ft_strcmp(token->content, "\'") && token->type == 3)
+			return (0);
+		token = token->next;
+	}
+	return (0);
+}
+
 int	ft_simplify(t_token **token, t_list **bin, char **env)
 {
 	t_token	*temp;
@@ -638,10 +654,19 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 	temp = NULL;
 	stop = NULL;
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
+	if (ft_first_quote(*token))
+	{
+		ft_doublequotes(*token, bin, temp, stop);
+		ft_simplequotes(*token, bin, temp, stop);
+	}
+	else
+	{
+		ft_simplequotes(*token, bin, temp, stop);
+		ft_doublequotes(*token, bin, temp, stop);
+	}
 	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	// printf("ca dit quoi le sang\n");
 	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
-	// ft_print(*token);
 	ft_rmvquotes(token, bin);
 	ft_joinwords(token, bin);
 	ft_supspace(token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
@@ -672,6 +697,7 @@ void	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
 		if (!ft_syntax(str, bin))
 		{
 			ft_token(token, bin, str); //parsing pur et dur (division des elements en tokens)
+			// ft_print(*token);
 			if (!ft_simplify(token, bin, *env)) //simplification des tokens
 			{
 				// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
