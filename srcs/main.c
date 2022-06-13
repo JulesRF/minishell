@@ -610,7 +610,15 @@ void	ft_rmvquotes(t_token **token, t_list **bin)
 	tmp = *token;
 	while (tmp)
 	{
-		if ((!ft_strcmp(tmp->content, "\"") && tmp->type == 3)
+		if (!ft_strcmp(tmp->content, "ls") && tmp->type == 2)
+		{
+			while (tmp && tmp->type != 5 &&
+				(ft_strcmp(tmp->content, "|") || tmp->type != 1))
+				tmp = tmp->next;
+		}
+		if (!tmp)
+			return ;
+		else if ((!ft_strcmp(tmp->content, "\"") && tmp->type == 3)
 			|| (!ft_strcmp(tmp->content, "\'") && tmp->type == 3))
 			ft_delete_token(token, tmp);
 		tmp = tmp->next;
@@ -701,7 +709,7 @@ void	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
 			// ft_print(*token);
 			if (!ft_simplify(token, bin, *env)) //simplification des tokens
 			{
-				// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
+				ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
 				// envoie des infos a mon mate
 
 				// ret = search_cmd(*token, env);

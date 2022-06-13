@@ -45,8 +45,11 @@ $(OBJ_DIR)/%.o: $(POTH)/%.c
 	@printf "Compiling $< ...\n"
 	@$(shell gcc $(FLAGS) -I $(INCLUDES) -c $< -o $@)
 
-$(NAME): $(OBJ_FILES)
+LIBFT:
 	${MAKE} -C ./libft
+
+$(NAME): LIBFT $(OBJ_FILES)
+# ${MAKE} -C ./libft
 	@$(shell gcc $(FLAGS) -I $(INCLUDES) -I $(INCLUDES_LIBFT) $(OBJ_FILES) $(LIBFT_A) -lreadline -o $(NAME))
 	@printf "Executable $@ created !\n"
 
