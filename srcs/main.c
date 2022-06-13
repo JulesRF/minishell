@@ -14,7 +14,7 @@
 
 int	ft_strlen2(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!str)
@@ -114,24 +114,26 @@ void	ft_lstadd_back_token(t_token **alst, t_token *new)
 	temp->next = new;
 }
 
-void ft_delete_token(t_token **alst, t_token *to_del)
+void	ft_delete_token(t_token **alst, t_token *to_del)
 {
-    t_token *tmp; 
-	t_token *prev;
+	t_token	*tmp;
+	t_token	*prev;
 
 	tmp = *alst;
-    if (tmp == to_del) {
-        *alst = tmp->next;
-        return; //free deleted token ?
-    }
-    while (tmp && tmp != to_del) {
-        prev = tmp;
-        tmp = tmp->next;
-    }
-    if (tmp == NULL)
-        return;
-    prev->next = tmp->next;
-    //free deleted token ?
+	if (tmp == to_del)
+	{
+		*alst = tmp->next;
+		return ;//free deleted token ?
+	}
+	while (tmp && tmp != to_del)
+	{
+		prev = tmp;
+		tmp = tmp->next;
+	}
+	if (tmp == NULL)
+		return ;
+	prev->next = tmp->next;
+	//free deleted token ?
 }
 
 ////// utils pour token
@@ -215,15 +217,6 @@ void	ft_print(t_token *token)
 
 void	ft_clean_token(t_token **token)
 {
-	// t_token *to_suppr;
-
-	// while (*token)
-	// {
-	// 	to_suppr = *token;
-	// 	*token = to_suppr->next;
-	// 	//free si pas | ou si pas $
-	// 	free(to_suppr);
-	// }
 	*token = NULL;
 }
 
@@ -255,27 +248,6 @@ int	ft_closed_quotes(char *str, t_list **bin)
 	}
 	return (0);
 }
-
-// int	ft_piperedir(char *str, t_list **bin)
-// {
-// 	int i;
-
-// 	(void)bin;
-// 	i = 0;
-// 	while (str[i])
-// 	{
-// 		if (str[i] == '|' || str[i] == '<' || str[i] == '>')
-// 		{
-// 			while (str[i] || str[i] == '|')
-// 			{
-// 				if (str[i] == ' ')
-// 			}
-// 		}
-// 		if ((str[i] == '>' && str[i + 1] == '>') ||
-// 			(str[i] == '<' && str[i + 1] == '>'))
-// 		i++;
-// 	}
-// }
 
 int	ft_syntax(char *str, t_list **bin)
 {
@@ -392,7 +364,8 @@ t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 
 	if (temp == NULL)
 		return (ft_lstnew_token(bin, token->content, 2)); //PROTECT
-	str = malloc(sizeof(char) * (ft_strlen2(temp->content) + ft_strlen2(token->content)) + 1);
+	str = malloc(sizeof(char) * (ft_strlen2(temp->content)
+		+ ft_strlen2(token->content)) + 1);
 	ft_lstadd_back(bin, ft_lstnew(str));//PROTECT
 	i = 0;
 	j = 0;
@@ -529,7 +502,8 @@ t_token	*ft_isdollar(t_token *token, t_list **bin, char **env)
 		token->type = 2;
 		token->next = token->next->next;
 	}
-	return (token);
+	return (token->next);
+	// return (token);
 }
 
 void	ft_dollar(t_token *token, t_list **bin, char **env)
@@ -543,31 +517,20 @@ void	ft_dollar(t_token *token, t_list **bin, char **env)
 				return ;
 			while (token && (ft_strcmp(token->content, "\'")
 				|| token->type != 3))
-			{
-				// printf("on sort des egouts c'est pas les lols\n");
 				token = token->next;
-				// printf("on sort du caniveau c'est pas des blagues\n");
-			}
 		}
 		if (!token)
 			return ;
 		if (!ft_strcmp(token->content, "\"") && token->type == 3)
 		{
-			// printf("i just want the piece, it's still lambo over mercedes\n");
 			token = token->next;
 			if (!token)
 				return ;
-			// printf("Life is just a maze, going through my phases\n");
 			while (token && (ft_strcmp(token->content, "\"")
 				|| token->type != 3))
-			{
-				// printf("nobody can press me but depress\n");
 				token = ft_isdollar(token, bin, env);//PROTECT
-				token = token->next;
-			}
 		}
 		token = ft_isdollar(token, bin, env);//PROTECT
-		token = token->next;
 	}
 }
 
