@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/13 10:08:55 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/13 11:47:57 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ int exec_cmd(t_token *command, char **env, pid_t pid)
  * @param command Linked list of command (name) and arguments
  * @return int -1 if the search fails, 1 if execution fails, 0 if no error
  */
-int check_builtin(t_token *command, char ***env, t_list **bin)
+int check_builtin(t_token *command, char ***env, t_list **bin, char *cmd_line)
 {
 	char *cmd_name;
 	
@@ -212,7 +212,7 @@ int check_builtin(t_token *command, char ***env, t_list **bin)
 	if (ft_strcmp(cmd_name, "env") == 0)
 		return (env_builtin(*env));
 	if (ft_strcmp(cmd_name, "exit") == 0)
-		return (exit_builtin(command, env, bin));
+		return (exit_builtin(command, env, bin, cmd_line));
 	return -1;
 }
 
@@ -294,7 +294,7 @@ int check_path(t_token *command, char **env, t_list **bin, pid_t pid)
  * @param env Environment variables
  * @return int -1 if the search fails, 1 if execution fails, 0 if no error
  */
-int search_cmd(t_token *command, char ***env, t_list **bin, pid_t pid)
+int search_cmd(t_token *command, char ***env, t_list **bin, pid_t pid, char *cmd_line)
 {
 	char *cmd_name;
 	int ret;
@@ -305,7 +305,7 @@ int search_cmd(t_token *command, char ***env, t_list **bin, pid_t pid)
 	cmd_name = command->content; 
 	if (ft_strchr(cmd_name, '/') == NULL) //check if cmd_name == NULL ?
 	{
-		ret = check_builtin(command, env, bin);
+		ret = check_builtin(command, env, bin, cmd_line);
 		if (ret != -1)
 			return ret;
 		ret = check_path(command, *env, bin, pid);

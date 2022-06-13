@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/12 19:10:22 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/13 11:47:14 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ int find_input_and_output_files(t_token **commands, int *input_redir, int *outpu
 
 
 
-int redir_and_exec(t_token **commands, char ***env, t_list **bin)
+int redir_and_exec(t_token **commands, char ***env, t_list **bin, char *cmd_line)
 {
 	int tmpin;
 	int tmpout;
@@ -249,12 +249,12 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin)
 			{
 				//g_exit_status
 				close(fdin);
-				ret = search_cmd(cmd_table[i], env, bin, pid);
+				ret = search_cmd(cmd_table[i], env, bin, pid, cmd_line);
 				exit(ret);
 			}
 		}
 		else		
-			ret = search_cmd(cmd_table[i], env, bin, pid);
+			ret = search_cmd(cmd_table[i], env, bin, pid, cmd_line);
 		
 		i++;
 	}

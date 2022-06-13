@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/12 15:12:44 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/13 11:49:54 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ extern int g_exit_status;
 
 //	main.c
 int	main(int argc, char **argv, char **env);
-int search_cmd(t_token *command, char ***env, t_list **bin, pid_t pid);
+int search_cmd(t_token *command, char ***env, t_list **bin, pid_t pid, char *cmd_line);
 void	ft_print(t_token *token);
 int	ft_strcmp(char *s1, char *s2);
 int echo(t_token *command);
@@ -53,7 +53,7 @@ void free_strs_array(char **strs);
 char *get_env_value(char *key, char **env);
 int unset(t_token *command, char ***env);
 void	ft_lstadd_back_token(t_token **alst, t_token *new);
-int redir_and_exec(t_token **commands, char ***env, t_list **bin);
+int redir_and_exec(t_token **commands, char ***env, t_list **bin, char *cmd_line);
 void ft_delete_token(t_token **alst, t_token *to_del);
 void free_strs(char **strs);
 char **dup_env(char **envp);
@@ -61,7 +61,7 @@ void handle_sigquit(int code);
 void handle_sigint(int code);
 void handle_sigint_no_prompt(int code);
 int handle_errno(char *error_msg, int ret, t_token **cmd_table);
-int exit_builtin(t_token *command, char ***env, t_list **bin);
+int exit_builtin(t_token *command, char ***env, t_list **bin, char *cmd_line);
 void	ft_garbage(t_list **bin);
 
 #endif

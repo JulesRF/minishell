@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/13 11:24:54 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/13 11:50:45 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -535,8 +535,10 @@ int	ft_isnum(char *s)
 	return (1);
 }
 
-void exit_prog(char *msg, char ***env, t_list **bin, int exit_status)
+void exit_prog(char *msg, char ***env, t_list **bin, int exit_status, char *cmd_line)
 {
+	free (cmd_line);
+	rl_clear_history();
 	free_strs_array(*env);
 	ft_garbage(bin);
 	if (msg != NULL)
@@ -544,12 +546,12 @@ void exit_prog(char *msg, char ***env, t_list **bin, int exit_status)
 	exit(exit_status);
 }
 
-int exit_builtin(t_token *command, char ***env, t_list **bin)
+int exit_builtin(t_token *command, char ***env, t_list **bin, char *cmd_line)
 {
 	if (command != NULL) //necessaire ?
 		command = command->next;
 	if (command == NULL)
-		exit_prog("exit", env, bin, 0);
+		exit_prog("exit", env, bin, 0, cmd_line);
 	if (command != NULL && command->next != NULL)
 	{
 		if (ft_isnum(command->content) == 1)
@@ -557,10 +559,10 @@ int exit_builtin(t_token *command, char ***env, t_list **bin)
 			ft_putendl_fd("exit\nminishell: exit: too many arguments", 2);
 			return (1);
 		}
-		exit_prog("exit\nminishell: exit: too many arguments", env, bin, 2);
+		exit_prog("exit\nminishell: exit: too many arguments", env, bin, 2, cmd_line);
 	}
 	if (ft_isnum(command->content) == 0)
-		exit_prog("exit\nminishell: exit: numeric argument required", env, bin, 2);
-	exit_prog("exit", env, bin, ft_atoi(command->content));
+		exit_prog("exit\nminishell: exit: numeric argument required", env, bin, 2, cmd_line);
+	exit_prog("exit", env, bin, ft_atoi(command->content), cmd_line);
 	return (0);
 }
