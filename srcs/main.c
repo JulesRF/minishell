@@ -629,7 +629,8 @@ void	ft_joinwords(t_token **token, t_list **bin)
 			tmp = ft_joincontent(tmp, tmp->next, bin);
 			tmp->next = tmp->next->next;
 		}
-		tmp = tmp->next;
+		else
+			tmp = tmp->next;
 	}
 }
 
