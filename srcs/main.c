@@ -6,11 +6,13 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/13 11:46:24 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/14 16:51:41 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int g_exit_status;
 
 int	ft_strlen2(char *str)
 {
@@ -652,6 +654,7 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 void	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
 {
 	char *str;
+	t_vars vars;
 	
 	signal(SIGQUIT, handle_sigquit);
 	signal(SIGINT, handle_sigint);
@@ -675,10 +678,12 @@ void	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
 			{
 				// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
 				// envoie des infos a mon mate
-
-				// ret = search_cmd(*token, env);
-				// printf("ret search_cmd=%d\n", ret);
-				g_exit_status = redir_and_exec(token, env, bin, str);
+				
+				vars.cmd = token;
+				vars.env = env;
+				vars.bin = bin;
+				vars.cmd_line = str;
+				g_exit_status = redir_and_exec(&vars);
 				// exit(g_exit_status);
 			}
 		}

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/13 11:47:14 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/14 17:18:13 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,15 +58,6 @@ t_token **split_commands(t_token *commands, int nb_cmd)
 	return cmd_table;
 }
 
-int handle_errno(char *error_msg, int ret, t_token **cmd_table)
-{
-	perror(error_msg);
-	if (cmd_table != NULL)
-		free(cmd_table);
-	return ret;
-}
-
-
 void	write_heredoc(int pipe_fd[2], char *line)
 {
 	write(pipe_fd[1], line, ft_strlen(line));
@@ -80,7 +71,7 @@ int heredoc(char *heredoc_eof)
 	int		output_redir;
 
 	if (pipe(pipe_fd) == -1)
-		return handle_errno("dup",-1, NULL);
+		return handle_errno("dup",-1, NULL, NULL);
 	while (1)
 	{
 		line = readline("> ");
@@ -96,7 +87,7 @@ int heredoc(char *heredoc_eof)
 	close(pipe_fd[0]);
 	output_redir = dup(0);
 	if (output_redir == -1)
-		return handle_errno("dup", -1, NULL);
+		return handle_errno("dup", -1, NULL, NULL);
 	return (output_redir);
 }
 
@@ -122,7 +113,7 @@ int find_input_and_output_files(t_token **commands, int *input_redir, int *outpu
 			ft_delete_token(commands, cur);
 			*input_redir = open(input_file, O_RDONLY);
 			if (*input_redir == -1)
-				return handle_errno(input_file, -1, NULL);
+				return handle_errno(input_file, -1, NULL, NULL);
 		}
 		else if (cur->type == 5 && ft_strcmp(cur->content, ">") == 0)
 		{
@@ -133,7 +124,7 @@ int find_input_and_output_files(t_token **commands, int *input_redir, int *outpu
 			ft_delete_token(commands, cur);
 			*output_redir = open(output_file, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
 			if (*output_redir == -1)
-					return handle_errno(output_file, -1, NULL);
+					return handle_errno(output_file, -1, NULL, NULL);
 		}
 		else if (cur->type == 5 && ft_strcmp(cur->content, ">>") == 0)
 		{
@@ -144,7 +135,7 @@ int find_input_and_output_files(t_token **commands, int *input_redir, int *outpu
 			ft_delete_token(commands, cur);
 			*output_redir = open(output_file, O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
 			if (*output_redir == -1)
-					return handle_errno(output_file, -1, NULL);
+					return handle_errno(output_file, -1, NULL, NULL);
 		}
 		else if (cur->type == 5 && ft_strcmp(cur->content, "<<") == 0)
 		{
@@ -164,7 +155,7 @@ int find_input_and_output_files(t_token **commands, int *input_redir, int *outpu
 
 
 
-int redir_and_exec(t_token **commands, char ***env, t_list **bin, char *cmd_line)
+int redir_and_exec(t_vars *vars)
 {
 	int tmpin;
 	int tmpout;
@@ -184,9 +175,9 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin, char *cmd_line
 	tmpin = dup(0);
 	tmpout = dup(1);
 	if (tmpin == -1 || tmpout == -1)
-		return handle_errno("dup", 1, NULL);
+		return handle_errno("dup", 1, NULL, NULL);
 
-	if (find_input_and_output_files(commands, &input_redir, &output_redir) == -1)
+	if (find_input_and_output_files(vars->cmd, &input_redir, &output_redir) == -1)
 		return (1);
 
 	//set initial input
@@ -196,11 +187,11 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin, char *cmd_line
 	{
 		fdin = dup(tmpin); //default in
 		if (fdin == -1)
-			return handle_errno("dup", 1, NULL);
+			return handle_errno("dup", 1, NULL, NULL);
 	}
 		
-	nb_cmd = get_nb_cmd(*commands);
-	cmd_table = split_commands(*commands, nb_cmd);
+	nb_cmd = get_nb_cmd(*(vars->cmd));
+	cmd_table = split_commands(*(vars->cmd), nb_cmd);
 	if (!cmd_table)
 		return (1);
 	ret = 0;
@@ -209,7 +200,7 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin, char *cmd_line
 	{
 		//redirect input to fdin
 		if (dup2(fdin, 0) == -1)
-			return handle_errno("dup2", 1, cmd_table); //éviter de sortir de la boucle ?
+			return handle_errno("dup2", 1, cmd_table, NULL); //éviter de sortir de la boucle ?
 		close(fdin); //bc not needed yet
 
 		//set output
@@ -221,14 +212,14 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin, char *cmd_line
 			{
 				fdout = dup(tmpout); //default out
 				if (fdout == -1)
-					return handle_errno("dup", 1, cmd_table); //éviter de sortir de la boucle ?
+					return handle_errno("dup", 1, cmd_table, NULL); //éviter de sortir de la boucle ?
 			}
 		}
 		else //not last cmd
 		{
 			//create pipe
 			if (pipe(fdpipe) == -1)
-				return handle_errno("pipe", 1, cmd_table); //éviter de sortir de la boucle ?
+				return handle_errno("pipe", 1, cmd_table, NULL); //éviter de sortir de la boucle ?
 			fdin = fdpipe[0]; //sera l'input lors de la prochaine itération
 			fdout = fdpipe[1];
 		}
@@ -236,7 +227,7 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin, char *cmd_line
 		
 		//redirect ouput to fdout
 		if (dup2(fdout, 1) == -1)
-			return handle_errno("dup2", 1, cmd_table); //éviter de sortir de la boucle ?
+			return handle_errno("dup2", 1, cmd_table, NULL); //éviter de sortir de la boucle ?
 		close(fdout);
 
 		pid = -1;
@@ -244,17 +235,23 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin, char *cmd_line
 		{
 			pid = fork();
 			if (pid == -1) //fork failed
-				return handle_errno("fork failed", 1, cmd_table);
+				return handle_errno("fork failed", 1, cmd_table, NULL);
 			if (pid==0)
 			{
 				//g_exit_status
 				close(fdin);
-				ret = search_cmd(cmd_table[i], env, bin, pid, cmd_line);
+				vars->cmd = &(cmd_table[i]);
+				vars->pid = pid;
+				ret = search_cmd(vars);
 				exit(ret);
 			}
 		}
-		else		
-			ret = search_cmd(cmd_table[i], env, bin, pid, cmd_line);
+		else
+		{
+			vars->cmd = &(cmd_table[i]);
+			vars->pid = pid;
+			ret = search_cmd(vars);
+		}
 		
 		i++;
 	}
@@ -263,9 +260,9 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin, char *cmd_line
 
 	//restore default in/out fd of parent process
 	if (dup2(tmpin, 0) == -1)
-		return handle_errno("dup2", 1, NULL);
+		return handle_errno("dup2", 1, NULL, NULL);
 	if (dup2(tmpout, 1) == -1)
-		return handle_errno("dup2", 1, NULL);
+		return handle_errno("dup2", 1, NULL, NULL);
 	close(tmpin);
 	close(tmpout);
 	
@@ -273,7 +270,7 @@ int redir_and_exec(t_token **commands, char ***env, t_list **bin, char *cmd_line
 	{
 		signal(SIGINT, handle_sigint_no_prompt);
 		if (waitpid(pid, &status, 0) == -1)
-			return handle_errno("waitpid", 1, NULL);
+			return handle_errno("waitpid", 1, NULL, NULL);
 		if (WIFEXITED(status))
 			ret = WEXITSTATUS(status);
 
