@@ -350,10 +350,19 @@ void	ft_supspace(t_token **token)
 	cur = *token;
 	while (cur)
 	{
-		if (!ft_strcmp(cur->content, " "))
+		if (!ft_strcmp(cur->content, " ") && cur->type == 4)
 			ft_delete_token(token, cur);
 		cur = cur->next;
 	}
+}
+
+t_token	*ft_addempty(t_token *token, t_token *stop, t_list **bin)
+{
+	token->next = ft_lstnew_token(bin, "", 2);
+	token = token->next;
+	token->next = stop;
+	token = token->next;
+	return (token);
 }
 
 t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
@@ -406,7 +415,7 @@ t_token *stop)
 		{
 			stop = token->next;
 			if (!ft_strcmp(stop->content, "\"") && stop->type == 3)
-				token = token->next;
+				token = ft_addempty(token, stop, bin);
 			else
 			{
 				while (stop && ft_strcmp(stop->content, "\""))
@@ -416,8 +425,7 @@ t_token *stop)
 				}
 				temp->next = stop;
 				token->next = temp;
-				token = ft_find_dquote(temp);
-				ft_doublequotes(token->next, bin, temp, stop);
+				ft_doublequotes(stop->next, bin, temp, stop);
 				return ;
 			}
 		}
@@ -446,7 +454,7 @@ t_token *stop)
 		{
 			stop = token->next;
 			if (!ft_strcmp(stop->content, "\'") && stop->type == 3)
-				token = token->next;
+				token = ft_addempty(token, stop, bin);
 			else
 			{
 				while (stop && ft_strcmp(stop->content, "\'"))
@@ -456,8 +464,7 @@ t_token *stop)
 				}
 				temp->next = stop;
 				token->next = temp;
-				token = ft_find_squote(temp);
-				ft_simplequotes(token->next, bin, temp, stop);
+				ft_simplequotes(stop->next, bin, temp, stop);
 				return ;
 			}
 		}
@@ -543,23 +550,14 @@ int	ft_piperedir(t_token *token, t_list **bin)
 			|| (token->type == 5))
 		{
 			if (!token->next)
-			{
-				printf("SYNTAX ERROR1\n");
-				return (1);
-			}
+				return (printf("SYNTAX ERROR1\n"), 1);
 			if (token->next->type == 4)
 				token = token->next;
 			if (!token->next)
-			{
-				printf("SYNTAX ERROR2\n");
-				return (1);
-			}
+				return (printf("SYNTAX ERROR2\n"), 1);
 			if (token->next->type != 2 && token->next->type != 3
 				&& token->next->type != 5)
-			{
-				printf("SYNTAX ERROR3\n");
-				return (1);
-			}
+				return (printf("SYNTAX ERROR3\n"), 1);
 		}
 		token = token->next;
 	}
@@ -574,15 +572,15 @@ void	ft_rmvquotes(t_token **token, t_list **bin)
 	tmp = *token;
 	while (tmp)
 	{
-		if (!ft_strcmp(tmp->content, "ls") && tmp->type == 2)
-		{
-			while (tmp && tmp->type != 5 &&
-				(ft_strcmp(tmp->content, "|") || tmp->type != 1))
-				tmp = tmp->next;
-		}
-		if (!tmp)
-			return ;
-		else if ((!ft_strcmp(tmp->content, "\"") && tmp->type == 3)
+		// if (!ft_strcmp(tmp->content, "ls") && tmp->type == 2)
+		// {
+		// 	while (tmp && tmp->type != 5 &&
+		// 		(ft_strcmp(tmp->content, "|") || tmp->type != 1))
+		// 		tmp = tmp->next;
+		// }
+		// if (!tmp)
+		// 	return ;
+		if ((!ft_strcmp(tmp->content, "\"") && tmp->type == 3)
 			|| (!ft_strcmp(tmp->content, "\'") && tmp->type == 3))
 			ft_delete_token(token, tmp);
 		tmp = tmp->next;
@@ -637,6 +635,7 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 		ft_simplequotes(*token, bin, temp, stop);
 		ft_doublequotes(*token, bin, temp, stop);
 	}
+	// ft_print(*token);
 	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	// printf("ca dit quoi le sang\n");
 	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
