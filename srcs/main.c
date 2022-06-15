@@ -472,9 +472,10 @@ t_token *stop)
 	}
 }
 
-char	*ft_dollarfind(char *to_find, char **env)
+char	*ft_dollarfind(char *to_find, char **env, t_list **bin)
 {
-	int	i;
+	int		i;
+	char	*dest;
 
 	i = 0;
 	if (!ft_strcmp(to_find, " "))
@@ -485,7 +486,10 @@ char	*ft_dollarfind(char *to_find, char **env)
 			return (env[i] + (ft_strlen(to_find) + 1));
 		i++;
 	}
-	return ("\n");
+	dest = malloc(sizeof(char) * (ft_strlen(to_find) + 1) + 1);//PROTECT
+	ft_lstadd_back(bin, ft_lstnew(dest));
+	
+	return ("");
 }
 
 
@@ -495,7 +499,7 @@ t_token	*ft_isdollar(t_token *token, t_list **bin, char **env)
 	if (!ft_strcmp(token->content, "$") && token->type == 1)
 	{
 		if (!token->next || token->next->type != 2)
-			return (token);
+			return (token->next);
 		if (ft_strcmp(token->next->content, "?") == 0)
 		{
 			token->content = ft_itoa(g_exit_status);
@@ -504,7 +508,7 @@ t_token	*ft_isdollar(t_token *token, t_list **bin, char **env)
 			ft_lstadd_back(bin, ft_lstnew(token->content));//PROTECT
 		}
 		else
-			token->content = ft_dollarfind(token->next->content, env);
+			token->content = ft_dollarfind(token->next->content, env, bin);
 
 		token->type = 2;
 		token->next = token->next->next;
@@ -572,14 +576,6 @@ void	ft_rmvquotes(t_token **token, t_list **bin)
 	tmp = *token;
 	while (tmp)
 	{
-		// if (!ft_strcmp(tmp->content, "ls") && tmp->type == 2)
-		// {
-		// 	while (tmp && tmp->type != 5 &&
-		// 		(ft_strcmp(tmp->content, "|") || tmp->type != 1))
-		// 		tmp = tmp->next;
-		// }
-		// if (!tmp)
-		// 	return ;
 		if ((!ft_strcmp(tmp->content, "\"") && tmp->type == 3)
 			|| (!ft_strcmp(tmp->content, "\'") && tmp->type == 3))
 			ft_delete_token(token, tmp);
