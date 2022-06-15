@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/15 09:30:39 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/15 15:47:24 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,18 @@ void	write_heredoc(int pipe_fd[2], char *line)
 	write(pipe_fd[1], "\n", 1);
 }
 
+/**
+ * @brief Put the program in heredoc mode where the user can type multiple 
+ * lines of input that will be passed to next command
+ * @param heredoc_eof delimiter string that marks the end of heredoc
+ * @return int -1 if error, the input fd from which the next command can
+ * read otherwise
+ */
 int	heredoc(char *heredoc_eof)
 {
 	char	*line;
 	int		pipe_fd[2];
-	int		output_redir;
+	int		input_redir;
 
 	if (pipe(pipe_fd) == -1)
 		return (handle_errno("dup", -1, NULL, NULL));
@@ -38,8 +45,8 @@ int	heredoc(char *heredoc_eof)
 	dup2(pipe_fd[0], 0);
 	close(pipe_fd[1]);
 	close(pipe_fd[0]);
-	output_redir = dup(0);
-	if (output_redir == -1)
+	input_redir = dup(0);
+	if (input_redir == -1)
 		return (handle_errno("dup", -1, NULL, NULL));
-	return (output_redir);
+	return (input_redir);
 }

@@ -6,15 +6,15 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/15 12:30:46 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/15 15:52:47 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int get_nb_cmd(t_token *commands)
+int	get_nb_cmd(t_token *commands)
 {
-	int count;
+	int	count;
 
 	count = 1;
 	while (commands)
@@ -23,48 +23,15 @@ int get_nb_cmd(t_token *commands)
 			count++;
 		commands = commands->next;
 	}
-	return count;
+	return (count);
 }
-
-t_token **split_commands(t_token *commands, int nb_cmd)
-{
-	int i;
-	t_token *tmp;
-	
-	t_token **cmd_table = malloc(sizeof(t_token *) * (nb_cmd + 1));
-	if (!cmd_table)
-		return NULL;
-	i = 0;
-	while (i < nb_cmd)
-	{
-		cmd_table[i] = NULL;
-		i++;
-	}
-	i = 0;
-	while (commands)
-	{
-		if (commands->type == 1 && (ft_strcmp(commands->content, "|") == 0))
-			i++;
-		if (commands->type == 2)
-		{
-			tmp = commands;
-			commands = commands->next;
-			tmp->next = NULL;
-			ft_lstadd_back_token(&cmd_table[i], tmp);
-		}
-		else
-			commands = commands->next;
-	}
-	return cmd_table;
-}
-
 
 int find_input_and_output_files(t_token **commands, t_redir *redir)
 {
 	t_token *cur;
 	char *input_file;
 	char *output_file;
-	char * heredoc_eof;
+	char *heredoc_eof;
 	
 	redir->input_redir = -1;
 	redir->output_redir = -1;

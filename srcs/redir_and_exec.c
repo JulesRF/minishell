@@ -6,12 +6,20 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/15 12:55:32 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/15 15:45:03 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/**
+ * @brief Save the default input/output for later and set
+ * the initial input for execution to the input file if there is one.
+ * If not, the input is set to default.
+ * @param vars variables related to command execution
+ * @param redir variables related to redirections
+ * @return int 1 if error, 0 otherwise
+ */
 int	set_init_input(t_vars *vars, t_redir *redir)
 {
 	redir->tmpin = dup(0);
@@ -27,7 +35,7 @@ int	set_init_input(t_vars *vars, t_redir *redir)
 			return (handle_errno("dup", 1, NULL, NULL));
 	}
 	redir->nb_cmd = get_nb_cmd(*(vars->cmd));
-	redir->cmd_table = split_commands(*(vars->cmd), redir->nb_cmd);
+	redir->cmd_table = split_commands(*(vars->cmd), redir->nb_cmd, redir->i);
 	if (!(redir->cmd_table))
 		return (1);
 	redir->ret = 0;
@@ -35,6 +43,13 @@ int	set_init_input(t_vars *vars, t_redir *redir)
 	return (0);
 }
 
+/**
+ * @brief Set the output to be the output file if there is one) or the inital
+ * output if this is the last command. If not, set the output to the write end
+ * side of a pipe, and the input to the read end side of it.
+ * @param redir variables related to redirections
+ * @return int 1 if error, should not return otherwise
+ */
 int	set_output(t_redir *redir)
 {
 	if (redir->i == redir->nb_cmd - 1)
@@ -61,6 +76,13 @@ int	set_output(t_redir *redir)
 	return (0);
 }
 
+/**
+ * @brief Fork the process to execute the command
+ * 
+ * @param vars variables related to command execution
+ * @param redir variables related to redirections
+ * @return int 1 if error, should not return otherwise
+ */
 int	fork_exec(t_vars *vars, t_redir *redir)
 {
 	vars->pid = fork();
@@ -78,8 +100,8 @@ int	fork_exec(t_vars *vars, t_redir *redir)
 /**
  * @brief Restore default in/out fd of parent process
  * and wait for child processes to die
- * @param vars 
- * @param redir 
+ * @param vars variables related to command execution
+ * @param redir variables related to redirections
  * @return int 
  */
 int	restore_in_out_and_wait(t_vars *vars, t_redir *redir)
@@ -103,6 +125,13 @@ int	restore_in_out_and_wait(t_vars *vars, t_redir *redir)
 	return (0);
 }
 
+/**
+ * @brief Find the input/output files if there are any and
+ * if there are any pipes, launch each command in a child process
+ * and connect their output/input accordingly.
+ * @param vars variables related to command execution
+ * @return int 1 if error, the exit status of the last command otherwise
+ */
 int	redir_and_exec(t_vars *vars)
 {
 	t_redir	redir;

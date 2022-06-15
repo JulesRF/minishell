@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:18:27 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/14 16:19:22 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/15 15:44:44 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,33 @@ char	**cmd_to_strs(t_token *command)
 	}
 	args[i] = NULL;
 	return (args);
+}
+
+t_token	**split_commands(t_token *commands, int nb_cmd, int i)
+{
+	t_token	*tmp;
+	t_token	**cmd_table;
+
+	cmd_table = malloc(sizeof(t_token *) * (nb_cmd + 1));
+	if (!cmd_table)
+		return (NULL);
+	i = -1;
+	while (++i < nb_cmd)
+		cmd_table[i] = NULL;
+	i = 0;
+	while (commands)
+	{
+		if (commands->type == 1 && (ft_strcmp(commands->content, "|") == 0))
+			i++;
+		if (commands->type == 2)
+		{
+			tmp = commands;
+			commands = commands->next;
+			tmp->next = NULL;
+			ft_lstadd_back_token(&cmd_table[i], tmp);
+		}
+		else
+			commands = commands->next;
+	}
+	return (cmd_table);
 }

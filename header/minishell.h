@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/15 12:31:48 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/15 15:44:39 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int	exec_cmd(t_token *command, char **env, pid_t pid);
 int heredoc(char *heredoc_eof);
 int find_input_and_output_files(t_token **commands, t_redir *redir);
 int get_nb_cmd(t_token *commands);
-t_token **split_commands(t_token *commands, int nb_cmd);
+t_token **split_commands(t_token *commands, int nb_cmd, int i);
 int	get_child_status(int pid, int *ret);
 
 #endif
