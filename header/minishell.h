@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/14 17:13:20 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/15 12:31:48 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,21 @@ typedef struct s_vars
 	char	*cmd_line;
 }	t_vars;
 
+typedef struct s_redir
+{
+	int		tmpin;
+	int		tmpout;
+	int		fdin;
+	int		fdout;
+	int		input_redir;
+	int		output_redir;
+	int		fdpipe[2];
+	t_token	**cmd_table;
+	int		nb_cmd;
+	int		ret;
+	int		i;
+}	t_redir;
+
 extern int g_exit_status;
 
 //	main.c
@@ -79,5 +94,10 @@ char	*get_var_name(char *s, int name_len);
 int	var_name_is_valid(char *s, int *name_len);
 char	**cmd_to_strs(t_token *command);
 int	exec_cmd(t_token *command, char **env, pid_t pid);
+int heredoc(char *heredoc_eof);
+int find_input_and_output_files(t_token **commands, t_redir *redir);
+int get_nb_cmd(t_token *commands);
+t_token **split_commands(t_token *commands, int nb_cmd);
+int	get_child_status(int pid, int *ret);
 
 #endif

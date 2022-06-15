@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/14 17:16:56 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/15 12:21:07 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,5 +93,3 @@ int	exec_cmd(t_token *command, char **env, pid_t pid)
 	free(args);
 	return (ret);
 }
-
-
