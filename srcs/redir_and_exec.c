@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/15 18:38:03 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/15 20:07:41 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ int	redir_and_exec(t_vars *vars)
 	if (redir.tmpin == -1 || redir.tmpout == -1)
 		return (handle_errno("dup", 1, NULL, NULL));
 
-	redir.ret = find_input_and_output_files(vars->cmd, &redir);
+	redir.ret = find_input_and_output_files(vars->cmd, &redir, vars->bin);
 	if (redir.ret != 0)
 		return (redir.ret );
 	if (set_init_input(vars, &redir) == 1)
