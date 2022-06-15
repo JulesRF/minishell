@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/15 15:52:47 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/15 18:32:13 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ int find_input_and_output_files(t_token **commands, t_redir *redir)
 	char *input_file;
 	char *output_file;
 	char *heredoc_eof;
+	int ret;
 	
 	redir->input_redir = -1;
 	redir->output_redir = -1;
@@ -78,9 +79,9 @@ int find_input_and_output_files(t_token **commands, t_redir *redir)
 			heredoc_eof = cur->next->content;
 			ft_delete_token(commands, cur->next);
 			ft_delete_token(commands, cur);
-			redir->input_redir = heredoc(heredoc_eof);
-			if (redir->input_redir == -1)
-				return -1;
+			ret = heredoc(heredoc_eof, &(redir->input_redir));
+			if (ret != 0)
+				return ret;
 		}
 		cur = cur->next;
 	}

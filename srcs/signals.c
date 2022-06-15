@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:26:25 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/12 07:50:31 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/15 18:11:15 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void handle_sigint(int code)
 	rl_on_new_line();
 	rl_redisplay();
 	g_exit_status = 130;
+
 }
 
 void handle_sigint_no_prompt(int code)
