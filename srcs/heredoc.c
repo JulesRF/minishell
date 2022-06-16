@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 14:11:15 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 14:34:19 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,45 @@ void	write_heredoc(int pipe_fd[2], char *line)
 {
 	write(pipe_fd[1], line, ft_strlen(line));
 	write(pipe_fd[1], "\n", 1);
+}
+
+void	heredoc_warning(t_list *heredoc_eofs, int *nb_eof)
+{
+	ft_putstr_fd("minishell: warning: here-document delimited\
+		by end-of-file (wanted '", 2);
+	ft_putstr_fd(heredoc_eofs->content, 2);
+	ft_putendl_fd("')", 2);
+	nb_eof++;
+	heredoc_eofs = heredoc_eofs->next;
+}
+
+void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
+{
+	char	*line;
+	int		nb_eof;
+
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	nb_eof = 0;
+	while (1)
+	{
+		line = readline("> ");
+		if (line == NULL)
+			heredoc_warning(heredoc_eofs, &nb_eof);
+		if (line && nb_eof == (nb_heredocs - 1)
+			&& ft_strcmp(line, heredoc_eofs->content) != 0)
+			write_heredoc(pipe_fd, line);
+		if (line && (ft_strcmp(line, heredoc_eofs->content) == 0))
+		{
+			nb_eof++;
+			heredoc_eofs = heredoc_eofs->next;
+		}
+		if (nb_eof == nb_heredocs)
+			break ;
+		free (line);
+	}
+	free(line);
+	exit(0);
 }
 
 /**
@@ -28,11 +67,9 @@ void	write_heredoc(int pipe_fd[2], char *line)
  */
 int	multiple_heredoc(t_list *heredoc_eofs, int *input_redir, int nb_heredocs)
 {
-	char	*line;
 	int		pipe_fd[2];
 	pid_t	pid;
 	int		ret;
-	int		nb_eof;
 
 	if (pipe(pipe_fd) == -1)
 		return (handle_errno("dup", -1, NULL, NULL));
@@ -40,35 +77,7 @@ int	multiple_heredoc(t_list *heredoc_eofs, int *input_redir, int nb_heredocs)
 	if (pid == -1)
 		return (handle_errno("fork", 1, NULL, NULL));
 	if (pid == 0)
-	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
-		nb_eof = 0;
-		while (1)
-		{
-			line = readline("> ");
-			if (line == NULL)
-			{
-				ft_putstr_fd("minishell: warning: here-document delimited by end-of-file (wanted '",2);
-				ft_putstr_fd(heredoc_eofs->content, 2);
-				ft_putendl_fd("')", 2);
-				nb_eof++;
-				heredoc_eofs = heredoc_eofs->next;
-			}
-			if (line && nb_eof == (nb_heredocs - 1) && ft_strcmp(line, heredoc_eofs->content) != 0)
-				write_heredoc(pipe_fd, line);
-			if (line && (ft_strcmp(line, heredoc_eofs->content) == 0))
-			{
-				nb_eof++;
-				heredoc_eofs = heredoc_eofs->next;
-			}
-			if (nb_eof == nb_heredocs)
-				break ;
-			free (line);
-		}
-		free(line);
-		exit(0);
-	}
+		start_heredoc(heredoc_eofs, nb_heredocs, pipe_fd);
 	else
 	{
 		get_child_status(pid, &ret);
