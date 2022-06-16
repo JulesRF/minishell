@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 13:29:31 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 14:47:45 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	get_nb_cmd_and_heredocs(t_token *commands, int *nb_heredocs)
 	return (count);
 }
 
-int find_input_and_output_files(t_token **commands, t_redir *redir, t_list **bin, t_list **heredoc_eofs, int nb_heredocs, int *count_heredocs)
+int find_in_out_files(t_token **commands, t_redir *redir)
 {
 	t_token *cur;
 	char *heredoc_eof;
@@ -38,7 +38,6 @@ int find_input_and_output_files(t_token **commands, t_redir *redir, t_list **bin
 	char *output_file;
 	int ret;
 	
-	(void)bin;
 	redir->input_redir = -1;
 	redir->output_redir = -1;
 	cur = *commands;
@@ -88,19 +87,19 @@ int find_input_and_output_files(t_token **commands, t_redir *redir, t_list **bin
 				free(heredoc_eof);
 				return (1);
 			}
-			ft_lstadd_back(heredoc_eofs, node);
+			ft_lstadd_back(&(redir->heredoc_eofs), node);
 			ft_delete_token(commands, cur->next);
 			ft_delete_token(commands, cur);
-			*count_heredocs = *count_heredocs + 1;
+			redir->count_heredocs = redir->count_heredocs + 1;
 		}
 		cur = cur->next;
 	}
-	if ((*count_heredocs > 0) && (*count_heredocs == nb_heredocs))
+	if ((redir->count_heredocs > 0) && (redir->count_heredocs == redir->nb_heredocs))
 	{
 		if (redir->input_redir != -1)
 			close(redir->input_redir);
-		ret = multiple_heredoc(*heredoc_eofs, &(redir->input_redir), *count_heredocs);
-		ft_garbage(heredoc_eofs);
+		ret = multiple_heredoc(redir->heredoc_eofs, &(redir->input_redir), redir->count_heredocs);
+		ft_garbage(&(redir->heredoc_eofs));
 		if (ret != 0)
 			return ret;
 	}

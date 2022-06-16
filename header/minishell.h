@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/16 11:31:22 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 14:55:59 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,9 @@ typedef struct s_redir
 	int		nb_cmd;
 	int		ret;
 	int		i;
+	t_list	*heredoc_eofs;
+	int		nb_heredocs;
+	int		count_heredocs;
 }	t_redir;
 
 extern int g_exit_status;
@@ -96,10 +99,11 @@ char	**cmd_to_strs(t_token *command);
 int	exec_cmd(t_token *command, char **env, pid_t pid);
 int	heredoc(char *heredoc_eof, int *input_redir);
 int	multiple_heredoc(t_list *heredoc_eofs, int *input_redir, int nb_heredocs);
-int find_input_and_output_files(t_token **commands, t_redir *redir, t_list **bin, t_list **heredoc_eofs, int nb_heredocs, int *count_heredocs);
+int find_in_out_files(t_token **commands, t_redir *redir);
 int	get_nb_cmd_and_heredocs(t_token *commands, int *nb_heredocs);
 t_token **split_commands(t_token *commands, int nb_cmd, int i);
 int	get_child_status(int pid, int *ret);
 void	ft_delete_node(t_list **alst, t_list *to_del);
+int	fork_exec(t_vars *vars, t_redir *redir);
 
 #endif

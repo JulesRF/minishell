@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 11:30:26 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 14:55:31 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,4 +95,25 @@ int	exec_cmd(t_token *command, char **env, pid_t pid)
 		start_exec(args, env);
 	free(args);
 	return (ret);
+}
+
+/**
+ * @brief Fork the process to execute the command
+ * 
+ * @param vars variables related to command execution
+ * @param redir variables related to redirections
+ * @return int 1 if error, should not return otherwise
+ */
+int	fork_exec(t_vars *vars, t_redir *redir)
+{
+	vars->pid = fork();
+	if (vars->pid == -1)
+		return (handle_errno("fork failed", 1, redir->cmd_table, NULL));
+	if (vars->pid == 0)
+	{
+		close(redir->fdin);
+		redir->ret = search_cmd(vars);
+		exit(redir->ret);
+	}
+	return (0);
 }
