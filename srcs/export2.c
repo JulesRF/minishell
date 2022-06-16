@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 14:28:12 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/14 14:36:14 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 15:50:45 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	print_env(char **sorted_env)
 	i = 0;
 	while (sorted_env[i])
 	{
-		ft_putstr_fd("declare -x ", 1);
+		ft_putstr_fd("export ", 1);
 		j = 0;
 		endquotes = 0;
 		while (sorted_env[i][j])
