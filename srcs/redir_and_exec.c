@@ -6,15 +6,14 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/15 20:07:41 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 12:11:26 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /**
- * @brief Save the default input/output for later and set
- * the initial input for execution to the input file if there is one.
+ * @brief Set the initial input for execution to the input file if there is one.
  * If not, the input is set to default.
  * @param vars variables related to command execution
  * @param redir variables related to redirections
@@ -22,20 +21,18 @@
  */
 int	set_init_input(t_vars *vars, t_redir *redir)
 {
+	(void)vars;
 	if (redir->input_redir != -1)
 		redir->fdin = redir->input_redir;
-	else
+	else if (redir->i == 0)
 	{
 		redir->fdin = dup(redir->tmpin);
 		if (redir->fdin == -1)
 			return (handle_errno("dup", 1, NULL, NULL));
 	}
-	redir->nb_cmd = get_nb_cmd(*(vars->cmd));
-	redir->cmd_table = split_commands(*(vars->cmd), redir->nb_cmd, redir->i);
-	if (!(redir->cmd_table))
-		return (1);
-	redir->ret = 0;
-	redir->i = -1;
+	if (dup2(redir->fdin, 0) == -1)
+		return (handle_errno("dup2", 1, redir->cmd_table, NULL));
+	close(redir->fdin);
 	return (0);
 }
 
@@ -47,17 +44,12 @@ int	set_init_input(t_vars *vars, t_redir *redir)
  * @return int 1 if error, should not return otherwise
  */
 int	set_output(t_redir *redir)
-{
-	if (redir->i == redir->nb_cmd - 1)
+{	
+	if (redir->i == (redir->nb_cmd - 1) && redir->output_redir == -1)
 	{
-		if (redir->output_redir != -1)
-			redir->fdout = redir->output_redir;
-		else
-		{
-			redir->fdout = dup(redir->tmpout);
-			if (redir->fdout == -1)
-				return (handle_errno("dup", 1, redir->cmd_table, NULL));
-		}
+		redir->fdout = dup(redir->tmpout);
+		if (redir->fdout == -1)
+			return (handle_errno("dup", 1, redir->cmd_table, NULL));
 	}
 	else
 	{
@@ -65,6 +57,12 @@ int	set_output(t_redir *redir)
 			return (handle_errno("pipe", 1, redir->cmd_table, NULL));
 		redir->fdin = (redir->fdpipe)[0];
 		redir->fdout = (redir->fdpipe)[1];
+		
+		if (redir->output_redir != -1)
+		{
+			close(redir->fdout);
+			redir->fdout = redir->output_redir;
+		}
 	}
 	if (dup2(redir->fdout, 1) == -1)
 		return (handle_errno("dup2", 1, redir->cmd_table, NULL));
@@ -113,7 +111,8 @@ int	restore_in_out_and_wait(t_vars *vars, t_redir *redir)
 	close(redir->tmpout);
 	if (redir->nb_cmd > 1)
 	{
-		get_child_status(vars->pid, &(redir->ret));
+		if (redir->ret == 0)
+			get_child_status(vars->pid, &(redir->ret));
 		wait_ret = 0;
 		while (wait_ret != -1)
 			wait_ret = waitpid(-1, &(redir->i), 0);
@@ -131,32 +130,46 @@ int	restore_in_out_and_wait(t_vars *vars, t_redir *redir)
 int	redir_and_exec(t_vars *vars)
 {
 	t_redir	redir;
+	t_list *heredoc_eofs;
+	int nb_heredocs;
+	int count_heredocs;
 
 	redir.tmpin = dup(0);
 	redir.tmpout = dup(1);
 	if (redir.tmpin == -1 || redir.tmpout == -1)
 		return (handle_errno("dup", 1, NULL, NULL));
 
-	redir.ret = find_input_and_output_files(vars->cmd, &redir, vars->bin);
-	if (redir.ret != 0)
-		return (redir.ret );
-	if (set_init_input(vars, &redir) == 1)
+	redir.nb_cmd = get_nb_cmd_and_heredocs(*(vars->cmd), &nb_heredocs);
+	redir.cmd_table = split_commands(*(vars->cmd), redir.nb_cmd, redir.i);
+	if (!(redir.cmd_table))
 		return (1);
+	redir.ret = 0;
+	redir.i = -1;
+	heredoc_eofs = NULL;
+	count_heredocs = 0;
+	// for(int i = 0; i < redir.nb_cmd; i++)
+	// {
+	// 	printf("cmd_table[%d]:\n", i);
+	// 	ft_print(redir.cmd_table[i]);
+	// }
+
 	while (++(redir.i) < redir.nb_cmd)
 	{
-		if (dup2(redir.fdin, 0) == -1)
-			return (handle_errno("dup2", 1, redir.cmd_table, NULL));
-		close(redir.fdin);
+		redir.ret = find_input_and_output_files(&((redir.cmd_table)[redir.i]), &redir, vars->bin, &heredoc_eofs, nb_heredocs, &count_heredocs);
+		// if (redir.ret != 0)
+		// 	continue ;
+		if (set_init_input(vars, &redir) == 1)
+			redir.ret = 1;
 		if (set_output(&redir) == 1)
-			return (1);
+			redir.ret = 1;
 		vars->pid = -1;
 		vars->cmd = &((redir.cmd_table)[redir.i]);
-		if (redir.nb_cmd > 1)
+		if (redir.nb_cmd > 1 && redir.ret == 0)
 		{
 			if (fork_exec(vars, &redir) == 1)
 				return (1);
 		}
-		else
+		else if (redir.ret == 0)
 			redir.ret = search_cmd(vars);
 	}
 	restore_in_out_and_wait(vars, &redir);

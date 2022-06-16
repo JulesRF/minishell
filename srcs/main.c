@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/14 16:51:41 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 10:48:23 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,27 @@ void	ft_lstadd_back_token(t_token **alst, t_token *new)
 	}
 	temp = ft_lstlast_token(*alst);
 	temp->next = new;
+}
+
+void	ft_delete_node(t_list **alst, t_list *to_del)
+{
+	t_list	*tmp;
+	t_list	*prev;
+
+	tmp = *alst;
+	if (tmp == to_del)
+	{
+		*alst = tmp->next;
+		return ;
+	}
+	while (tmp && tmp != to_del)
+	{
+		prev = tmp;
+		tmp = tmp->next;
+	}
+	if (tmp == NULL)
+		return ;
+	prev->next = tmp->next;
 }
 
 void	ft_delete_token(t_token **alst, t_token *to_del)

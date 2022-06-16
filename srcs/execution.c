@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/15 12:21:07 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 11:30:26 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,10 @@ int	exec_cmd(t_token *command, char **env, pid_t pid)
 	{
 		pid = fork();
 		if (pid == -1)
-			return (handle_errno("fork", 1, NULL, args));
+		{
+			free(args);
+			return (handle_errno("fork", 1, NULL, NULL));
+		}
 		else if (pid == 0)
 			start_exec(args, env);
 		else
