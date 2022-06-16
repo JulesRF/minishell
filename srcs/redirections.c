@@ -6,285 +6,122 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/13 11:47:14 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 15:36:57 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int get_nb_cmd(t_token *commands)
+int	set_input_file(t_token **cur, t_token **commands, t_redir *redir)
 {
-	int count;
+	char	*input_file;
 
-	count = 1;
-	while (commands)
+	if (redir->input_redir != -1)
+		close(redir->input_redir);
+	input_file = (*cur)->next->content;
+	ft_delete_token(commands, (*cur)->next);
+	ft_delete_token(commands, *cur);
+	redir->input_redir = open(input_file, O_RDONLY);
+	if (redir->input_redir == -1)
+		return (handle_errno(input_file, 1, NULL, NULL));
+	return (0);
+}
+
+int	set_output_file(t_token **cur, t_token **commands, t_redir *redir,
+	int append)
+{
+	char	*output_file;
+
+	if (redir->output_redir != -1)
+		close(redir->output_redir);
+	output_file = (*cur)->next->content;
+	ft_delete_token(commands, (*cur)->next);
+	ft_delete_token(commands, *cur);
+	if (append == 1)
+		redir->output_redir = open(output_file, O_CREAT | O_WRONLY
+				| O_APPEND, S_IRWXU);
+	else
+		redir->output_redir = open(output_file, O_CREAT | O_WRONLY
+				| O_TRUNC, S_IRWXU);
+	if (redir->output_redir == -1)
+		return (handle_errno(output_file, 1, NULL, NULL));
+	return (0);
+}
+
+int	add_heredoc_eof_to_list(t_token **cur, t_token **commands, t_redir *redir)
+{
+	char	*heredoc_eof;
+	t_list	*node;
+
+	heredoc_eof = ft_strdup((*cur)->next->content);
+	if (!heredoc_eof)
+		return (1);
+	node = ft_lstnew(heredoc_eof);
+	if (!node)
 	{
-		if (commands->type == 1 && (ft_strcmp(commands->content, "|") == 0))
-			count++;
-		commands = commands->next;
+		free(heredoc_eof);
+		return (1);
 	}
-	return count;
+	ft_lstadd_back(&(redir->heredoc_eofs), node);
+	ft_delete_token(commands, (*cur)->next);
+	ft_delete_token(commands, *cur);
+	redir->count_heredocs = redir->count_heredocs + 1;
+	return (0);
 }
 
-t_token **split_commands(t_token *commands, int nb_cmd)
+int	check_token_is_in_out_file(t_token **cur, t_token **commands,
+	t_redir *redir)
 {
-	int i;
-	t_token *tmp;
-	
-	t_token **cmd_table = malloc(sizeof(t_token *) * (nb_cmd + 1));
-	if (!cmd_table)
-		return NULL;
-	i = 0;
-	while (i < nb_cmd)
+	if ((*cur)->type == 5 && ft_strcmp((*cur)->content, "<") == 0)
 	{
-		cmd_table[i] = NULL;
-		i++;
+		if (set_input_file(cur, commands, redir) == 1)
+			return (1);
 	}
-	i = 0;
-	while (commands)
+	else if ((*cur)->type == 5 && ft_strcmp((*cur)->content, ">") == 0)
 	{
-		if (commands->type == 1 && (ft_strcmp(commands->content, "|") == 0))
-			i++;
-		if (commands->type == 2)
-		{
-			tmp = commands;
-			commands = commands->next;
-			tmp->next = NULL;
-			ft_lstadd_back_token(&cmd_table[i], tmp);
-		}
-		else
-			commands = commands->next;
+		if (set_output_file(cur, commands, redir, 0) == 1)
+			return (1);
 	}
-	return cmd_table;
-}
-
-int handle_errno(char *error_msg, int ret, t_token **cmd_table)
-{
-	perror(error_msg);
-	if (cmd_table != NULL)
-		free(cmd_table);
-	return ret;
-}
-
-
-void	write_heredoc(int pipe_fd[2], char *line)
-{
-	write(pipe_fd[1], line, ft_strlen(line));
-	write(pipe_fd[1], "\n", 1);
-}
-
-int heredoc(char *heredoc_eof)
-{
-	char	*line;
-	int		pipe_fd[2];
-	int		output_redir;
-
-	if (pipe(pipe_fd) == -1)
-		return handle_errno("dup",-1, NULL);
-	while (1)
+	else if ((*cur)->type == 5 && ft_strcmp((*cur)->content, ">>") == 0)
 	{
-		line = readline("> ");
-		if (line && (ft_strcmp(line, heredoc_eof) == 0))
-			break ;
-		//line = dollar substitution ?
-		write_heredoc(pipe_fd, line);
-		free (line);
+		if (set_output_file(cur, commands, redir, 1) == 1)
+			return (1);
 	}
-	free(line);
-	dup2(pipe_fd[0], 0);
-	close(pipe_fd[1]);
-	close(pipe_fd[0]);
-	output_redir = dup(0);
-	if (output_redir == -1)
-		return handle_errno("dup", -1, NULL);
-	return (output_redir);
+	else if ((*cur)->type == 5 && ft_strcmp((*cur)->content, "<<") == 0)
+		if (add_heredoc_eof_to_list(cur, commands, redir) == 1)
+			return (1);
+	return (0);
 }
 
-
-int find_input_and_output_files(t_token **commands, int *input_redir, int *output_redir)
+/**
+ * @brief Iterate over the command to find and handle input/output files or
+ * heredocs.
+ * @param commands a simple command
+ * @param redir variables related to redirections
+ * @return int 1 if error, 0 otherwise
+ */
+int	find_in_out_files(t_token **commands, t_redir *redir)
 {
-	t_token *cur;
-	char *input_file;
-	char *output_file;
-	char * heredoc_eof;
-	
-	*input_redir = -1;
-	*output_redir = -1;
+	t_token	*cur;
+	int		ret;
+
 	cur = *commands;
 	while (cur)
 	{
-		if (cur->type == 5 && ft_strcmp(cur->content, "<") == 0)
-		{
-			if (*input_redir != -1)
-				close(*input_redir);
-			input_file = cur->next->content; //check if next NULL ? devrait pas l'etre apres parsing
-			ft_delete_token(commands, cur->next);
-			ft_delete_token(commands, cur);
-			*input_redir = open(input_file, O_RDONLY);
-			if (*input_redir == -1)
-				return handle_errno(input_file, -1, NULL);
-		}
-		else if (cur->type == 5 && ft_strcmp(cur->content, ">") == 0)
-		{
-			if (*output_redir != -1)
-				close(*output_redir);
-			output_file = cur->next->content; //check if next NULL ? devrait pas l'etre apres parsing
-			ft_delete_token(commands, cur->next);
-			ft_delete_token(commands, cur);
-			*output_redir = open(output_file, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
-			if (*output_redir == -1)
-					return handle_errno(output_file, -1, NULL);
-		}
-		else if (cur->type == 5 && ft_strcmp(cur->content, ">>") == 0)
-		{
-			if (*output_redir != -1)
-				close(*output_redir);
-			output_file = cur->next->content; //check if next NULL ? devrait pas l'etre apres parsing
-			ft_delete_token(commands, cur->next);
-			ft_delete_token(commands, cur);
-			*output_redir = open(output_file, O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
-			if (*output_redir == -1)
-					return handle_errno(output_file, -1, NULL);
-		}
-		else if (cur->type == 5 && ft_strcmp(cur->content, "<<") == 0)
-		{
-			if (*input_redir != -1)
-				close(*input_redir);
-			heredoc_eof = cur->next->content;
-			ft_delete_token(commands, cur->next);
-			ft_delete_token(commands, cur);
-			*input_redir = heredoc(heredoc_eof);
-			if (*input_redir == -1)
-				return -1;
-		}
+		if (check_token_is_in_out_file(&cur, commands, redir) == 1)
+			return (1);
 		cur = cur->next;
 	}
-	return 0;
-}
-
-
-
-int redir_and_exec(t_token **commands, char ***env, t_list **bin, char *cmd_line)
-{
-	int tmpin;
-	int tmpout;
-	int fdin;
-	int fdout;
-	int input_redir;
-	int output_redir;
-	int nb_cmd;
-	int ret;
-	pid_t pid;
-	int i;
-	t_token **cmd_table;
-	int fdpipe[2];
-	int status;
-
-	//store default in/out fd of parent process for later reset
-	tmpin = dup(0);
-	tmpout = dup(1);
-	if (tmpin == -1 || tmpout == -1)
-		return handle_errno("dup", 1, NULL);
-
-	if (find_input_and_output_files(commands, &input_redir, &output_redir) == -1)
-		return (1);
-
-	//set initial input
-	if (input_redir != -1)
-		fdin = input_redir;
-	else
+	if ((redir->count_heredocs > 0) && (redir->count_heredocs
+			== redir->nb_heredocs))
 	{
-		fdin = dup(tmpin); //default in
-		if (fdin == -1)
-			return handle_errno("dup", 1, NULL);
+		if (redir->input_redir != -1)
+			close(redir->input_redir);
+		ret = multiple_heredoc(redir->heredoc_eofs, &(redir->input_redir),
+				redir->count_heredocs);
+		ft_garbage(&(redir->heredoc_eofs));
+		if (ret != 0)
+			return (ret);
 	}
-		
-	nb_cmd = get_nb_cmd(*commands);
-	cmd_table = split_commands(*commands, nb_cmd);
-	if (!cmd_table)
-		return (1);
-	ret = 0;
-	i = 0;
-	while (i < nb_cmd)
-	{
-		//redirect input to fdin
-		if (dup2(fdin, 0) == -1)
-			return handle_errno("dup2", 1, cmd_table); //éviter de sortir de la boucle ?
-		close(fdin); //bc not needed yet
-
-		//set output
-		if (i == nb_cmd - 1) //last cmd
-		{
-			if (output_redir != -1)
-				fdout = output_redir;
-			else
-			{
-				fdout = dup(tmpout); //default out
-				if (fdout == -1)
-					return handle_errno("dup", 1, cmd_table); //éviter de sortir de la boucle ?
-			}
-		}
-		else //not last cmd
-		{
-			//create pipe
-			if (pipe(fdpipe) == -1)
-				return handle_errno("pipe", 1, cmd_table); //éviter de sortir de la boucle ?
-			fdin = fdpipe[0]; //sera l'input lors de la prochaine itération
-			fdout = fdpipe[1];
-		}
-
-		
-		//redirect ouput to fdout
-		if (dup2(fdout, 1) == -1)
-			return handle_errno("dup2", 1, cmd_table); //éviter de sortir de la boucle ?
-		close(fdout);
-
-		pid = -1;
-		if (nb_cmd > 1) //if there are pipes
-		{
-			pid = fork();
-			if (pid == -1) //fork failed
-				return handle_errno("fork failed", 1, cmd_table);
-			if (pid==0)
-			{
-				//g_exit_status
-				close(fdin);
-				ret = search_cmd(cmd_table[i], env, bin, pid, cmd_line);
-				exit(ret);
-			}
-		}
-		else		
-			ret = search_cmd(cmd_table[i], env, bin, pid, cmd_line);
-		
-		i++;
-	}
-	
-	free(cmd_table);
-
-	//restore default in/out fd of parent process
-	if (dup2(tmpin, 0) == -1)
-		return handle_errno("dup2", 1, NULL);
-	if (dup2(tmpout, 1) == -1)
-		return handle_errno("dup2", 1, NULL);
-	close(tmpin);
-	close(tmpout);
-	
-	if (nb_cmd > 1)
-	{
-		signal(SIGINT, handle_sigint_no_prompt);
-		if (waitpid(pid, &status, 0) == -1)
-			return handle_errno("waitpid", 1, NULL);
-		if (WIFEXITED(status))
-			ret = WEXITSTATUS(status);
-
-		if (WIFSIGNALED(status))
-		{
-			ret = WTERMSIG(status);
-			ret += 128;
-		}
-		signal(SIGINT, handle_sigint);
-		while (waitpid(-1, &status, 0) != -1);		
-	}
-
-	return ret;
+	return (0);
 }

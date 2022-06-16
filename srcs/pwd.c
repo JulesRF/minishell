@@ -1,37 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/11 11:26:25 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 15:40:14 by vfiszbin         ###   ########.fr       */
+/*   Created: 2022/06/14 10:03:59 by vfiszbin          #+#    #+#             */
+/*   Updated: 2022/06/14 10:50:33 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-//réécrire le buffer d'avant signal pour effacer ^\ ?
-void	handle_sigquit(int code)
+/**
+ * @brief Print the name of the current/working directory
+ * 
+ * @return int 1 in case of failure, 0 otherwise
+ */
+int	pwd(void)
 {
-	(void)code;
-	g_exit_status = 131;
-}
+	char	buffer[BUFFER_SIZE];
+	char	*ret;
 
-void	handle_sigint(int code)
-{
-	(void)code;
-	rl_replace_line("", 0);
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_redisplay();
-	g_exit_status = 130;
-}
-
-void	handle_sigint_no_prompt(int code)
-{
-	(void)code;
-	write(2, "\n", 1);
-	g_exit_status = 130;
+	ret = getcwd(buffer, BUFFER_SIZE);
+	if (ret == NULL)
+		return (handle_error("getcwd", 1, NULL, NULL));
+	ft_putendl_fd(ret, 1);
+	return (0);
 }

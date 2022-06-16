@@ -6,7 +6,7 @@
 #    By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/04 14:03:48 by jroux-fo          #+#    #+#              #
-#    Updated: 2022/06/11 11:31:02 by vfiszbin         ###   ########.fr        #
+#    Updated: 2022/06/15 09:36:28 by vfiszbin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,9 +14,21 @@ NAME = minishell
 
 SRCS_FILES	=	main.c	\
 				execution.c\
-				builtins.c\
+				search_cmd.c\
+				exit.c\
+				echo.c\
+				pwd.c\
+				cd.c\
+				export.c\
+				export2.c\
+				env.c\
+				unset.c\
+				redir_and_exec.c\
+				heredoc.c\
 				redirections.c\
 				signals.c\
+				utils.c\
+				utils2.c\
 
 FLAGS = -Wall -Werror -Wextra -g3
 
@@ -49,7 +61,6 @@ LIBFT:
 	${MAKE} -C ./libft
 
 $(NAME): LIBFT $(OBJ_FILES)
-# ${MAKE} -C ./libft
 	@$(shell gcc $(FLAGS) -I $(INCLUDES) -I $(INCLUDES_LIBFT) $(OBJ_FILES) $(LIBFT_A) -lreadline -o $(NAME))
 	@printf "Executable $@ created !\n"
 

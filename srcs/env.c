@@ -1,37 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/11 11:26:25 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 15:40:14 by vfiszbin         ###   ########.fr       */
+/*   Created: 2022/06/14 14:36:55 by vfiszbin          #+#    #+#             */
+/*   Updated: 2022/06/14 14:37:38 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-//réécrire le buffer d'avant signal pour effacer ^\ ?
-void	handle_sigquit(int code)
+/**
+ * @brief Print environment variables
+ * 
+ * @param env environment variables
+ * @return int 0 when done
+ */
+int	env_builtin(char **env)
 {
-	(void)code;
-	g_exit_status = 131;
-}
+	int	i;
 
-void	handle_sigint(int code)
-{
-	(void)code;
-	rl_replace_line("", 0);
-	write(1, "\n", 1);
-	rl_on_new_line();
-	rl_redisplay();
-	g_exit_status = 130;
-}
-
-void	handle_sigint_no_prompt(int code)
-{
-	(void)code;
-	write(2, "\n", 1);
-	g_exit_status = 130;
+	i = 0;
+	while (env && env[i])
+	{
+		if (ft_strchr(env[i], '=') != NULL)
+			ft_putendl_fd(env[i], 1);
+		i++;
+	}
+	return (0);
 }
