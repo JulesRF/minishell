@@ -6,20 +6,20 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:26:25 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 14:15:16 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 15:40:14 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void handle_sigquit(int code)
+//réécrire le buffer d'avant signal pour effacer ^\ ?
+void	handle_sigquit(int code)
 {
 	(void)code;
 	g_exit_status = 131;
-	//réécrire le buffer d'avant signal pour effacer ^\ ?
 }
 
-void handle_sigint(int code)
+void	handle_sigint(int code)
 {
 	(void)code;
 	rl_replace_line("", 0);
@@ -27,10 +27,9 @@ void handle_sigint(int code)
 	rl_on_new_line();
 	rl_redisplay();
 	g_exit_status = 130;
-
 }
 
-void handle_sigint_no_prompt(int code)
+void	handle_sigint_no_prompt(int code)
 {
 	(void)code;
 	write(2, "\n", 1);
