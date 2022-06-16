@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:20:08 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/15 15:49:19 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 16:43:57 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ int	cmd_not_found(t_token *command)
 	char	*cmd_name;
 
 	cmd_name = command->content;
+	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(cmd_name, 2);
 	ft_putendl_fd(": command not found", 2);
 	return (127);
@@ -130,6 +131,8 @@ int	search_cmd(t_vars *vars)
 	cmd_name = (*(vars->cmd))->content;
 	if (ft_strchr(cmd_name, '/') == NULL)
 	{
+		if (ft_strlen(cmd_name) == 0)
+			return (cmd_not_found(*(vars->cmd)));
 		ret = check_builtin(*(vars->cmd), vars->env, vars->bin, vars->cmd_line);
 		if (ret != -1)
 			return (ret);
