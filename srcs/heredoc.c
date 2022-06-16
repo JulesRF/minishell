@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 14:34:19 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 14:52:57 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ void	write_heredoc(int pipe_fd[2], char *line)
 	write(pipe_fd[1], "\n", 1);
 }
 
-void	heredoc_warning(t_list *heredoc_eofs, int *nb_eof)
+void	heredoc_warning(t_list **heredoc_eofs, int *nb_eof)
 {
 	ft_putstr_fd("minishell: warning: here-document delimited\
-		by end-of-file (wanted '", 2);
-	ft_putstr_fd(heredoc_eofs->content, 2);
+ by end-of-file (wanted '", 2);
+	ft_putstr_fd((*heredoc_eofs)->content, 2);
 	ft_putendl_fd("')", 2);
-	nb_eof++;
-	heredoc_eofs = heredoc_eofs->next;
+	*nb_eof = *nb_eof + 1;
+	(*heredoc_eofs) = (*heredoc_eofs)->next;
 }
 
 void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
@@ -40,7 +40,7 @@ void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
 	{
 		line = readline("> ");
 		if (line == NULL)
-			heredoc_warning(heredoc_eofs, &nb_eof);
+			heredoc_warning(&heredoc_eofs, &nb_eof);
 		if (line && nb_eof == (nb_heredocs - 1)
 			&& ft_strcmp(line, heredoc_eofs->content) != 0)
 			write_heredoc(pipe_fd, line);
