@@ -474,8 +474,8 @@ t_token *stop)
 
 char	*ft_dollarfind(char *to_find, char **env, t_list **bin)
 {
+	(void)bin;
 	int		i;
-	char	*dest;
 
 	i = 0;
 	if (!ft_strcmp(to_find, " "))
@@ -486,9 +486,6 @@ char	*ft_dollarfind(char *to_find, char **env, t_list **bin)
 			return (env[i] + (ft_strlen(to_find) + 1));
 		i++;
 	}
-	dest = malloc(sizeof(char) * (ft_strlen(to_find) + 1) + 1);//PROTECT
-	ft_lstadd_back(bin, ft_lstnew(dest));
-	
 	return ("");
 }
 
@@ -514,7 +511,6 @@ t_token	*ft_isdollar(t_token *token, t_list **bin, char **env)
 		token->next = token->next->next;
 	}
 	return (token->next);
-	// return (token);
 }
 
 void	ft_dollar(t_token *token, t_list **bin, char **env)
@@ -613,6 +609,63 @@ int	ft_first_quote(t_token *token)
 	return (0);
 }
 
+t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_token *stop)
+{
+	char	*str;
+	t_token *temp;
+
+	if (!ft_strcmp(token->content, "$") && token->type == 1)
+	{
+		if (!token->next)
+			return (token->next);
+		stop = token->next;
+		while (stop->content[i])
+		{
+			if (stop->content[i] && !ft_isalnum(stop->content[i]))
+			{
+				str = stop->content;
+				stop->content = ft_strdup(str + i);
+				ft_lstadd_back(bin, ft_lstnew(stop->content));
+				str[i] = '\0';
+				temp = ft_lstnew_token(bin, str, 2);
+				temp->next = stop;
+				token->next = temp;
+				return (temp);
+			}
+			i++;
+		}
+	}
+	return (token->next);
+}
+
+void	ft_sepdollar(t_token *token, t_list **bin, t_token *stop)
+{
+	while (token)
+	{
+		if (!ft_strcmp(token->content, "\'") && token->type == 3)
+		{
+			token = token->next;
+			if (!token)
+				return ;
+			while (token && (ft_strcmp(token->content, "\'")
+				|| token->type != 3))
+				token = token->next;
+		}
+		if (!token)
+			return ;
+		if (!ft_strcmp(token->content, "\"") && token->type == 3)
+		{
+			token = token->next;
+			if (!token)
+				return ;
+			while (token && (ft_strcmp(token->content, "\"")
+				|| token->type != 3))
+				token = ft_splitdollar(token, bin, 0, stop);//PROTECT
+		}
+		token = ft_splitdollar(token, bin, 0, stop);//PROTECT
+	}
+}
+
 int	ft_simplify(t_token **token, t_list **bin, char **env)
 {
 	t_token	*temp;
@@ -620,6 +673,8 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 
 	temp = NULL;
 	stop = NULL;
+	ft_sepdollar(*token, bin, stop);
+	ft_print(*token);
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
 	if (ft_first_quote(*token))
 	{
@@ -631,7 +686,6 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 		ft_simplequotes(*token, bin, temp, stop);
 		ft_doublequotes(*token, bin, temp, stop);
 	}
-	// ft_print(*token);
 	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	// printf("ca dit quoi le sang\n");
 	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
@@ -668,7 +722,7 @@ void	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
 			// ft_print(*token);
 			if (!ft_simplify(token, bin, *env)) //simplification des tokens
 			{
-				// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
+				ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
 				// envoie des infos a mon mate
 
 				// ret = search_cmd(*token, env);
