@@ -6,20 +6,20 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 12:31:16 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 13:36:44 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /**
- * @brief Set the initial input for execution to the input file if there is one.
+ * @brief Set the input for execution to the input file if there is one.
  * If not, the input is set to default.
  * @param vars variables related to command execution
  * @param redir variables related to redirections
  * @return int 1 if error, 0 otherwise
  */
-int	set_init_input(t_vars *vars, t_redir *redir)
+int	set_input(t_vars *vars, t_redir *redir)
 {
 	(void)vars;
 	if (redir->input_redir != -1)
@@ -162,7 +162,7 @@ int	redir_and_exec(t_vars *vars)
 		redir.ret = find_input_and_output_files(&((redir.cmd_table)[redir.i]), &redir, vars->bin, &heredoc_eofs, nb_heredocs, &count_heredocs);
 		// if (redir.ret != 0)
 		// 	continue ;
-		if (set_init_input(vars, &redir) == 1)
+		if (set_input(vars, &redir) == 1)
 			redir.ret = 1;
 		if (set_output(&redir) == 1)
 			redir.ret = 1;

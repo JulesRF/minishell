@@ -6,12 +6,11 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/14 15:37:13 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 13:30:43 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 int	ft_isnum(char *s)
 {
@@ -45,7 +44,6 @@ void	exit_prog(char *msg, int exit_status)
 		ft_putendl_fd(msg, 2);
 	exit(exit_status);
 }
-
 
 int	exit_too_many_args(t_token *command, char ***env, t_list **bin,
 	char *cmd_line)

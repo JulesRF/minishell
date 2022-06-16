@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 10:15:45 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 11:31:15 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 13:28:32 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,8 @@ int	handle_error(char *error_msg, int ret_value, char *to_free1, char *to_free2)
 	return (ret_value);
 }
 
-int	handle_errno(char *error_msg, int ret, t_token **to_free1, t_list **to_free2)
+int	handle_errno(char *error_msg, int ret, t_token **to_free1,
+	t_list **to_free2)
 {
 	perror(error_msg);
 	if (to_free1 != NULL)

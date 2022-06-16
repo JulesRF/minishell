@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 12:16:18 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 13:29:31 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,6 @@ int	get_nb_cmd_and_heredocs(t_token *commands, int *nb_heredocs)
 		commands = commands->next;
 	}
 	return (count);
-}
-
-
-int	handle_err_free_lst(char *error_msg, int ret, t_list **to_free)
-{
-	if (to_free != NULL)
-		ft_garbage(to_free);
-	if (error_msg)
-		ft_putendl_fd(error_msg, 2);
-	return (ret);
 }
 
 int find_input_and_output_files(t_token **commands, t_redir *redir, t_list **bin, t_list **heredoc_eofs, int nb_heredocs, int *count_heredocs)
