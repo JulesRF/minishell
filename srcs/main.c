@@ -674,7 +674,7 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 	temp = NULL;
 	stop = NULL;
 	ft_sepdollar(*token, bin, stop);
-	ft_print(*token);
+	// ft_print(*token);
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
 	if (ft_first_quote(*token))
 	{
@@ -722,7 +722,7 @@ void	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
 			// ft_print(*token);
 			if (!ft_simplify(token, bin, *env)) //simplification des tokens
 			{
-				ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
+				// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
 				// envoie des infos a mon mate
 
 				// ret = search_cmd(*token, env);
