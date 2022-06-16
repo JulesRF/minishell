@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 12:11:26 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 12:31:16 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,11 @@ int	set_init_input(t_vars *vars, t_redir *redir)
 {
 	(void)vars;
 	if (redir->input_redir != -1)
+	{
+		if (redir->nb_cmd > 1 && redir->i > 0)
+			close(redir->fdin);
 		redir->fdin = redir->input_redir;
+	}
 	else if (redir->i == 0)
 	{
 		redir->fdin = dup(redir->tmpin);
