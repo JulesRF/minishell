@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 14:55:44 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 15:27:04 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,8 @@ int	redir_and_exec(t_vars *vars)
 		return (1);
 	while (++(redir.i) < redir.nb_cmd)
 	{
+		redir.input_redir = -1;
+		redir.output_redir = -1;
 		redir.ret = find_in_out_files(&((redir.cmd_table)[redir.i]), &redir);
 		if (set_input(&redir) == 1)
 			redir.ret = 1;

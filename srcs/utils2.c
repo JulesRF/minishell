@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:18:27 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 09:44:50 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/16 15:34:28 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,4 +92,21 @@ t_token	**split_commands(t_token *commands, int nb_cmd, int i)
 			commands = commands->next;
 	}
 	return (cmd_table);
+}
+
+int	get_nb_cmd_and_heredocs(t_token *commands, int *nb_heredocs)
+{
+	int	count;
+
+	*nb_heredocs = 0;
+	count = 1;
+	while (commands)
+	{
+		if (commands->type == 1 && (ft_strcmp(commands->content, "|") == 0))
+			count++;
+		else if (commands->type == 5 && ft_strcmp(commands->content, "<<") == 0)
+			*nb_heredocs = *nb_heredocs + 1;
+		commands = commands->next;
+	}
+	return (count);
 }
