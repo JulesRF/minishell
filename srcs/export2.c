@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 14:28:12 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 15:50:45 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/17 10:24:13 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	print_env(char **sorted_env)
 		while (sorted_env[i][j])
 		{
 			ft_putchar_fd(sorted_env[i][j], 1);
-			if (sorted_env[i][j] == '=')
+			if (sorted_env[i][j] == '=' && endquotes == 0)
 			{
 				ft_putchar_fd('"', 1);
 				endquotes = 1;
