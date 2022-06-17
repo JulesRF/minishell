@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 10:06:53 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/17 09:52:16 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/17 09:58:41 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	update_pwd(char *pwd, int strlen, char ***env)
 		handle_errno("getcwd", 1, NULL, NULL);
 	if (ft_strcmp(pwd, "OLDPWD") == 0)
 		new_str = ft_strjoin("OLDPWD=", buffer);
-	else if (ft_strcmp(pwd, "PWD") == 0)
+	else
 		new_str = ft_strjoin("PWD=", buffer);
 	if (!new_str)
 		return (handle_error("Memory allocation error", 1, NULL, NULL));
