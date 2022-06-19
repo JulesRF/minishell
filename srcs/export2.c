@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 14:28:12 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/17 10:59:51 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/19 08:47:51 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,8 @@ int	var_name_is_valid(char *s, int *name_len)
 	*name_len = 1;
 	while (s && s[*name_len] && s[*name_len] != '=')
 	{
-		if ((ft_isalnum(s[*name_len]) == 0 && s[*name_len] != '_' && s[*name_len] != '+')
+		if ((ft_isalnum(s[*name_len]) == 0 && s[*name_len] != '_'
+				&& s[*name_len] != '+')
 			|| (s[*name_len] == '+' && s[*name_len + 1] != '='))
 		{
 			ft_putstr_fd("export: ", 2);

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/16 14:55:59 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/19 08:48:39 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,5 +105,7 @@ t_token **split_commands(t_token *commands, int nb_cmd, int i);
 int	get_child_status(int pid, int *ret);
 void	ft_delete_node(t_list **alst, t_list *to_del);
 int	fork_exec(t_vars *vars, t_redir *redir);
+int	concat_to_env(t_token *command, char ***env, int name_len);
+char	*get_env_var(char *key, char **env);
 
 #endif

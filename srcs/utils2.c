@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:18:27 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 15:34:28 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/19 08:47:11 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,4 +109,32 @@ int	get_nb_cmd_and_heredocs(t_token *commands, int *nb_heredocs)
 		commands = commands->next;
 	}
 	return (count);
+}
+
+/**
+ * @brief Return a string representation of the command and its arguments
+ * 
+ * @param command Linked list of command (name) and arguments
+ * @return char* NULL if error, the string containing the command and its 
+ * arguments otherwise
+ */
+char	*cmd_to_str(t_token *command)
+{
+	char	*args_str;
+	char	*tmp;
+
+	args_str = malloc(1);
+	if (!args_str)
+		return (NULL);
+	args_str[0] = '\0';
+	while (command && (command->type == 2 || command->type == 4))
+	{
+		tmp = args_str;
+		args_str = ft_strjoin(args_str, command->content);
+		free(tmp);
+		if (!args_str)
+			return (NULL);
+		command = command->next;
+	}
+	return (args_str);
 }

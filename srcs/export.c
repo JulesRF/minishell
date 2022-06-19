@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 11:24:42 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/17 12:05:11 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/19 08:41:16 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,55 +112,6 @@ int	add_var_to_env(char *s, char ***env)
 	*env = new_env;
 	free_strs_array(tmp);
 	return (0);
-}
-
-void rm_char_from_str(int index, char **str)
-{
-	int		i;
-	char	*s;
-
-	i = index;
-	s = *str;
-	while ((s + 1) && s[i + 1])
-	{
-		s[i] = s[i + 1];
-		i++;
-	}
-	s[i] = '\0';
-}
-
-int concat_to_env(t_token *command, char ***env, int name_len)
-{
-	char	*var_name;
-	char	*value;
-	char	*concat;
-	int		ret;
-	
-	ret = 0;
-	name_len--;
-	var_name = get_var_name(command->content, (name_len));
-	if (!var_name)
-		return (1);
-	value = get_env_value(var_name, *env);
-	rm_char_from_str((name_len), &(command->content));
-	if (value == NULL)
-		ret = add_var_to_env(command->content, env);
-	else
-	{
-		concat = ft_strjoin(var_name, "="); //remplacer
-		concat = ft_strjoin(concat, value);
-		concat = ft_strjoin(concat, &(command->content[name_len + 1]));
-		if (!concat)
-			ret = 1;
-		else
-		{
-			ret = set_var_in_env(concat, var_name, name_len, env);
-			free(concat);
-		}
-	}
-	free(var_name);
-	free(value);
-	return (ret);
 }
 
 /**

@@ -6,7 +6,7 @@
 #    By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/04 14:03:48 by jroux-fo          #+#    #+#              #
-#    Updated: 2022/06/15 09:36:28 by vfiszbin         ###   ########.fr        #
+#    Updated: 2022/06/19 08:51:00 by vfiszbin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,7 @@ SRCS_FILES	=	main.c	\
 				cd.c\
 				export.c\
 				export2.c\
+				export3.c\
 				env.c\
 				unset.c\
 				redir_and_exec.c\
