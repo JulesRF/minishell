@@ -6,7 +6,7 @@
 /*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/20 18:40:16 by jroux-fo         ###   ########.fr       */
+/*   Updated: 2022/06/20 18:43:31 by jroux-fo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -679,7 +679,7 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 	temp = NULL;
 	stop = NULL;
 	ft_sepdollar(*token, bin, stop);
-	ft_print(*token);
+	// ft_print(*token);
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
 	if (ft_first_quote(*token))
 	{
