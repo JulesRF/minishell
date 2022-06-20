@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/16 13:29:41 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/20 17:39:46 by jroux-fo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -498,7 +498,10 @@ t_token	*ft_isdollar(t_token *token, t_list **bin, char **env)
 	if (!ft_strcmp(token->content, "$") && token->type == 1)
 	{
 		if (!token->next || token->next->type != 2)
+		{
+			token->type = 2;
 			return (token->next);
+		}
 		if (ft_strcmp(token->next->content, "?") == 0)
 		{
 			token->content = ft_itoa(g_exit_status);
@@ -508,7 +511,6 @@ t_token	*ft_isdollar(t_token *token, t_list **bin, char **env)
 		}
 		else
 			token->content = ft_dollarfind(token->next->content, env, bin);
-
 		token->type = 2;
 		token->next = token->next->next;
 	}
@@ -618,7 +620,7 @@ t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_token *stop)
 
 	if (!ft_strcmp(token->content, "$") && token->type == 1)
 	{
-		if (!token->next)
+		if (!token->next || token->next->type != 2)
 			return (token->next);
 		stop = token->next;
 		while (stop->content[i])
