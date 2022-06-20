@@ -6,7 +6,7 @@
 /*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/20 17:39:46 by jroux-fo         ###   ########.fr       */
+/*   Updated: 2022/06/20 18:40:16 by jroux-fo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -484,7 +484,8 @@ char	*ft_dollarfind(char *to_find, char **env, t_list **bin)
 		return ("$ ");
 	while (env[i])
 	{
-		if (!ft_strncmp2(env[i], to_find, ft_strlen(to_find)))
+		if ((!ft_strncmp2(env[i], to_find, ft_strlen(to_find)))
+			&& (env[i][ft_strlen(to_find)] == '='))
 			return (env[i] + (ft_strlen(to_find) + 1));
 		i++;
 	}
@@ -678,7 +679,7 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 	temp = NULL;
 	stop = NULL;
 	ft_sepdollar(*token, bin, stop);
-	// ft_print(*token);
+	ft_print(*token);
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
 	if (ft_first_quote(*token))
 	{
