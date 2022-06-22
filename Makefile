@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+         #
+#    By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/04 14:03:48 by jroux-fo          #+#    #+#              #
-#    Updated: 2022/06/19 08:51:00 by vfiszbin         ###   ########.fr        #
+#    Updated: 2022/06/22 15:53:39 by jroux-fo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,16 @@ SRCS_FILES	=	main.c	\
 				signals.c\
 				utils.c\
 				utils2.c\
-
+				garbage.c\
+				token_utils.c\
+				parse_utils.c\
+				token.c\
+				quotes.c\
+				dollar.c\
+				simplify.c\
+				prompt.c\
+				simplify_utils.c\
+				
 FLAGS = -Wall -Werror -Wextra -g3
 
 INCLUDES = header

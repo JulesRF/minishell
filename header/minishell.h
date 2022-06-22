@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/19 08:48:39 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/22 15:54:53 by jroux-fo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,28 +68,21 @@ extern int g_exit_status;
 //	main.c
 int	main(int argc, char **argv, char **env);
 int search_cmd(t_vars *vars);
-void	ft_print(t_token *token);
-int	ft_strcmp(char *s1, char *s2);
 int echo(t_token *command);
 int handle_error(char *error_msg, int ret_value, char *to_free1, char *to_free2);
 int pwd();
 int cd(t_token *command, char ***env);
 int export(t_token *command, char ***env);
 int env_builtin(char **env);
-void free_strs_array(char **strs);
 char *get_env_value(char *key, char **env);
 int unset(t_token *command, char ***env);
-void	ft_lstadd_back_token(t_token **alst, t_token *new);
 int redir_and_exec(t_vars *vars);
-void ft_delete_token(t_token **alst, t_token *to_del);
 void free_strs(char **strs);
-char **dup_env(char **envp);
 void handle_sigquit(int code);
 void handle_sigint(int code);
 void handle_sigint_no_prompt(int code);
 int	handle_errno(char *error_msg, int ret, t_token **to_free1, t_list **to_free2);
 int exit_builtin(t_token *command, char ***env, t_list **bin, char *cmd_line);
-void	ft_garbage(t_list **bin);
 int add_var_to_env(char *s, char ***env);
 int set_var_in_env(char *s, char *var_name, int name_len, char ***env);
 int	print_sorted_env(char **env);
@@ -107,5 +100,63 @@ void	ft_delete_node(t_list **alst, t_list *to_del);
 int	fork_exec(t_vars *vars, t_redir *redir);
 int	concat_to_env(t_token *command, char ***env, int name_len);
 char	*get_env_var(char *key, char **env);
+
+//	garbage.c
+void	ft_garbage(t_list **bin);
+t_list	*ft_lstnew(void *content);
+t_list	*ft_lstlast(t_list *lst);
+void	ft_lstadd_back(t_list **alst, t_list *new);
+
+//	token_utils.c
+t_token	*ft_lstnew_token(t_list **bin, char *content, int type);
+t_token	*ft_lstlast_token(t_token *lst);
+void	ft_lstadd_back_token(t_token **alst, t_token *new);
+void	ft_delete_token(t_token **alst, t_token *to_del);
+void	ft_clean_token(t_token **token);
+
+//	parse_utils.c
+char	*ft_strdup(const char *s1);
+int		ft_strcmp(char *s1, char *s2);
+void	ft_preparse(int argc, char **argv, char **env);
+void	ft_print(t_token *token);
+
+//	token.c
+void	ft_parse_operator(t_token **token, t_list **bin, char c);
+void	ft_parse_ponct(t_token **token, t_list **bin, char c);
+int		ft_parse_redir(t_token **token, t_list **bin, char c, char *str);
+int		ft_parse_word(t_token **token, t_list **bin, char *str);
+void	ft_token(t_token **token, t_list **bin, char *str);
+
+//	quotes.c
+t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin);
+t_token	*ft_find_dquote(t_token *token);
+void	ft_doublequotes(t_token *token, t_list **bin, t_token *temp, t_token *stop);
+t_token	*ft_find_squote(t_token *token);
+void	ft_simplequotes(t_token *token, t_list **bin, t_token *temp, t_token *stop);
+
+//	dollar.c
+char	*ft_dollarfind(char *to_find, char **env, t_list **bin);
+t_token	*ft_isdollar(t_token *token, t_list **bin, char **env);
+void	ft_dollar(t_token *token, t_list **bin, char **env);
+t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_token *stop);
+void	ft_sepdollar(t_token *token, t_list **bin, t_token *stop);
+
+//	simplify.c
+int		ft_piperedir(t_token *token, t_list **bin);
+void	ft_rmvquotes(t_token **token, t_list **bin);
+void	ft_joinwords(t_token **token, t_list **bin);
+int		ft_first_quote(t_token *token);
+int		ft_simplify(t_token **token, t_list **bin, char **env);
+
+//	prompt.c
+int		ft_closed_quotes(char *str, t_list **bin);
+int		ft_syntax(char *str, t_list **bin);
+void	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd);
+char	**dup_env(char **envp);
+void	free_strs_array(char **strs);
+
+//	simplify_utils.c
+void	ft_supspace(t_token **token);
+t_token	*ft_addempty(t_token *token, t_token *stop, t_list **bin);
 
 #endif
