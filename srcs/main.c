@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/22 15:42:41 by jroux-fo         ###   ########.fr       */
+/*   Updated: 2022/06/22 19:05:32 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -783,6 +783,15 @@ int g_exit_status;
 // 	free(strs); //est ce qu'on ne devrait pas avoir char ***strs pour ici ?
 // }
 
+
+int increment_shlvl(char **env)
+{
+	char *shlvl_str;
+
+	get_env_value("SHLVL", env);
+	set_var_in_env("SHLVL=3");
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_list	*bin;      // garbage collector, tout ce que je malloc, je le fous dedans
@@ -796,7 +805,8 @@ int	main(int argc, char **argv, char **envp)
 
 	env = dup_env(envp);
 	if (!env)
-		exit(1); // exit code ?
+		exit(1);
+	increment_shlvl(env);
 
 	// if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
 	// {
