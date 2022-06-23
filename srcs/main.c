@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/22 19:05:32 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/23 08:48:05 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -784,12 +784,37 @@ int g_exit_status;
 // }
 
 
-int increment_shlvl(char **env)
+int increment_shlvl(char ***env)
 {
 	char *shlvl_str;
+	char *shlvl_var;
+	int shlvl;
 
-	get_env_value("SHLVL", env);
-	set_var_in_env("SHLVL=3");
+	shlvl_str = get_env_value("SHLVL", *env);
+	if (!shlvl_str)
+		return (1);
+	shlvl = ft_atoi(shlvl_str);
+	free(shlvl_str);
+	shlvl++;
+	if (shlvl < 0)
+		shlvl = 0;
+	else if (shlvl >= 1000)
+	{
+		ft_putstr_fd("minishell: warning: shell level (", 2);
+		ft_putnbr_fd(shlvl, 2);
+		ft_putendl_fd(") too high, resetting to 1", 2);
+		shlvl = 1;
+	}
+	shlvl_str = ft_itoa(shlvl);
+	if (!shlvl_str)
+		return (1);
+	shlvl_var = ft_strjoin("SHLVL=", shlvl_str);
+	free(shlvl_str);
+	if (!shlvl_var)
+		return (1);
+	shlvl = set_var_in_env(shlvl_var, "SHLVL", 5, env);
+	free(shlvl_var);
+	return (shlvl);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -806,7 +831,11 @@ int	main(int argc, char **argv, char **envp)
 	env = dup_env(envp);
 	if (!env)
 		exit(1);
-	increment_shlvl(env);
+	if (increment_shlvl(&env) == 1)
+	{
+		free_strs_array(env);
+		exit(1);
+	}
 
 	// if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
 	// {
