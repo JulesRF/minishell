@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 14:52:57 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/23 17:22:08 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,16 @@ void	heredoc_warning(t_list **heredoc_eofs, int *nb_eof)
 	(*heredoc_eofs) = (*heredoc_eofs)->next;
 }
 
+
 void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
 {
 	char	*line;
 	int		nb_eof;
 
+
 	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
 	nb_eof = 0;
+
 	while (1)
 	{
 		line = readline("> ");
@@ -80,7 +82,10 @@ int	multiple_heredoc(t_list *heredoc_eofs, int *input_redir, int nb_heredocs)
 		start_heredoc(heredoc_eofs, nb_heredocs, pipe_fd);
 	else
 	{
+		signal(SIGQUIT, handle_sigquit_heredoc);
 		get_child_status(pid, &ret);
+		signal(SIGINT, handle_sigint);
+		signal(SIGQUIT, handle_sigquit);
 		if (ret != 0)
 			return (ret);
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/22 15:54:53 by jroux-fo         ###   ########.fr       */
+/*   Updated: 2022/06/23 17:17:48 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <../libft/libft.h>
 # include <errno.h>
 # include <fcntl.h>
+
 
 #include <dirent.h>
 
@@ -81,6 +82,8 @@ void free_strs(char **strs);
 void handle_sigquit(int code);
 void handle_sigint(int code);
 void handle_sigint_no_prompt(int code);
+void handle_sigint_heredoc(int code);
+void	handle_sigquit_heredoc(int code);
 int	handle_errno(char *error_msg, int ret, t_token **to_free1, t_list **to_free2);
 int exit_builtin(t_token *command, char ***env, t_list **bin, char *cmd_line);
 int add_var_to_env(char *s, char ***env);
