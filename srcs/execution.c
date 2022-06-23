@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/23 17:17:41 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/23 18:15:37 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ int	get_child_status(int pid, int *ret)
 		*ret = *ret + 128;
 	}
 	signal(SIGINT, handle_sigint);
+	if (*ret == 130)
+		write(1, "\n", 1);
 	return (0);
 }
 

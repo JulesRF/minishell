@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/23 17:17:14 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/23 18:18:52 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,8 @@ int	redir_and_exec(t_vars *vars)
 
 	if (save_fd_and_init_vars(vars, &redir) == 1)
 		return (1);
+
+	signal(SIGINT, handle_sigint_no_prompt);
 	while (++(redir.i) < redir.nb_cmd)
 	{
 		redir.input_redir = -1;
@@ -151,5 +153,6 @@ int	redir_and_exec(t_vars *vars)
 			redir.ret = search_cmd(vars);
 	}
 	restore_in_out_and_wait(vars, &redir);
+	signal(SIGINT, handle_sigint);
 	return (redir.ret);
 }
