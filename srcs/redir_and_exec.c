@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/24 11:44:08 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/24 12:55:55 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,6 @@ int	redir_and_exec(t_vars *vars)
 
 	if (save_fd_and_init_vars(vars, &redir) == 1)
 		return (1);
-
 	signal(SIGINT, handle_sigint_no_prompt);
 	while (++(redir.i) < redir.nb_cmd)
 	{
