@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/24 11:43:08 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/24 15:17:24 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ void	ft_delete_node(t_list **alst, t_list *to_del);
 int	fork_exec(t_vars *vars, t_redir *redir);
 int	concat_to_env(t_token *command, char ***env, int name_len);
 char	*get_env_var(char *key, char **env);
+int	rm_var_from_env(char *s, char ***env);
 
 //	garbage.c
 void	ft_garbage(t_list **bin);

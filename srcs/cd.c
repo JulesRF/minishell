@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 10:06:53 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/17 09:58:41 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/24 15:25:16 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,20 +40,33 @@ int	cd_oldpwd(char **path, char **env, int *path_allocated)
  * @param env environment variables
  * @return int 1 if error, 0 otherwise
  */
-int	update_pwd(char *pwd, int strlen, char ***env)
+int	update_pwd(char *pwd, int strlen, char ***env, char *old_pwd)
 {
 	char	*new_str;
 	char	*old_str;
 	char	buffer[BUFFER_SIZE];
 
-	if (getcwd(buffer, BUFFER_SIZE) == NULL)
-		handle_errno("getcwd", 1, NULL, NULL);
-	if (ft_strcmp(pwd, "OLDPWD") == 0)
-		new_str = ft_strjoin("OLDPWD=", buffer);
+	if (old_pwd == NULL && strcmp(pwd, "OLDPWD") == 0)
+	{
+		old_str = get_env_var("OLDPWD", *env);
+		if (old_str)
+		{
+			rm_var_from_env(old_str, env);
+			free(old_str);
+		}
+		return (0);
+	}
+	if (strcmp(pwd, "PWD") == 0)
+	{
+		if (getcwd(buffer, BUFFER_SIZE) == NULL)
+			handle_errno("chdir: error retrieving current directory: \
+	getcwd: cannot access parent directories", 1, NULL, NULL);
+			new_str = ft_strjoin("PWD=", buffer);
+		if (!new_str)
+			return (handle_error("Memory allocation error", 1, NULL, NULL));
+	}
 	else
-		new_str = ft_strjoin("PWD=", buffer);
-	if (!new_str)
-		return (handle_error("Memory allocation error", 1, NULL, NULL));
+		new_str = ft_strjoin("OLDPWD=", old_pwd);
 	old_str = get_env_value(pwd, *env);
 	if (!old_str)
 	{
@@ -69,10 +82,12 @@ int	update_pwd(char *pwd, int strlen, char ***env)
 	return (0);
 }
 
-int	free_path(char *path, int path_allocated, int ret)
+int	free_path(char *path, int path_allocated, int ret, char *old_pwd)
 {
 	if (path_allocated)
 		free(path);
+	if (old_pwd)
+		free(old_pwd);
 	return (ret);
 }
 
@@ -112,7 +127,9 @@ int	check_no_arg(t_token **command, char **env, char **path,
 int	cd(t_token *command, char ***env)
 {
 	char	*path;
+	char	*old_pwd;
 	int		path_allocated;
+
 
 	if (check_no_arg(&command, *env, &path, &path_allocated) == 1)
 		return (1);
@@ -127,12 +144,18 @@ int	cd(t_token *command, char ***env)
 	}
 	else
 		path = command->content;
-	if (update_pwd("OLDPWD", 6, env) == 1)
-		return (free_path(path, path_allocated, 1));
+	old_pwd = get_env_value("PWD", *env);
 	if (chdir(path) == -1)
-		return (handle_errno(path, free_path(path, path_allocated, 1), NULL,
+	{
+		path = ft_strjoin("cd: ", path);
+		if (!path)
+			return (1);
+		return (handle_errno(path, free_path(path, path_allocated, 1, old_pwd), NULL,
 				NULL));
-	if (update_pwd("PWD", 3, env) == 1)
-		return (free_path(path, path_allocated, 1));
-	return (free_path(path, path_allocated, 0));
+	}
+	if (update_pwd("PWD", 3, env, NULL) == 1)
+		return (free_path(path, path_allocated, 1, old_pwd));
+	if (update_pwd("OLDPWD", 6, env, old_pwd) == 1)
+		return (free_path(path, path_allocated, 1,old_pwd));
+	return (free_path(path, path_allocated, 0, old_pwd));
 }

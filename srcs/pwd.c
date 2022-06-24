@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 10:03:59 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/14 10:50:33 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/24 14:20:28 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ int	pwd(void)
 
 	ret = getcwd(buffer, BUFFER_SIZE);
 	if (ret == NULL)
-		return (handle_error("getcwd", 1, NULL, NULL));
+		return (handle_errno("pwd: error retrieving current directory: \
+getcwd: cannot access parent directories", 1, NULL, NULL));
 	ft_putendl_fd(ret, 1);
 	return (0);
 }
