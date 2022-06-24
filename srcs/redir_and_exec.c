@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/23 18:18:52 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/24 11:44:08 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ int	set_output(t_redir *redir)
 int	restore_in_out_and_wait(t_vars *vars, t_redir *redir)
 {
 	int	wait_ret;
+	int	ret_other_processes;
 
 	free(redir->cmd_table);
 	if (dup2(redir->tmpin, 0) == -1)
@@ -92,10 +93,11 @@ int	restore_in_out_and_wait(t_vars *vars, t_redir *redir)
 	if (redir->nb_cmd > 1)
 	{
 		if (redir->ret == 0)
-			get_child_status(vars->pid, &(redir->ret));
+			get_child_status(vars->pid, &(redir->ret), 0, 0);
 		wait_ret = 0;
 		while (wait_ret != -1)
-			wait_ret = waitpid(-1, &(redir->i), 0);
+			wait_ret = get_child_status(-1, &ret_other_processes, 0, 1);
+
 	}
 	return (0);
 }

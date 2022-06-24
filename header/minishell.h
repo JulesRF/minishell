@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/23 17:17:48 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/24 11:43:08 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int	multiple_heredoc(t_list *heredoc_eofs, int *input_redir, int nb_heredocs);
 int find_in_out_files(t_token **commands, t_redir *redir);
 int	get_nb_cmd_and_heredocs(t_token *commands, int *nb_heredocs);
 t_token **split_commands(t_token *commands, int nb_cmd, int i);
-int	get_child_status(int pid, int *ret);
+int	get_child_status(int pid, int *ret, int change_sig, int ignore_err);
 void	ft_delete_node(t_list **alst, t_list *to_del);
 int	fork_exec(t_vars *vars, t_redir *redir);
 int	concat_to_env(t_token *command, char ***env, int name_len);

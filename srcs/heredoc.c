@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/23 18:00:28 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/24 11:40:55 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int	multiple_heredoc(t_list *heredoc_eofs, int *input_redir, int nb_heredocs)
 	else
 	{
 		signal(SIGQUIT, handle_sigquit_heredoc);
-		get_child_status(pid, &ret);
+		get_child_status(pid, &ret, 1, 0);
 		signal(SIGINT, handle_sigint);
 		signal(SIGQUIT, handle_sigquit);
 		if (ret != 0)

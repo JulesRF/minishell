@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/23 18:15:37 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/24 11:40:48 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,18 @@ int	find_error_status(char *path)
 	return (ret);
 }
 
-int	get_child_status(int pid, int *ret)
+int	get_child_status(int pid, int *ret, int change_sig, int ignore_err)
 {
 	int		status;
 
-	signal(SIGINT, handle_sigint_no_prompt);
+	if (change_sig)
+		signal(SIGINT, handle_sigint_no_prompt);
 	if (waitpid(pid, &status, 0) == -1)
+	{
+		if (ignore_err)
+			return (-1);
 		return (handle_errno("waitpid", 1, NULL, NULL));
+	}
 	if (WIFEXITED(status))
 		*ret = WEXITSTATUS(status);
 	if (WIFSIGNALED(status))
@@ -44,7 +49,8 @@ int	get_child_status(int pid, int *ret)
 		*ret = WTERMSIG(status);
 		*ret = *ret + 128;
 	}
-	signal(SIGINT, handle_sigint);
+	if (change_sig)
+		signal(SIGINT, handle_sigint);
 	if (*ret == 130)
 		write(1, "\n", 1);
 	return (0);
@@ -90,7 +96,7 @@ int	exec_cmd(t_token *command, char **env, pid_t pid)
 		else if (pid == 0)
 			start_exec(args, env);
 		else
-			if (get_child_status(pid, &ret) == 1)
+			if (get_child_status(pid, &ret, 1, 0) == 1)
 				return (1);
 	}
 	else
