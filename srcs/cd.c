@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 10:06:53 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/24 15:25:16 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/24 20:14:42 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	update_pwd(char *pwd, int strlen, char ***env, char *old_pwd)
 	{
 		if (getcwd(buffer, BUFFER_SIZE) == NULL)
 			handle_errno("chdir: error retrieving current directory: \
-	getcwd: cannot access parent directories", 1, NULL, NULL);
+getcwd: cannot access parent directories", 1, NULL, NULL);
 			new_str = ft_strjoin("PWD=", buffer);
 		if (!new_str)
 			return (handle_error("Memory allocation error", 1, NULL, NULL));
@@ -84,7 +84,7 @@ int	update_pwd(char *pwd, int strlen, char ***env, char *old_pwd)
 
 int	free_path(char *path, int path_allocated, int ret, char *old_pwd)
 {
-	if (path_allocated)
+	if (path_allocated && path)
 		free(path);
 	if (old_pwd)
 		free(old_pwd);
@@ -129,7 +129,7 @@ int	cd(t_token *command, char ***env)
 	char	*path;
 	char	*old_pwd;
 	int		path_allocated;
-
+	char	buffer[BUFFER_SIZE];
 
 	if (check_no_arg(&command, *env, &path, &path_allocated) == 1)
 		return (1);
@@ -144,15 +144,24 @@ int	cd(t_token *command, char ***env)
 	}
 	else
 		path = command->content;
+
+	if (getcwd(buffer, BUFFER_SIZE) == NULL && path[0] == '.')
+	{
+		printf("GRB\n");
+		ft_putstr_fd("minishell: cd: ", 2);
+		ft_putstr_fd(path, 2);
+		ft_putendl_fd(": No such file or directory", 2);
+		return (1);
+	}
+
 	old_pwd = get_env_value("PWD", *env);
 	if (chdir(path) == -1)
 	{
 		path = ft_strjoin("cd: ", path);
-		if (!path)
-			return (1);
-		return (handle_errno(path, free_path(path, path_allocated, 1, old_pwd), NULL,
-				NULL));
+		handle_errno(path, 1, NULL, NULL);
+		return  free_path(path, 1, 1, old_pwd);
 	}
+
 	if (update_pwd("PWD", 3, env, NULL) == 1)
 		return (free_path(path, path_allocated, 1, old_pwd));
 	if (update_pwd("OLDPWD", 6, env, old_pwd) == 1)
