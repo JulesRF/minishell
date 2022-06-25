@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/24 11:40:55 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/25 10:11:05 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
 {
 	char	*line;
 	int		nb_eof;
-
 
 	signal(SIGINT, SIG_DFL);
 	nb_eof = 0;

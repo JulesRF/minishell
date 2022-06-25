@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/24 13:28:40 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/25 10:09:08 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,9 @@ int	get_child_status(int pid, int *ret, int change_sig, int ignore_err)
 		signal(SIGINT, handle_sigquit);
 	}
 	if (*ret == 130)
-		write(1, "\n", 1);
+		write(2, "\n", 1);
 	if (*ret == 131 && !ignore_err)
-		write(1, "Quit (core dumped)\n", 19);
+		write(2, "Quit (core dumped)\n", 19);
 	return (0);
 }
 
