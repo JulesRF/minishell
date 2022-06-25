@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/25 10:11:05 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/25 12:23:44 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
 
 	signal(SIGINT, SIG_DFL);
 	nb_eof = 0;
+	
+	close(pipe_fd[0]);
 
 	while (1)
 	{
@@ -66,12 +68,13 @@ void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
  * @param nb_heredocs the overall number of heredocs 
  * @return int 0 if no error, n > 0 otherwise
  */
-int	multiple_heredoc(t_list *heredoc_eofs, int *input_redir, int nb_heredocs)
+int	multiple_heredoc(t_list *heredoc_eofs, int *heredoc_redir, int nb_heredocs)
 {
 	int		pipe_fd[2];
 	pid_t	pid;
 	int		ret;
 
+	// fprintf(stderr,"in multiple_heredoc\n");
 	if (pipe(pipe_fd) == -1)
 		return (handle_errno("dup", -1, NULL, NULL));
 	pid = fork();
@@ -88,11 +91,14 @@ int	multiple_heredoc(t_list *heredoc_eofs, int *input_redir, int nb_heredocs)
 		if (ret != 0)
 			return (ret);
 	}
-	dup2(pipe_fd[0], 0);
+	// *heredoc_redir = dup(0);
+	// *heredoc_redir = dup(pipe_fd[0]);
+	// fprintf(stderr,"\nFD\n");
 	close(pipe_fd[1]);
-	close(pipe_fd[0]);
-	*input_redir = dup(0);
-	if (*input_redir == -1)
+	*heredoc_redir = dup(pipe_fd[0]);
+	// close(pipe_fd[0]);
+	// *heredoc_redir = dup(0);
+	if (*heredoc_redir == -1)
 		return (handle_errno("dup", -1, NULL, NULL));
 	return (0);
 }

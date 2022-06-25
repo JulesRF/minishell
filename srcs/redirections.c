@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 15:36:57 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/25 12:23:21 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ int	add_heredoc_eof_to_list(t_token **cur, t_token **commands, t_redir *redir)
 	char	*heredoc_eof;
 	t_list	*node;
 
+	(void)commands;
 	heredoc_eof = ft_strdup((*cur)->next->content);
 	if (!heredoc_eof)
 		return (1);
@@ -63,8 +64,6 @@ int	add_heredoc_eof_to_list(t_token **cur, t_token **commands, t_redir *redir)
 		return (1);
 	}
 	ft_lstadd_back(&(redir->heredoc_eofs), node);
-	ft_delete_token(commands, (*cur)->next);
-	ft_delete_token(commands, *cur);
 	redir->count_heredocs = redir->count_heredocs + 1;
 	return (0);
 }
@@ -88,8 +87,12 @@ int	check_token_is_in_out_file(t_token **cur, t_token **commands,
 			return (1);
 	}
 	else if ((*cur)->type == 5 && ft_strcmp((*cur)->content, "<<") == 0)
-		if (add_heredoc_eof_to_list(cur, commands, redir) == 1)
-			return (1);
+	{
+		ft_delete_token(commands, (*cur)->next);
+		ft_delete_token(commands, *cur);
+		redir->count_heredocs = redir->count_heredocs + 1;
+	}
+
 	return (0);
 }
 
@@ -103,7 +106,6 @@ int	check_token_is_in_out_file(t_token **cur, t_token **commands,
 int	find_in_out_files(t_token **commands, t_redir *redir)
 {
 	t_token	*cur;
-	int		ret;
 
 	cur = *commands;
 	while (cur)
@@ -117,11 +119,35 @@ int	find_in_out_files(t_token **commands, t_redir *redir)
 	{
 		if (redir->input_redir != -1)
 			close(redir->input_redir);
-		ret = multiple_heredoc(redir->heredoc_eofs, &(redir->input_redir),
+		// dup2(redir->heredoc_redir, 0);
+		redir->input_redir = dup(redir->heredoc_redir); // faut dup ???
+	}
+	return (0);
+}
+
+
+int	find_heredocs(t_token **commands, t_redir *redir)
+{
+	t_token	*cur;
+	int		ret;
+
+	ret = 0;
+	cur = *commands;
+	while (cur)
+	{
+		if (cur->type == 5 && ft_strcmp(cur->content, "<<") == 0)
+			if (add_heredoc_eof_to_list(&cur, commands, redir) == 1)
+				return (1);
+		cur = cur->next;
+	}
+	if (redir->count_heredocs > 0)
+	{
+		// fprintf(stderr,"before multiple_heredoc\n");
+		ret = multiple_heredoc(redir->heredoc_eofs, &(redir->heredoc_redir),
 				redir->count_heredocs);
 		ft_garbage(&(redir->heredoc_eofs));
-		if (ret != 0)
-			return (ret);
 	}
+	if (ret != 0)
+		return (ret);
 	return (0);
 }

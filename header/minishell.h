@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/24 18:37:08 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/25 10:44:47 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef struct s_redir
 	int		fdin;
 	int		fdout;
 	int		input_redir;
+	int		heredoc_redir;
 	int		output_redir;
 	int		fdpipe[2];
 	t_token	**cmd_table;
@@ -104,6 +105,7 @@ int	fork_exec(t_vars *vars, t_redir *redir);
 int	concat_to_env(t_token *command, char ***env, int name_len);
 char	*get_env_var(char *key, char **env);
 int	rm_var_from_env(char *s, char ***env);
+int	find_heredocs(t_token **commands, t_redir *redir);
 
 //	garbage.c
 void	ft_garbage(t_list **bin);
