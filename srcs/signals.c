@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/11 11:26:25 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/25 10:08:47 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/25 15:30:59 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,19 @@ void	handle_sigint(int code)
 void	handle_sigint_no_prompt(int code)
 {
 	(void)code;
-	// write(1, "\n", 1);
 	g_exit_status = 130;
+}
+
+void	change_signals(int i)
+{
+	if (i == 1)
+	{
+		signal(SIGINT, handle_sigint_no_prompt);
+		signal(SIGQUIT, handle_sigquit_heredoc);
+	}
+	else if (i == 2)
+	{
+		signal(SIGINT, handle_sigint);
+		signal(SIGQUIT, handle_sigquit);
+	}
 }

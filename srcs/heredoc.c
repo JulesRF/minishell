@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/25 12:23:44 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/25 14:52:36 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void	heredoc_warning(t_list **heredoc_eofs, int *nb_eof)
 	(*heredoc_eofs) = (*heredoc_eofs)->next;
 }
 
-
 void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
 {
 	char	*line;
@@ -36,9 +35,7 @@ void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
 
 	signal(SIGINT, SIG_DFL);
 	nb_eof = 0;
-	
 	close(pipe_fd[0]);
-
 	while (1)
 	{
 		line = readline("> ");
@@ -74,7 +71,6 @@ int	multiple_heredoc(t_list *heredoc_eofs, int *heredoc_redir, int nb_heredocs)
 	pid_t	pid;
 	int		ret;
 
-	// fprintf(stderr,"in multiple_heredoc\n");
 	if (pipe(pipe_fd) == -1)
 		return (handle_errno("dup", -1, NULL, NULL));
 	pid = fork();
@@ -91,14 +87,43 @@ int	multiple_heredoc(t_list *heredoc_eofs, int *heredoc_redir, int nb_heredocs)
 		if (ret != 0)
 			return (ret);
 	}
-	// *heredoc_redir = dup(0);
-	// *heredoc_redir = dup(pipe_fd[0]);
-	// fprintf(stderr,"\nFD\n");
 	close(pipe_fd[1]);
 	*heredoc_redir = dup(pipe_fd[0]);
-	// close(pipe_fd[0]);
-	// *heredoc_redir = dup(0);
 	if (*heredoc_redir == -1)
 		return (handle_errno("dup", -1, NULL, NULL));
+	return (0);
+}
+
+/**
+ * @brief Find and handle all heredocs in command
+ * 
+ * @param commands entire command
+ * @param redir variables related to redirections
+ * @return int 
+ */
+int	find_heredocs(t_token **commands, t_redir *redir)
+{
+	t_token	*cur;
+	int		ret;
+
+	redir->heredoc_eofs = NULL;
+	redir->count_heredocs = 0;
+	ret = 0;
+	cur = *commands;
+	while (cur)
+	{
+		if (cur->type == 5 && ft_strcmp(cur->content, "<<") == 0)
+			if (add_heredoc_eof_to_list(&cur, commands, redir) == 1)
+				return (1);
+		cur = cur->next;
+	}
+	if (redir->count_heredocs > 0)
+	{
+		ret = multiple_heredoc(redir->heredoc_eofs, &(redir->heredoc_redir),
+				redir->count_heredocs);
+		ft_garbage(&(redir->heredoc_eofs));
+	}
+	if (ret != 0)
+		return (ret);
 	return (0);
 }

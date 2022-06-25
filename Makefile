@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+         #
+#    By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/04 14:03:48 by jroux-fo          #+#    #+#              #
-#    Updated: 2022/06/22 15:53:39 by jroux-fo         ###   ########.fr        #
+#    Updated: 2022/06/25 15:43:08 by vfiszbin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ SRCS_FILES	=	main.c	\
 				echo.c\
 				pwd.c\
 				cd.c\
+				cd2.c\
 				export.c\
 				export2.c\
 				export3.c\

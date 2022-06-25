@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/25 10:44:47 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/25 15:59:00 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,12 @@ int	concat_to_env(t_token *command, char ***env, int name_len);
 char	*get_env_var(char *key, char **env);
 int	rm_var_from_env(char *s, char ***env);
 int	find_heredocs(t_token **commands, t_redir *redir);
+int	add_heredoc_eof_to_list(t_token **cur, t_token **commands, t_redir *redir);
+void	change_signals(int i);
+int	unset_oldpwd(char ***env);
+int	get_current_pwd(char **new_str);
+int	path_exists(char *path);
+int	set_new_dir(char **path, char **old_pwd, char **env);
 
 //	garbage.c
 void	ft_garbage(t_list **bin);

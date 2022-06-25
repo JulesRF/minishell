@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/25 10:09:08 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/25 15:21:46 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,7 @@ int	get_child_status(int pid, int *ret, int change_sig, int ignore_err)
 	int		status;
 
 	if (change_sig)
-	{
-		signal(SIGINT, handle_sigint_no_prompt);
-		signal(SIGQUIT, handle_sigquit_heredoc);
-	}
+		change_signals(1);
 	if (waitpid(pid, &status, 0) == -1)
 	{
 		if (ignore_err)
@@ -53,10 +50,7 @@ int	get_child_status(int pid, int *ret, int change_sig, int ignore_err)
 		*ret = *ret + 128;
 	}
 	if (change_sig)
-	{
-		signal(SIGINT, handle_sigint);
-		signal(SIGINT, handle_sigquit);
-	}
+		change_signals(2);
 	if (*ret == 130)
 		write(2, "\n", 1);
 	if (*ret == 131 && !ignore_err)
