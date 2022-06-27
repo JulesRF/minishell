@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 15:27:04 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/25 15:15:42 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	set_input(t_redir *redir)
 			return (handle_errno("dup", 1, NULL, NULL));
 	}
 	if (dup2(redir->fdin, 0) == -1)
-		return (handle_errno("dup2", 1, redir->cmd_table, NULL));
+		return (handle_errno("dup2", 1, NULL, NULL));
 	close(redir->fdin);
 	return (0);
 }
@@ -51,12 +51,12 @@ int	set_output(t_redir *redir)
 	{
 		redir->fdout = dup(redir->tmpout);
 		if (redir->fdout == -1)
-			return (handle_errno("dup", 1, redir->cmd_table, NULL));
+			return (handle_errno("dup", 1, NULL, NULL));
 	}
 	else
 	{
 		if (pipe(redir->fdpipe) == -1)
-			return (handle_errno("pipe", 1, redir->cmd_table, NULL));
+			return (handle_errno("pipe", 1, NULL, NULL));
 		redir->fdin = (redir->fdpipe)[0];
 		redir->fdout = (redir->fdpipe)[1];
 		if (redir->output_redir != -1)
@@ -66,14 +66,14 @@ int	set_output(t_redir *redir)
 		}
 	}
 	if (dup2(redir->fdout, 1) == -1)
-		return (handle_errno("dup2", 1, redir->cmd_table, NULL));
+		return (handle_errno("dup2", 1, NULL, NULL));
 	close(redir->fdout);
 	return (0);
 }
 
 /**
  * @brief Restore default in/out fd of parent process
- * and wait for child processes to die
+ * and wait for childs to end
  * @param vars variables related to command execution
  * @param redir variables related to redirections
  * @return int 
@@ -81,6 +81,7 @@ int	set_output(t_redir *redir)
 int	restore_in_out_and_wait(t_vars *vars, t_redir *redir)
 {
 	int	wait_ret;
+	int	ret_other_processes;
 
 	free(redir->cmd_table);
 	if (dup2(redir->tmpin, 0) == -1)
@@ -92,16 +93,21 @@ int	restore_in_out_and_wait(t_vars *vars, t_redir *redir)
 	if (redir->nb_cmd > 1)
 	{
 		if (redir->ret == 0)
-			get_child_status(vars->pid, &(redir->ret));
+			get_child_status(vars->pid, &(redir->ret), 0, 0);
 		wait_ret = 0;
 		while (wait_ret != -1)
-			wait_ret = waitpid(-1, &(redir->i), 0);
+			wait_ret = get_child_status(-1, &ret_other_processes, 0, 1);
 	}
+	signal(SIGINT, handle_sigint);
 	return (0);
 }
 
 int	save_fd_and_init_vars(t_vars *vars, t_redir *redir)
 {
+	if (find_heredocs(vars->cmd, redir) == 1)
+		return (1);
+	if (ft_piperedir(*(vars->cmd), vars->bin) == 1)
+		return (2);
 	redir->tmpin = dup(0);
 	redir->tmpout = dup(1);
 	if (redir->tmpin == -1 || redir->tmpout == -1)
@@ -112,9 +118,8 @@ int	save_fd_and_init_vars(t_vars *vars, t_redir *redir)
 	if (!(redir->cmd_table))
 		return (1);
 	redir->ret = 0;
-	redir->i = -1;
-	redir->heredoc_eofs = NULL;
 	redir->count_heredocs = 0;
+	redir->i = -1;
 	return (0);
 }
 
@@ -129,12 +134,12 @@ int	redir_and_exec(t_vars *vars)
 {
 	t_redir	redir;
 
-	if (save_fd_and_init_vars(vars, &redir) == 1)
-		return (1);
+	redir.ret = save_fd_and_init_vars(vars, &redir);
+	if (redir.ret != 0)
+		return (redir.ret);
+	signal(SIGINT, handle_sigint_no_prompt);
 	while (++(redir.i) < redir.nb_cmd)
 	{
-		redir.input_redir = -1;
-		redir.output_redir = -1;
 		redir.ret = find_in_out_files(&((redir.cmd_table)[redir.i]), &redir);
 		if (set_input(&redir) == 1)
 			redir.ret = 1;

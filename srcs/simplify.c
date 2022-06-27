@@ -106,7 +106,5 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 	ft_rmvquotes(token, bin);
 	ft_joinwords(token, bin);
 	ft_supspace(token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
-	if (ft_piperedir(*token, bin))
-		return (1);
 	return (0);
 }

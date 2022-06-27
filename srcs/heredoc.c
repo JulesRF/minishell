@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 14:52:57 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/25 14:52:36 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
 	int		nb_eof;
 
 	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
 	nb_eof = 0;
+	close(pipe_fd[0]);
 	while (1)
 	{
 		line = readline("> ");
@@ -65,7 +65,7 @@ void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
  * @param nb_heredocs the overall number of heredocs 
  * @return int 0 if no error, n > 0 otherwise
  */
-int	multiple_heredoc(t_list *heredoc_eofs, int *input_redir, int nb_heredocs)
+int	multiple_heredoc(t_list *heredoc_eofs, int *heredoc_redir, int nb_heredocs)
 {
 	int		pipe_fd[2];
 	pid_t	pid;
@@ -80,15 +80,50 @@ int	multiple_heredoc(t_list *heredoc_eofs, int *input_redir, int nb_heredocs)
 		start_heredoc(heredoc_eofs, nb_heredocs, pipe_fd);
 	else
 	{
-		get_child_status(pid, &ret);
+		signal(SIGQUIT, handle_sigquit_heredoc);
+		get_child_status(pid, &ret, 1, 0);
+		signal(SIGINT, handle_sigint);
+		signal(SIGQUIT, handle_sigquit);
 		if (ret != 0)
 			return (ret);
 	}
-	dup2(pipe_fd[0], 0);
 	close(pipe_fd[1]);
-	close(pipe_fd[0]);
-	*input_redir = dup(0);
-	if (*input_redir == -1)
+	*heredoc_redir = dup(pipe_fd[0]);
+	if (*heredoc_redir == -1)
 		return (handle_errno("dup", -1, NULL, NULL));
+	return (0);
+}
+
+/**
+ * @brief Find and handle all heredocs in command
+ * 
+ * @param commands entire command
+ * @param redir variables related to redirections
+ * @return int 
+ */
+int	find_heredocs(t_token **commands, t_redir *redir)
+{
+	t_token	*cur;
+	int		ret;
+
+	redir->heredoc_eofs = NULL;
+	redir->count_heredocs = 0;
+	ret = 0;
+	cur = *commands;
+	while (cur)
+	{
+		if (cur->type == 5 && ft_strcmp(cur->content, "<<") == 0)
+			if (add_heredoc_eof_to_list(&cur, commands, redir) == 1)
+				return (1);
+		cur = cur->next;
+	}
+	if (redir->count_heredocs > 0)
+	{
+		ret = multiple_heredoc(redir->heredoc_eofs, &(redir->heredoc_redir),
+				redir->count_heredocs);
+		ft_garbage(&(redir->heredoc_eofs));
+	}
+	if (ret != 0)
+		return (ret);
 	return (0);
 }

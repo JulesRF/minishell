@@ -52,10 +52,9 @@ void	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
 	char *str;
 	t_vars vars;
 	
-	signal(SIGQUIT, handle_sigquit);
-	signal(SIGINT, handle_sigint);
+	change_signals(2);
 
-	rl_outstream = stderr; //RETIRER
+	rl_outstream = stderr; //RETIRER ?
 
 	str = readline("\033[95mminishell$\033[0m ");
 
