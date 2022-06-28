@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/26 15:49:21 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/26 15:50:48 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ typedef struct s_redir
 	int		count_heredocs;
 }	t_redir;
 
-extern int g_exit_status;
+extern int	g_exit_status;
 
 //	main.c
 int		main(int argc, char **argv, char **env);
