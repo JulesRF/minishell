@@ -11,12 +11,8 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-int	ft_closed_quotes(char *str, t_list **bin)
+int	ft_closed_quotes(char *str, int i)
 {
-	int	i;
-
-	(void)bin;
-	i = 0;
 	while (str[i])
 	{
 		if (str[i] == '\'')
@@ -25,7 +21,8 @@ int	ft_closed_quotes(char *str, t_list **bin)
 			while (str[i] && str[i] != '\'')
 				i++;
 			if (str[i] != '\'')
-				return (printf("SYNTAX ERROR\n"), 1);
+				return (printf("minishell: syntax error unclosed quotes\n"),
+					1);
 		}
 		if (str[i] == '\"')
 		{
@@ -33,7 +30,8 @@ int	ft_closed_quotes(char *str, t_list **bin)
 			while (str[i] && str[i] != '\"')
 				i++;
 			if (str[i] != '\"')
-				return (printf("SYNTAX ERROR\n"), 1);
+				return (printf("minishell: syntax error unclosed quotes\n"),
+					1);
 		}
 		i++;
 	}
@@ -42,7 +40,8 @@ int	ft_closed_quotes(char *str, t_list **bin)
 
 int	ft_syntax(char *str, t_list **bin)
 {
-	if (ft_closed_quotes(str, bin))
+	(void)bin;
+	if (ft_closed_quotes(str, 0))
 		return (1);
 	return (0);
 }

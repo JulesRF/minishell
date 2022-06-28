@@ -30,7 +30,7 @@
 
 typedef struct s_token
 {
-	int				type; //1-operator, 2-word, 3-ponct, 4-space, 5-redir
+	int				type; //1-operator, 2-word, 3-ponct, 4-space, 5-redir, 6-phantom
 	char			*content;
 	struct s_token	*next;
 }	t_token;
@@ -146,7 +146,7 @@ void	ft_simplequotes(t_token *token, t_list **bin, t_token *temp,
 			t_token *stop);
 
 //	dollar.c
-char	*ft_dollarfind(char *to_find, char **env, t_list **bin);
+void	ft_dollarfind(t_token *token, char *to_find, char **env, t_list **bin);
 t_token	*ft_isdollar(t_token *token, t_list **bin, char **env);
 void	ft_dollar(t_token *token, t_list **bin, char **env);
 t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_token *stop);
@@ -160,11 +160,15 @@ int		ft_first_quote(t_token *token);
 int		ft_simplify(t_token **token, t_list **bin, char **env);
 
 //	prompt.c
-int		ft_closed_quotes(char *str, t_list **bin);
+int		ft_closed_quotes(char *str, int i);
 int		ft_syntax(char *str, t_list **bin);
 void	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd);
 char	**dup_env(char **envp);
 void	free_strs_array(char **strs);
+
+//	questionmark.c
+void	ft_supempty(t_token **token);
+void	ft_questionmark(t_token *token, t_list **bin);
 
 //	simplify_utils.c
 void	ft_supspace(t_token **token);

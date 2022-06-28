@@ -21,14 +21,14 @@ int	ft_piperedir(t_token *token, t_list **bin)
 			|| (token->type == 5))
 		{
 			if (!token->next)
-				return (printf("SYNTAX ERROR1\n"), 1);
+				return (printf("minishell: syntax error\n"), 1);
 			if (token->next->type == 4)
 				token = token->next;
 			if (!token->next)
-				return (printf("SYNTAX ERROR2\n"), 1);
+				return (printf("minishell: syntax error\n"), 1);
 			if (token->next->type != 2 && token->next->type != 3
-				&& token->next->type != 5)
-				return (printf("SYNTAX ERROR3\n"), 1);
+				&& token->next->type != 5 && token->next->type != 6)
+				return (printf("minishell: syntax error\n"), 1);
 		}
 		token = token->next;
 	}
@@ -87,7 +87,9 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 
 	temp = NULL;
 	stop = NULL;
+	ft_questionmark(*token, bin);
 	ft_sepdollar(*token, bin, stop);
+	ft_supempty(token);
 	// ft_print(*token);
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
 	if (ft_first_quote(*token))
@@ -100,9 +102,8 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 		ft_simplequotes(*token, bin, temp, stop);
 		ft_doublequotes(*token, bin, temp, stop);
 	}
-	ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
-	// printf("ca dit quoi le sang\n");
-	ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
+	// ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
+	// ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
 	ft_rmvquotes(token, bin);
 	ft_joinwords(token, bin);
 	ft_supspace(token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
