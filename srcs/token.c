@@ -30,9 +30,9 @@ void	ft_parse_ponct(t_token **token, t_list **bin, char c)
 
 int	ft_parse_redir(t_token **token, t_list **bin, char c, char *str)
 {
-	if (c == 60)
+	if (c == '<')
 	{
-		if (str[1] == 60)
+		if (str[1] == '<')
 		{
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, "<<", 5));//PROTECT
 			return (1);
@@ -40,9 +40,9 @@ int	ft_parse_redir(t_token **token, t_list **bin, char c, char *str)
 		else
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, "<", 5));//PROTECT
 	}
-	if (c == 62)
+	if (c == '>')
 	{
-		if (str[1] == 62)
+		if (str[1] == '>')
 		{
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, ">>", 5));//PROTECT
 			return (1);
@@ -61,8 +61,8 @@ int	ft_parse_word(t_token **token, t_list **bin, char *str)
 
 	i = 0;
 	j = 0;
-	while (str[i] != '|' && str[i] != '$' && str[i] != 39 && str[i] != 34
-		&& str[i] != ' ' && str[i])
+	while (str[i] != '|' && str[i] != '$' && str[i] != '\'' && str[i] != '\"'
+		&& str[i] != ' ' && str[i] != '<' && str[i] != '>' && str[i])
 		i++;
 	dest = malloc(sizeof(char) * i + 1);
 	ft_lstadd_back(bin, ft_lstnew(dest));
@@ -85,9 +85,9 @@ void	ft_token(t_token **token, t_list **bin, char *str)
 	{
 		if (str[i] == '|' || str[i] == '$')
 			ft_parse_operator(token, bin, str[i]);
-		else if (str[i] == 39 || str[i] == 34)
+		else if (str[i] == '\'' || str[i] == '\"')
 			ft_parse_ponct(token, bin, str[i]);
-		else if (str[i] == 60 || str[i] == 62)
+		else if (str[i] == '<' || str[i] == '>')
 			i = i + ft_parse_redir(token, bin, str[i], str + i);
 		else if (str[i] == ' ')
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, " ", 4));//PROTECT
