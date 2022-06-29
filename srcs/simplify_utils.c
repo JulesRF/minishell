@@ -12,6 +12,19 @@
 
 #include "minishell.h"
 
+void	ft_supempty(t_token **token)
+{
+	t_token *cur;
+
+	cur = *token;
+	while (cur)
+	{
+		if (cur->content[0] == '\0')
+			ft_delete_token(token, cur);
+		cur = cur->next;
+	}
+}
+
 void	ft_supspace(t_token **token)
 {
 	t_token *cur;
