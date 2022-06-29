@@ -6,16 +6,30 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/25 14:52:36 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/29 10:41:02 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	write_heredoc(int pipe_fd[2], char *line)
+int	add_heredoc_eof_to_list(t_token **cur, t_token **commands, t_redir *redir)
 {
-	write(pipe_fd[1], line, ft_strlen(line));
-	write(pipe_fd[1], "\n", 1);
+	char	*heredoc_eof;
+	t_list	*node;
+
+	(void)commands;
+	heredoc_eof = ft_strdup((*cur)->next->content);
+	if (!heredoc_eof)
+		return (1);
+	node = ft_lstnew(heredoc_eof);
+	if (!node)
+	{
+		free(heredoc_eof);
+		return (1);
+	}
+	ft_lstadd_back(&(redir->heredoc_eofs), node);
+	redir->count_heredocs = redir->count_heredocs + 1;
+	return (0);
 }
 
 void	heredoc_warning(t_list **heredoc_eofs, int *nb_eof)

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:20:08 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/16 16:43:57 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/29 10:07:08 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,8 @@ int	find_executable(t_vars *vars, char **paths, char *cmd_name)
 /**
  * @brief Check if an executable whose name is that of command exists in
  * one the PATH directories. If an executable is found, it is executed
- * @param command Linked list of command (name) and arguments
- * @param env Environment variables
- * @return int -1 if the search or execution fails
+ * @param vars variables related to command execution
+ * @return int -1 if the search fails, the executed command status otherwise
  */
 int	check_path(t_vars *vars)
 {
@@ -116,9 +115,8 @@ int	check_path(t_vars *vars)
 /**
  * @brief Search the command executable and try execute it
  * 
- * @param command Linked list of command (path or name) and arguments
- * @param env Environment variables
- * @return int -1 if the search fails, 1 if execution fails, 0 if no error
+ * @param vars variables related to command execution
+ * @return int 0 if no error, >0 otherwise
  */
 int	search_cmd(t_vars *vars)
 {
@@ -127,7 +125,7 @@ int	search_cmd(t_vars *vars)
 
 	ret = 0;
 	if (*(vars->cmd) == NULL)
-		return (-1);
+		return (0);
 	cmd_name = (*(vars->cmd))->content;
 	if (ft_strchr(cmd_name, '/') == NULL)
 	{

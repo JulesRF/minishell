@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/25 15:21:46 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/29 10:08:36 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,8 @@ void	start_exec(char	**args, char **env)
  * @param env Environment variables
  * @param pid 0 : this process is child of minishell, -1 this process
  * is minishell
- * @return int 1 if execution fails, 0 if no error
+ * @return int 1 if execution fails, 0 if no error, the execution status
+ * of the command otherwise
  */
 int	exec_cmd(t_token *command, char **env, pid_t pid)
 {

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/28 09:01:16 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/29 11:03:15 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,13 +143,12 @@ int	redir_and_exec(t_vars *vars)
 	signal(SIGINT, handle_sigint_no_prompt);
 	while (++(redir.i) < redir.nb_cmd)
 	{
-		redir.ret = find_in_out_files(&((redir.cmd_table)[redir.i]), &redir);
-		if (set_input(&redir) == 1)
+		set_input_and_output(&redir, vars);
+		if (redir.ret == 2)
+		{
 			redir.ret = 1;
-		if (set_output(&redir) == 1)
-			redir.ret = 1;
-		vars->pid = -1;
-		vars->cmd = &((redir.cmd_table)[redir.i]);
+			continue ;
+		}
 		if (redir.nb_cmd > 1 && redir.ret == 0)
 		{
 			if (fork_exec(vars, &redir) == 1)
