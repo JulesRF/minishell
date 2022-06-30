@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/26 15:49:21 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/29 11:02:29 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,23 +63,29 @@ typedef struct s_redir
 	int		count_heredocs;
 }	t_redir;
 
-extern int g_exit_status;
+extern int	g_exit_status;
 
 //	main.c
 int		main(int argc, char **argv, char **env);
 
 //	redir_and_exec.c
 int		redir_and_exec(t_vars *vars);
+int		set_input(t_redir *redir);
+int		set_output(t_redir *redir);
+
+//	redir_and_exec2.c
+void	set_input_and_output(t_redir *redir, t_vars *vars);
 
 //	heredoc.c
 int		multiple_heredoc(t_list *heredoc_eofs, int *input_redir,
 			int nb_heredocs);
 int		find_heredocs(t_token **commands, t_redir *redir);
 
+//	heredoc2.c
+void	write_heredoc(int pipe_fd[2], char *line);
+
 //	redirections.c
 int		find_in_out_files(t_token **commands, t_redir *redir);
-int		add_heredoc_eof_to_list(t_token **cur, t_token **commands,
-			t_redir *redir);
 
 //	execution.c
 int		exec_cmd(t_token *command, char **env, pid_t pid);

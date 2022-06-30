@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/25 15:15:42 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/29 11:03:15 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,11 @@ int	restore_in_out_and_wait(t_vars *vars, t_redir *redir)
 
 int	save_fd_and_init_vars(t_vars *vars, t_redir *redir)
 {
-	if (find_heredocs(vars->cmd, redir) == 1)
-		return (1);
+	int	ret;
+
+	ret = find_heredocs(vars->cmd, redir);
+	if (ret != 0)
+		return (ret);
 	if (ft_piperedir(*(vars->cmd), vars->bin) == 1)
 		return (2);
 	redir->tmpin = dup(0);
@@ -140,13 +143,12 @@ int	redir_and_exec(t_vars *vars)
 	signal(SIGINT, handle_sigint_no_prompt);
 	while (++(redir.i) < redir.nb_cmd)
 	{
-		redir.ret = find_in_out_files(&((redir.cmd_table)[redir.i]), &redir);
-		if (set_input(&redir) == 1)
+		set_input_and_output(&redir, vars);
+		if (redir.ret == 2)
+		{
 			redir.ret = 1;
-		if (set_output(&redir) == 1)
-			redir.ret = 1;
-		vars->pid = -1;
-		vars->cmd = &((redir.cmd_table)[redir.i]);
+			continue ;
+		}
 		if (redir.nb_cmd > 1 && redir.ret == 0)
 		{
 			if (fork_exec(vars, &redir) == 1)

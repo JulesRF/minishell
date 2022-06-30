@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/25 14:53:59 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/29 10:49:50 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,26 +48,6 @@ int	set_output_file(t_token **cur, t_token **commands, t_redir *redir,
 	return (0);
 }
 
-int	add_heredoc_eof_to_list(t_token **cur, t_token **commands, t_redir *redir)
-{
-	char	*heredoc_eof;
-	t_list	*node;
-
-	(void)commands;
-	heredoc_eof = ft_strdup((*cur)->next->content);
-	if (!heredoc_eof)
-		return (1);
-	node = ft_lstnew(heredoc_eof);
-	if (!node)
-	{
-		free(heredoc_eof);
-		return (1);
-	}
-	ft_lstadd_back(&(redir->heredoc_eofs), node);
-	redir->count_heredocs = redir->count_heredocs + 1;
-	return (0);
-}
-
 int	check_token_is_in_out_file(t_token **cur, t_token **commands,
 	t_redir *redir)
 {
@@ -95,12 +75,22 @@ int	check_token_is_in_out_file(t_token **cur, t_token **commands,
 	return (0);
 }
 
+int	ambiguous_redirect(t_token **cur, t_token **commands)
+{
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd((*cur)->next->content, 2);
+	ft_putendl_fd(" ambiguous redirect", 2);
+	ft_delete_token(commands, (*cur)->next);
+	ft_delete_token(commands, *cur);
+	return (2);
+}
+
 /**
  * @brief Iterate over the command to find and handle input/output files or
  * heredocs.
  * @param commands a simple command
  * @param redir variables related to redirections
- * @return int 1 if error, 0 otherwise
+ * @return int 1 if error, 2 if ambiguous redirect, 0 otherwise
  */
 int	find_in_out_files(t_token **commands, t_redir *redir)
 {
@@ -111,7 +101,12 @@ int	find_in_out_files(t_token **commands, t_redir *redir)
 	cur = *commands;
 	while (cur)
 	{
-		if (check_token_is_in_out_file(&cur, commands, redir) == 1)
+		if (cur->type == 5 && ft_strcmp(cur->content, "<<")
+			&& cur->next && cur->next->type == 6)
+			return (ambiguous_redirect(&cur, commands));
+		else if (cur->type == 6)
+			ft_delete_token(commands, cur);
+		else if (check_token_is_in_out_file(&cur, commands, redir) == 1)
 			return (1);
 		cur = cur->next;
 	}

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:18:27 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/19 08:47:11 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/06/29 09:57:13 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ t_token	**split_commands(t_token *commands, int nb_cmd, int i)
 	{
 		if (commands->type == 1 && (ft_strcmp(commands->content, "|") == 0))
 			i++;
-		if (commands->type == 2 || commands->type == 5)
+		if (commands->type == 2 || commands->type == 5 || commands->type == 6)
 		{
 			tmp = commands;
 			commands = commands->next;
