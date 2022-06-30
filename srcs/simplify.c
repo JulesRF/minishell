@@ -92,6 +92,7 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 	ft_supempty(token);
 	// ft_print(*token);
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
+	// ft_print(*token);
 	if (ft_first_quote(*token))
 	{
 		ft_doublequotes(*token, bin, temp, stop);

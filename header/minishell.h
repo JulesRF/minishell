@@ -152,6 +152,9 @@ void	ft_dollar(t_token *token, t_list **bin, char **env);
 t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_token *stop);
 void	ft_sepdollar(t_token *token, t_list **bin, t_token *stop);
 
+//	dollar2.c
+int		ft_dollarcheck(t_token *token, char *to_find, char **env, t_list **bin);
+
 //	simplify.c
 int		ft_piperedir(t_token *token, t_list **bin);
 void	ft_rmvquotes(t_token **token, t_list **bin);

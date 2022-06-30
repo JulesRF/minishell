@@ -37,6 +37,7 @@ SRCS_FILES	=	main.c	\
 				token.c\
 				quotes.c\
 				dollar.c\
+				dollar2.c\
 				simplify.c\
 				prompt.c\
 				simplify_utils.c\

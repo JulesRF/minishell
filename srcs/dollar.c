@@ -17,17 +17,15 @@ void	ft_dollarfind(t_token *token, char *to_find, char **env, t_list **bin)
 	int		i;
 
 	i = 0;
-	if (!ft_strcmp(to_find, " "))
-	{
-		token->content = "$ ";
+	if (ft_dollarcheck(token, to_find, env, bin))
 		return ;
-	}
 	while (env[i])
 	{
 		if ((!ft_strncmp(env[i], to_find, ft_strlen(to_find)))
 			&& (env[i][ft_strlen(to_find)] == '='))
 		{
 			token->content = (env[i] + (ft_strlen(to_find) + 1));
+			token->type = 2;
 			return ;
 		}
 		i++;
