@@ -144,10 +144,8 @@ void	ft_token(t_token **token, t_list **bin, char *str);
 
 //	quotes.c
 t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin);
-t_token	*ft_find_dquote(t_token *token);
 void	ft_doublequotes(t_token *token, t_list **bin, t_token *temp,
 			t_token *stop);
-t_token	*ft_find_squote(t_token *token);
 void	ft_simplequotes(t_token *token, t_list **bin, t_token *temp,
 			t_token *stop);
 

@@ -94,7 +94,6 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 	ft_supempty(token);
 	// ft_print(*token);
 	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
-	// ft_print(*token);
 	if (ft_first_quote(*token))
 	{
 		ft_doublequotes(*token, bin, temp, stop);
@@ -107,6 +106,7 @@ int	ft_simplify(t_token **token, t_list **bin, char **env)
 	}
 	// ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	// ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
+	// ft_print(*token);
 	ft_rmvquotes(token, bin);
 	ft_joinwords(token, bin);
 	ft_supspace(token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"

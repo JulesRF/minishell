@@ -19,7 +19,7 @@ t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 	int		j;
 
 	if (temp == NULL)
-		return (ft_lstnew_token(bin, token->content, 2));
+		return (ft_lstnew_token(bin, token->content, token->type));
 	str = malloc(sizeof(char) * (ft_strlen(temp->content)
 		+ ft_strlen(token->content)) + 1);
 	ft_lstadd_back(bin, ft_lstnew(str));
@@ -41,21 +41,9 @@ t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin)
 	return (temp);
 }
 
-t_token	*ft_find_dquote(t_token *token)
-{
-	while (token)
-	{
-		if (!ft_strcmp(token->content, "\""))
-			return(token);
-		token = token->next;
-	}
-	return (token);
-}
-
 void	ft_doublequotes(t_token *token, t_list **bin, t_token *temp,
 t_token *stop)
 {
-	temp = NULL;
 	while (token)
 	{
 		if (!ft_strcmp(token->content, "\"") && token->type == 3)
@@ -67,9 +55,12 @@ t_token *stop)
 			{
 				while (stop && ft_strcmp(stop->content, "\""))
 				{
-					temp = ft_joincontent(temp, stop, bin);
+					if (stop->type != 6)
+						temp = ft_joincontent(temp, stop, bin);
 					stop = stop->next;
 				}
+				if (temp == NULL)
+					temp = ft_lstnew_token(bin, "", 2);
 				temp->next = stop;
 				token->next = temp;
 				ft_doublequotes(stop->next, bin, temp, stop);
@@ -80,21 +71,9 @@ t_token *stop)
 	}
 }
 
-t_token	*ft_find_squote(t_token *token)
-{
-	while (token)
-	{
-		if (!ft_strcmp(token->content, "\'"))
-			return(token);
-		token = token->next;
-	}
-	return (token);
-}
-
 void	ft_simplequotes(t_token *token, t_list **bin, t_token *temp,
 t_token *stop)
 {
-	temp = NULL;
 	while (token)
 	{
 		if (!ft_strcmp(token->content, "\'") && token->type == 3)
@@ -106,9 +85,12 @@ t_token *stop)
 			{
 				while (stop && ft_strcmp(stop->content, "\'"))
 				{
-					temp = ft_joincontent(temp, stop, bin);
+					if (stop->type != 6)
+						temp = ft_joincontent(temp, stop, bin);
 					stop = stop->next;
 				}
+				if (temp == NULL)
+					temp = ft_lstnew_token(bin, "", 2);
 				temp->next = stop;
 				token->next = temp;
 				ft_simplequotes(stop->next, bin, temp, stop);
