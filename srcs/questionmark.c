@@ -21,7 +21,7 @@ int	ft_is_questionmark(char *str)
 	return (0);
 }
 
-void	ft_questionmark(t_token *token, t_list **bin)
+void	ft_questionmark(t_token *token, t_list **bin, t_data *data)
 {
 	t_token	*stop;
 	t_token *temp;
@@ -35,7 +35,7 @@ void	ft_questionmark(t_token *token, t_list **bin)
 			stop = token->next;
 			if (ft_is_questionmark(token->next->content))
 			{
-				temp = ft_lstnew_token(bin, stop->content + 1, 2);
+				temp = ft_lstnew_token(bin, data, stop->content + 1, 2);
 				stop->content = "?";
 				temp->next = stop->next;
 				stop->next = temp;

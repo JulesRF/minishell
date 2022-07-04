@@ -86,7 +86,7 @@ t_token	**split_commands(t_token *commands, int nb_cmd, int i)
 			tmp = commands;
 			commands = commands->next;
 			tmp->next = NULL;
-			ft_lstadd_back_token(&cmd_table[i], tmp);
+			ft_lstadd_back_token(&cmd_table[i], tmp, NULL, NULL);
 		}
 		else
 			commands = commands->next;

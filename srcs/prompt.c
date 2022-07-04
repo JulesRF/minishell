@@ -46,49 +46,46 @@ int	ft_syntax(char *str, t_list **bin)
 	return (0);
 }
 
-void	ft_prompt(t_token **token, t_list **bin, char ***env, char *tester_cmd)
+void	ft_prompt(t_token **token, t_list **bin, t_data *data, char *tester_cmd)
 {
-	char *str;
 	t_vars vars;
 	
 	change_signals(2);
 
 	rl_outstream = stderr; //RETIRER ?
 
-	str = readline("\033[95mminishell$\033[0m ");
-
+	data->cmd_line = readline("\033[95mminishell$\033[0m ");
 	(void)tester_cmd;
 	// str = tester_cmd;
 	
-	while (str != NULL && ft_strcmp(str, "exit"))
+	while (data->cmd_line != NULL && ft_strcmp(data->cmd_line, "exit"))
 	{
-		if (str[0] != '\0')
-			add_history(str);   // gere l'historique des commandes, sauf si la commande est un \n
-		if (!ft_syntax(str, bin))
+		if (data->cmd_line[0] != '\0')
+			add_history(data->cmd_line);   // gere l'historique des commandes, sauf si la commande est un \n
+		if (!ft_syntax(data->cmd_line, bin))
 		{
-			ft_token(token, bin, str); //parsing pur et dur (division des elements en tokens)
+			ft_token(token, bin, data); //parsing pur et dur (division des elements en tokens)
+			// printf("salut a tous\n");
 			// ft_print(*token);
-			if (!ft_simplify(token, bin, *env)) //simplification des tokens
+			if (!ft_simplify(token, bin, data)) //simplification des tokens
 			{
 				// ft_print(*token);			// print simplement la liste de token pour voir le resultat du parsing
-				// envoie des infos a mon mate
-				
 				vars.cmd = token;
-				vars.env = env;
+				vars.env = data->env;
 				vars.bin = bin;
-				vars.cmd_line = str;
+				vars.cmd_line = data->cmd_line;
 				g_exit_status = redir_and_exec(&vars);
 				// exit(g_exit_status);
 			}
 		}
 		ft_garbage(bin);
 		ft_clean_token(token);
-		free (str);
-		str = readline("\033[95mminishell$\033[0m ");
+		free (data->cmd_line);
+		data->cmd_line = readline("\033[95mminishell$\033[0m ");
 	}
-	free (str);
+	free (data->cmd_line);
 	rl_clear_history();
-	if (str == NULL)
+	if (data->cmd_line == NULL)
 		write(1, "\n", 1);
 }
 

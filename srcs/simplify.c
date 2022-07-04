@@ -52,7 +52,7 @@ void	ft_rmvquotes(t_token **token, t_list **bin)
 	}
 }
 
-void	ft_joinwords(t_token **token, t_list **bin)
+void	ft_joinwords(t_token **token, t_list **bin, t_data *data)
 {
 	t_token	*tmp;
 
@@ -61,7 +61,7 @@ void	ft_joinwords(t_token **token, t_list **bin)
 	{
 		if (tmp->type == 2 && tmp->next && tmp->next->type == 2)
 		{
-			tmp = ft_joincontent(tmp, tmp->next, bin);
+			tmp = ft_joincontent(tmp, tmp->next, bin, data);
 			tmp->next = tmp->next->next;
 		}
 		else
@@ -82,33 +82,30 @@ int	ft_first_quote(t_token *token)
 	return (0);
 }
 
-int	ft_simplify(t_token **token, t_list **bin, char **env)
+int	ft_simplify(t_token **token, t_list **bin, t_data *data)
 {
-	t_token	*temp;
-	t_token	*stop;
-
-	temp = NULL;
-	stop = NULL;
-	ft_questionmark(*token, bin);
-	ft_sepdollar(*token, bin, stop);
+	data->temp = NULL;
+	data->stop = NULL;
+	ft_questionmark(*token, bin, data);
+	ft_sepdollar(*token, bin, data);
 	ft_supempty(token);
 	// ft_print(*token);
-	ft_dollar(*token, bin, env);             // export : remplacer $USER par -> jroux-fo (avec env)
+	ft_dollar(*token, bin, data);             // export : remplacer $USER par -> jroux-fo (avec env)
 	if (ft_first_quote(*token))
 	{
-		ft_doublequotes(*token, bin, temp, stop);
-		ft_simplequotes(*token, bin, temp, stop);
+		ft_doublequotes(*token, bin, data);//temp, stop);
+		ft_simplequotes(*token, bin, data);//temp, stop);
 	}
 	else
 	{
-		ft_simplequotes(*token, bin, temp, stop);
-		ft_doublequotes(*token, bin, temp, stop);
+		ft_simplequotes(*token, bin, data);//temp, stop);
+		ft_doublequotes(*token, bin, data);//temp, stop);
 	}
 	// ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	// ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
 	// ft_print(*token);
 	ft_rmvquotes(token, bin);
-	ft_joinwords(token, bin);
+	ft_joinwords(token, bin, data);
 	ft_supspace(token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
 	return (0);
 }

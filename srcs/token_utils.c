@@ -12,14 +12,14 @@
 
 #include "minishell.h"
 
-t_token	*ft_lstnew_token(t_list **bin, char *content, int type)
+t_token	*ft_lstnew_token(t_list **bin, t_data *data, char *content, int type)
 {
 	t_token	*newcell;
 
 	newcell = malloc(sizeof(t_token));
-	ft_lstadd_back(bin, ft_lstnew(newcell));
 	if (!newcell)
 		return (NULL);
+	ft_lstadd_backs(bin, ft_lstnew(newcell), data, bin);   //
 	newcell->content = content;
 	newcell->type = type;
 	newcell->next = NULL;
@@ -35,10 +35,16 @@ t_token	*ft_lstlast_token(t_token *lst)
 	return (lst);
 }
 
-void	ft_lstadd_back_token(t_token **alst, t_token *new)
+void	ft_lstadd_back_token(t_token **alst, t_token *new, t_data *data,
+t_list **bin)
 {
 	t_token	*temp;
 
+	if (!new)
+	{
+		clean_prog(data->env, bin, data->cmd_line);
+		exit_prog("exit\nminishell: exit: bas malloc allocation", 2);
+	}
 	if (!*alst)
 	{
 		*alst = new;
@@ -67,7 +73,6 @@ void	ft_delete_token(t_token **alst, t_token *to_del)
 	if (tmp == NULL)
 		return ;
 	prev->next = tmp->next;
-	//free deleted token ?
 }
 
 void	ft_clean_token(t_token **token)

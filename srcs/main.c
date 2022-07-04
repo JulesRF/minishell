@@ -51,29 +51,33 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_list	*bin;      // garbage collector, tout ce que je malloc, je le fous dedans
 	t_token	*token;
+	t_data	*data;
 	char **env;
 
 	g_exit_status = 0;
 	ft_preparse(argc, argv, envp);
 	bin = NULL;
 	token = NULL;
-
+	data = malloc(sizeof(t_data));
+	if (!data)
+		return (1);
 	env = dup_env(envp);
 	if (!env)
 		exit(1);
 	if (increment_shlvl(&env) == 1)
 	{
 		free_strs_array(env);
+		free(data);
 		exit(1);
 	}
-
+	data->env = &env;
 	// if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
 	// {
 	// 	ft_prompt(&token, &bin, &env, argv[2]);
 	// 	// printf("g_exit_status=%d\n", g_exit_status);
 	// }
 	
-	ft_prompt(&token, &bin, &env, argv[2]);
+	ft_prompt(&token, &bin, data, argv[2]);
 	
 	free_strs_array(env);
 	ft_garbage(&bin);

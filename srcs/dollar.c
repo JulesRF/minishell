@@ -12,10 +12,12 @@
 
 #include "minishell.h"
 
-void	ft_dollarfind(t_token *token, char *to_find, char **env, t_list **bin)
+void	ft_dollarfind(t_token *token, char *to_find, t_data *data, t_list **bin)
 {
 	int		i;
+	char **env;
 
+	env = *data->env;
 	i = 0;
 	if (ft_dollarcheck(token, to_find, env, bin))
 		return ;
@@ -32,13 +34,12 @@ void	ft_dollarfind(t_token *token, char *to_find, char **env, t_list **bin)
 	}
 	token->type = 6;
 	token->content = ft_strjoin(token->content, to_find);
-	ft_lstadd_back(bin, ft_lstnew(token->content));
+	ft_lstadd_backs(bin, ft_lstnew(token->content), data, bin);
 }
 
 
-t_token	*ft_isdollar(t_token *token, t_list **bin, char **env)
+t_token	*ft_isdollar(t_token *token, t_list **bin, t_data *data)
 {
-	(void)bin;
 	if (!ft_strcmp(token->content, "$") && token->type == 1)
 	{
 		if (!token->next || token->next->type != 2)
@@ -51,17 +52,17 @@ t_token	*ft_isdollar(t_token *token, t_list **bin, char **env)
 			token->content = ft_itoa(g_exit_status);
 			if (!token->content)
 				return NULL; 
-			ft_lstadd_back(bin, ft_lstnew(token->content));//PROTECT
+			ft_lstadd_backs(bin, ft_lstnew(token->content), data, bin);//PROTECT
 			token->type = 2;
 		}
 		else
-			ft_dollarfind(token, token->next->content, env, bin);
+			ft_dollarfind(token, token->next->content, data, bin);
 		token->next = token->next->next;
 	}
 	return (token->next);
 }
 
-void	ft_dollar(t_token *token, t_list **bin, char **env)
+void	ft_dollar(t_token *token, t_list **bin, t_data *data)
 {
 	while (token)
 	{
@@ -83,16 +84,17 @@ void	ft_dollar(t_token *token, t_list **bin, char **env)
 				return ;
 			while (token && (ft_strcmp(token->content, "\"")
 				|| token->type != 3))
-				token = ft_isdollar(token, bin, env);//PROTECT
+				token = ft_isdollar(token, bin, data);//PROTECT
 		}
-		token = ft_isdollar(token, bin, env);//PROTECT
+		token = ft_isdollar(token, bin, data);//PROTECT
 	}
 }
 
-t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_token *stop)
+t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_data *data)
 {
 	char	*str;
 	t_token *temp;
+	t_token	*stop;
 
 	if (!ft_strcmp(token->content, "$") && token->type == 1)
 	{
@@ -104,10 +106,11 @@ t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_token *stop)
 			if (stop->content[i] && !ft_isalnum(stop->content[i]))
 			{
 				str = stop->content;
-				stop->content = ft_strdup(str + i);
-				ft_lstadd_back(bin, ft_lstnew(stop->content));
+				ft_fucknorm(stop, ft_strdup(str + i), bin, data);
+				// stop->content = ft_strdup(str + i);
+				// ft_lstadd_backs(bin, ft_lstnew(stop->content));
 				str[i] = '\0';
-				temp = ft_lstnew_token(bin, str, 2);
+				temp = ft_lstnew_token(bin, data, str, 2);
 				temp->next = stop;
 				token->next = temp;
 				return (temp);
@@ -118,7 +121,7 @@ t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_token *stop)
 	return (token->next);
 }
 
-void	ft_sepdollar(t_token *token, t_list **bin, t_token *stop)
+void	ft_sepdollar(t_token *token, t_list **bin, t_data *data)
 {
 	while (token)
 	{
@@ -140,8 +143,8 @@ void	ft_sepdollar(t_token *token, t_list **bin, t_token *stop)
 				return ;
 			while (token && (ft_strcmp(token->content, "\"")
 				|| token->type != 3))
-				token = ft_splitdollar(token, bin, 0, stop);//PROTECT
+				token = ft_splitdollar(token, bin, 0, data);//PROTECT
 		}
-		token = ft_splitdollar(token, bin, 0, stop);//PROTECT
+		token = ft_splitdollar(token, bin, 0, data);//PROTECT
 	}
 }

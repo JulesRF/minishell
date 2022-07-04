@@ -30,7 +30,7 @@ int	ft_isnum(char *s)
 	return (1);
 }
 
-void	clean_prog( char ***env, t_list **bin, char *cmd_line)
+void	clean_prog(char ***env, t_list **bin, char *cmd_line)
 {
 	free (cmd_line);
 	rl_clear_history();
