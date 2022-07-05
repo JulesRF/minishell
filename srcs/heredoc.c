@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/05 18:19:24 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/05 18:53:38 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ void	heredoc_warning(t_list **heredoc_eofs, int *nb_eof)
 	(*heredoc_eofs) = (*heredoc_eofs)->next;
 }
 
-void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd, t_vars *vars)
+void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd,
+	t_vars *vars)
 {
 	char	*line;
 	int		nb_eof;
@@ -79,7 +80,8 @@ void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd, t_vars *
  * @param nb_heredocs the overall number of heredocs 
  * @return int 0 if no error, n > 0 otherwise
  */
-int	multiple_heredoc(t_list *heredoc_eofs, int *heredoc_redir, int nb_heredocs, t_vars *vars)
+int	multiple_heredoc(t_list *heredoc_eofs, int *heredoc_redir, int nb_heredocs,
+	t_vars *vars)
 {
 	int		pipe_fd[2];
 	pid_t	pid;
