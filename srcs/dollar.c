@@ -38,10 +38,15 @@ void	ft_dollarfind(t_token *token, char *to_find, t_data *data, t_list **bin)
 }
 
 
-t_token	*ft_isdollar(t_token *token, t_list **bin, t_data *data)
+t_token	*ft_isdollar(t_token *token, t_list **bin, t_data *data, int inf)
 {
 	if (!ft_strcmp(token->content, "$") && token->type == 1)
 	{
+		if (token->next && (inf == 1 || token->next->content[0] == '='))
+		{
+			token->type = 2;
+			return (token->next);
+		}
 		if (!token->next || token->next->type != 2)
 		{
 			token->type = 2;
@@ -73,7 +78,7 @@ void	ft_dollar(t_token *token, t_list **bin, t_data *data)
 				return ;
 			while (token && (ft_strcmp(token->content, "\'")
 				|| token->type != 3))
-				token = token->next;
+				token = ft_isdollar(token, bin, data, 1);
 		}
 		if (!token)
 			return ;
@@ -84,9 +89,9 @@ void	ft_dollar(t_token *token, t_list **bin, t_data *data)
 				return ;
 			while (token && (ft_strcmp(token->content, "\"")
 				|| token->type != 3))
-				token = ft_isdollar(token, bin, data);//PROTECT
+				token = ft_isdollar(token, bin, data, 0);//PROTECT
 		}
-		token = ft_isdollar(token, bin, data);//PROTECT
+		token = ft_isdollar(token, bin, data, 0);//PROTECT
 	}
 }
 

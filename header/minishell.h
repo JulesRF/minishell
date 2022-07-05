@@ -41,6 +41,8 @@ typedef struct s_data {
 	char	***env;
 	t_token	*temp;
 	t_token	*stop;
+	int		i;
+	int		j;
 }	t_data;
 
 typedef struct s_vars
@@ -153,12 +155,12 @@ void	ft_token(t_token **token, t_list **bin, t_data *data);//char *str, char **e
 
 //	quotes.c
 t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin, t_data *data);
-void	ft_doublequotes(t_token *token, t_list **bin, t_data *data);//t_token *temp, t_token *stop);
-void	ft_simplequotes(t_token *token, t_list **bin, t_data *data);//t_token *temp, t_token *stop);
+void	ft_doublequotes(t_token *token, t_list **bin, t_data *data, t_token *temp);//t_token *temp, t_token *stop);
+void	ft_simplequotes(t_token *token, t_list **bin, t_data *data, t_token *temp);//t_token *temp, t_token *stop);
 
 //	dollar.c
 void	ft_dollarfind(t_token *token, char *to_find, t_data *data, t_list **bin);
-t_token	*ft_isdollar(t_token *token, t_list **bin, t_data *data);
+t_token	*ft_isdollar(t_token *token, t_list **bin, t_data *data, int inf);
 void	ft_dollar(t_token *token, t_list **bin, t_data *data);
 t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_data *data);
 void	ft_sepdollar(t_token *token, t_list **bin, t_data *data);
@@ -187,6 +189,7 @@ void	ft_questionmark(t_token *token, t_list **bin, t_data *data);
 //	simplify_utils.c
 void	ft_supspace(t_token **token);
 void	ft_fucknorm(t_token *stop, char *str, t_list **bin, t_data *data);
+void	ft_getmeout(t_data *data, t_list **bin);
 t_token	*ft_addempty(t_token *token, t_token *stop, t_list **bin, t_data *data);
 
 ////	builtins	////

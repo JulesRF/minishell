@@ -80,6 +80,7 @@ int	main(int argc, char **argv, char **envp)
 	ft_prompt(&token, &bin, data, argv[2]);
 	
 	free_strs_array(env);
+	free (data);
 	ft_garbage(&bin);
 	exit(g_exit_status);
 }

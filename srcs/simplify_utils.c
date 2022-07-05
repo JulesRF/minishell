@@ -49,6 +49,12 @@ void	ft_fucknorm(t_token *stop, char *str, t_list **bin, t_data *data)
 	ft_lstadd_backs(bin, ft_lstnew(stop->content), data, bin);
 }
 
+void	ft_getmeout(t_data *data, t_list **bin)
+{
+	clean_prog(data->env, bin, data->cmd_line);
+	exit_prog("exit\nminishell: exit: bas malloc allocation", 2);
+}
+
 t_token	*ft_addempty(t_token *token, t_token *stop, t_list **bin, t_data *data)
 {
 	token->next = ft_lstnew_token(bin, data, "", 2);

@@ -16,31 +16,33 @@ t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin,
 t_data *data)
 {
 	char	*str;
-	int		i;
-	int		j;
 
+	data->i = 0;
+	data->j = 0;
 	if (temp == NULL)
+	{
+		if (token->type == 4 || token->type == 1 || token->type == 5)
+			return (ft_lstnew_token(bin, data, token->content, 2));
 		return (ft_lstnew_token(bin, data, token->content, token->type));
+	}
 	str = malloc(sizeof(char) * (ft_strlen(temp->content)
 		+ ft_strlen(token->content)) + 1);
 	if (!str)
-
+		ft_getmeout(data, bin);
 	ft_lstadd_backs(bin, ft_lstnew(str), data, bin);
-	i = 0;
-	j = 0;
-	while (temp->content[i])
+	while (temp->content[data->i])
 	{
-		str[i] = temp->content[i];
-		i++;
+		str[data->i] = temp->content[data->i];
+		data->i++;
 	}
-	while (token->content[j])
-		str[i++] = token->content[j++];
-	str[i] = '\0';
+	while (token->content[data->j])
+		str[data->i++] = token->content[data->j++];
+	str[data->i] = '\0';
 	temp->content = str;
 	return (temp);
 }
 
-void	ft_doublequotes(t_token *token, t_list **bin, t_data *data)//t_token *temp, t_token *stop)
+void	ft_doublequotes(t_token *token, t_list **bin, t_data *data, t_token *temp)//t_token *temp, t_token *stop)
 {
 	while (token)
 	{
@@ -54,14 +56,14 @@ void	ft_doublequotes(t_token *token, t_list **bin, t_data *data)//t_token *temp,
 				while (data->stop && ft_strcmp(data->stop->content, "\""))
 				{
 					if (data->stop->type != 6)
-						data->temp = ft_joincontent(data->temp, data->stop, bin, data);
+						temp = ft_joincontent(temp, data->stop, bin, data);
 					data->stop = data->stop->next;
 				}
-				if (data->temp == NULL)
-					data->temp = ft_lstnew_token(bin, data, "", 2);
-				data->temp->next = data->stop;
-				token->next = data->temp;
-				ft_doublequotes(data->stop->next, bin, data);
+				if (temp == NULL)
+					temp = ft_lstnew_token(bin, data, "", 2);
+				temp->next = data->stop;
+				token->next = temp;
+				ft_doublequotes(data->stop->next, bin, data, NULL);
 				return ;
 			}
 		}
@@ -69,7 +71,7 @@ void	ft_doublequotes(t_token *token, t_list **bin, t_data *data)//t_token *temp,
 	}
 }
 
-void	ft_simplequotes(t_token *token, t_list **bin, t_data *data)//t_token *temp, t_token *stop)
+void	ft_simplequotes(t_token *token, t_list **bin, t_data *data, t_token *temp)//t_token *temp, t_token *stop)
 {
 	while (token)
 	{
@@ -83,14 +85,14 @@ void	ft_simplequotes(t_token *token, t_list **bin, t_data *data)//t_token *temp,
 				while (data->stop && ft_strcmp(data->stop->content, "\'"))
 				{
 					if (data->stop->type != 6)
-						data->temp = ft_joincontent(data->temp, data->stop, bin, data);
+						temp = ft_joincontent(temp, data->stop, bin, data);
 					data->stop = data->stop->next;
 				}
-				if (data->temp == NULL)
-					data->temp = ft_lstnew_token(bin, data, "", 2);
-				data->temp->next = data->stop;
-				token->next = data->temp;
-				ft_simplequotes(data->stop->next, bin, data);
+				if (temp == NULL)
+					temp = ft_lstnew_token(bin, data, "", 2);
+				temp->next = data->stop;
+				token->next = temp;
+				ft_simplequotes(data->stop->next, bin, data, NULL);
 				return ;
 			}
 		}

@@ -89,17 +89,17 @@ int	ft_simplify(t_token **token, t_list **bin, t_data *data)
 	ft_questionmark(*token, bin, data);
 	ft_sepdollar(*token, bin, data);
 	ft_supempty(token);
-	// ft_print(*token);
 	ft_dollar(*token, bin, data);             // export : remplacer $USER par -> jroux-fo (avec env)
+	// ft_print(*token);
 	if (ft_first_quote(*token))
 	{
-		ft_doublequotes(*token, bin, data);//temp, stop);
-		ft_simplequotes(*token, bin, data);//temp, stop);
+		ft_doublequotes(*token, bin, data, NULL);//temp, stop);
+		ft_simplequotes(*token, bin, data, NULL);//temp, stop);
 	}
 	else
 	{
-		ft_simplequotes(*token, bin, data);//temp, stop);
-		ft_doublequotes(*token, bin, data);//temp, stop);
+		ft_simplequotes(*token, bin, data, NULL);//temp, stop);
+		ft_doublequotes(*token, bin, data, NULL);//temp, stop);
 	}
 	// ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	// ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
