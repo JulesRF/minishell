@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/29 11:03:15 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/05 18:16:17 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ int	save_fd_and_init_vars(t_vars *vars, t_redir *redir)
 {
 	int	ret;
 
-	ret = find_heredocs(vars->cmd, redir);
+	ret = find_heredocs(vars->cmd, redir, vars);
 	if (ret != 0)
 		return (ret);
 	if (ft_piperedir(*(vars->cmd), vars->bin) == 1)

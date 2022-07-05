@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/29 10:41:02 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/05 18:19:24 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	heredoc_warning(t_list **heredoc_eofs, int *nb_eof)
 	(*heredoc_eofs) = (*heredoc_eofs)->next;
 }
 
-void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
+void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd, t_vars *vars)
 {
 	char	*line;
 	int		nb_eof;
@@ -57,7 +57,7 @@ void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
 			heredoc_warning(&heredoc_eofs, &nb_eof);
 		if (line && nb_eof == (nb_heredocs - 1)
 			&& ft_strcmp(line, heredoc_eofs->content) != 0)
-			write_heredoc(pipe_fd, line);
+			write_heredoc(pipe_fd, line, vars);
 		if (line && (ft_strcmp(line, heredoc_eofs->content) == 0))
 		{
 			nb_eof++;
@@ -79,7 +79,7 @@ void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd)
  * @param nb_heredocs the overall number of heredocs 
  * @return int 0 if no error, n > 0 otherwise
  */
-int	multiple_heredoc(t_list *heredoc_eofs, int *heredoc_redir, int nb_heredocs)
+int	multiple_heredoc(t_list *heredoc_eofs, int *heredoc_redir, int nb_heredocs, t_vars *vars)
 {
 	int		pipe_fd[2];
 	pid_t	pid;
@@ -91,7 +91,7 @@ int	multiple_heredoc(t_list *heredoc_eofs, int *heredoc_redir, int nb_heredocs)
 	if (pid == -1)
 		return (handle_errno("fork", 1, NULL, NULL));
 	if (pid == 0)
-		start_heredoc(heredoc_eofs, nb_heredocs, pipe_fd);
+		start_heredoc(heredoc_eofs, nb_heredocs, pipe_fd, vars);
 	else
 	{
 		signal(SIGQUIT, handle_sigquit_heredoc);
@@ -115,7 +115,7 @@ int	multiple_heredoc(t_list *heredoc_eofs, int *heredoc_redir, int nb_heredocs)
  * @param redir variables related to redirections
  * @return int 
  */
-int	find_heredocs(t_token **commands, t_redir *redir)
+int	find_heredocs(t_token **commands, t_redir *redir, t_vars *vars)
 {
 	t_token	*cur;
 	int		ret;
@@ -134,7 +134,7 @@ int	find_heredocs(t_token **commands, t_redir *redir)
 	if (redir->count_heredocs > 0)
 	{
 		ret = multiple_heredoc(redir->heredoc_eofs, &(redir->heredoc_redir),
-				redir->count_heredocs);
+				redir->count_heredocs, vars);
 		ft_garbage(&(redir->heredoc_eofs));
 	}
 	if (ret != 0)

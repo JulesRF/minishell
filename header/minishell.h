@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/06/29 11:02:29 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/05 18:19:02 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,11 +88,11 @@ void	set_input_and_output(t_redir *redir, t_vars *vars);
 
 //	heredoc.c
 int		multiple_heredoc(t_list *heredoc_eofs, int *input_redir,
-			int nb_heredocs);
-int		find_heredocs(t_token **commands, t_redir *redir);
+			int nb_heredocs, t_vars *vars);
+int	find_heredocs(t_token **commands, t_redir *redir, t_vars *vars);
 
 //	heredoc2.c
-void	write_heredoc(int pipe_fd[2], char *line);
+void	write_heredoc(int pipe_fd[2], char *line, t_vars *vars);
 
 //	redirections.c
 int		find_in_out_files(t_token **commands, t_redir *redir);
@@ -122,6 +122,7 @@ char	*get_env_var(char *key, char **env);
 
 //	utils2.c
 char	**cmd_to_strs(t_token *command);
+char	*cmd_to_str(t_token *command);
 void	free_strs(char **strs);
 int		get_nb_cmd_and_heredocs(t_token *commands, int *nb_heredocs);
 t_token	**split_commands(t_token *commands, int nb_cmd, int i);
