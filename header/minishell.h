@@ -32,6 +32,7 @@
 typedef struct s_token
 {
 	int				type;
+	int				qt;
 	char			*content;
 	struct s_token	*next;
 }	t_token;
@@ -175,6 +176,8 @@ int		ft_dollarcheck(t_token *token, char *to_find, char **env, t_list **bin);
 
 //	simplify_utils2.c
 void	ft_handleheredoc(t_token *token, t_list **bin, t_data *data);
+int		ft_add(t_token *token);
+void	ft_quotesbool(t_token *token);
 void	ft_ghostbuster(t_token **token, t_list **bin, t_data *data);
 
 //	simplify.c

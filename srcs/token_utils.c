@@ -20,6 +20,13 @@ t_token	*ft_lstnew_token(t_list **bin, t_data *data, char *content, int type)
 	if (!newcell)
 		return (NULL);
 	ft_lstadd_backs(bin, ft_lstnew(newcell), data, bin);
+	if (type > 10)
+	{
+		newcell->qt = 10;
+		type = type - 10;
+	}
+	else
+		newcell->qt = 0;
 	newcell->content = content;
 	newcell->type = type;
 	newcell->next = NULL;

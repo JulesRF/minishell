@@ -70,7 +70,7 @@ void	ft_print(t_token *token)
 	while (token)
 	{
 		printf("---------------\n");
-		printf("numero: %d\ntype: %d\n", i, token->type);
+		printf("numero: %d\ntype: %d\nBOOL: %d\n", i, token->type, token->qt);
 		printf("content:\e[38;5;196m->\033[0m%s\e[38;5;196m<-\033[0m\n",
 			(char *)token->content);
 		printf("---------------\n");

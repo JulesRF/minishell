@@ -16,21 +16,21 @@ int	ft_piperedir(t_token *token, t_list **bin)
 {
 	(void)bin;
 	if (!ft_strcmp(token->content, "|") && token->type == 1)
-		return (printf("minishell: syntax error1\n"), 1);
+		return (printf("minishell: syntax error\n"), 1);
 	while (token)
 	{
 		if ((!ft_strcmp(token->content, "|") && token->type == 1)
 			|| (token->type == 5))
 		{
 			if (!token->next)
-				return (printf("minishell: syntax error2\n"), 1);
+				return (printf("minishell: syntax error\n"), 1);
 			if (token->next->type == 4)
 				token = token->next;
 			if (!token->next)
-				return (printf("minishell: syntax error3\n"), 1);
+				return (printf("minishell: syntax error\n"), 1);
 			if (token->next->type != 2 && token->next->type != 3
 				&& token->next->type != 5 && token->next->type != 6)
-				return (printf("minishell: syntax error4\n"), 1);
+				return (printf("minishell: syntax error\n"), 1);
 		}
 		token = token->next;
 	}
@@ -86,6 +86,7 @@ int	ft_simplify(t_token **token, t_list **bin, t_data *data, t_vars *vars)
 {
 	data->temp = NULL;
 	data->stop = NULL;
+	ft_quotesbool(*token);
 	ft_questionmark(*token, bin, data);
 	ft_handleheredoc(*token, bin, data);
 	ft_sepdollar(*token, bin, data);

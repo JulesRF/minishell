@@ -22,8 +22,8 @@ t_data *data)
 	if (temp == NULL)
 	{
 		if (token->type == 4 || token->type == 1 || token->type == 5)
-			return (ft_lstnew_token(bin, data, token->content, 2));
-		return (ft_lstnew_token(bin, data, token->content, token->type));
+			return (ft_lstnew_token(bin, data, token->content, 2 + token->qt));
+		return (ft_lstnew_token(bin, data, token->content, ft_add(token)));
 	}
 	str = malloc(sizeof(char) * (ft_strlen(temp->content)
 				+ ft_strlen(token->content)) + 1);
