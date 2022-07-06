@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   questionmark.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jroux-fo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 15:24:32 by jroux-fo          #+#    #+#             */
 /*   Updated: 2022/06/28 15:24:34 by jroux-fo         ###   ########.fr       */

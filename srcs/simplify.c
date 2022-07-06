@@ -16,21 +16,21 @@ int	ft_piperedir(t_token *token, t_list **bin)
 {
 	(void)bin;
 	if (!ft_strcmp(token->content, "|") && token->type == 1)
-		return (printf("minishell: syntax error\n"), 1);
+		return (printf("minishell: syntax error1\n"), 1);
 	while (token)
 	{
 		if ((!ft_strcmp(token->content, "|") && token->type == 1)
 			|| (token->type == 5))
 		{
 			if (!token->next)
-				return (printf("minishell: syntax error\n"), 1);
+				return (printf("minishell: syntax error2\n"), 1);
 			if (token->next->type == 4)
 				token = token->next;
 			if (!token->next)
-				return (printf("minishell: syntax error\n"), 1);
+				return (printf("minishell: syntax error3\n"), 1);
 			if (token->next->type != 2 && token->next->type != 3
 				&& token->next->type != 5 && token->next->type != 6)
-				return (printf("minishell: syntax error\n"), 1);
+				return (printf("minishell: syntax error4\n"), 1);
 		}
 		token = token->next;
 	}
@@ -87,10 +87,11 @@ int	ft_simplify(t_token **token, t_list **bin, t_data *data)
 	data->temp = NULL;
 	data->stop = NULL;
 	ft_questionmark(*token, bin, data);
+	ft_handleheredoc(*token, bin, data);
+	// ft_print(*token);
 	ft_sepdollar(*token, bin, data);
 	ft_supempty(token);
 	ft_dollar(*token, bin, data);             // export : remplacer $USER par -> jroux-fo (avec env)
-	// ft_print(*token);
 	if (ft_first_quote(*token))
 	{
 		ft_doublequotes(*token, bin, data, NULL);//temp, stop);
@@ -103,9 +104,13 @@ int	ft_simplify(t_token **token, t_list **bin, t_data *data)
 	}
 	// ft_doublequotes(*token, bin, temp, stop);// simplifier tout les tokens entre doubles quotes par un seul token mot
 	// ft_simplequotes(*token, bin, temp, stop);// simplifier tout les tokens entre simple quotes par un seul token mot
-	// ft_print(*token);
 	ft_rmvquotes(token, bin);
+	ft_ghostbuster(token, bin, data);
 	ft_joinwords(token, bin, data);
 	ft_supspace(token);                     // supprimer les tokens espace en trop : "salut     ca va" -> "salut ca va"
+	// ft_print(*token);
+	// ft_ghostbuster(token, bin, data);
+	// ft_print(*token);
+	// ft_joinwords(token, bin, data);
 	return (0);
 }
