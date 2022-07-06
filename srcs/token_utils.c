@@ -19,7 +19,7 @@ t_token	*ft_lstnew_token(t_list **bin, t_data *data, char *content, int type)
 	newcell = malloc(sizeof(t_token));
 	if (!newcell)
 		return (NULL);
-	ft_lstadd_backs(bin, ft_lstnew(newcell), data, bin);   //
+	ft_lstadd_backs(bin, ft_lstnew(newcell), data, bin);
 	newcell->content = content;
 	newcell->type = type;
 	newcell->next = NULL;
@@ -63,7 +63,7 @@ void	ft_delete_token(t_token **alst, t_token *to_del)
 	if (tmp == to_del)
 	{
 		*alst = tmp->next;
-		return ;//free deleted token ?
+		return ;
 	}
 	while (tmp && tmp != to_del)
 	{

@@ -26,7 +26,7 @@ t_data *data)
 		return (ft_lstnew_token(bin, data, token->content, token->type));
 	}
 	str = malloc(sizeof(char) * (ft_strlen(temp->content)
-		+ ft_strlen(token->content)) + 1);
+				+ ft_strlen(token->content)) + 1);
 	if (!str)
 		ft_getmeout(data, bin);
 	ft_lstadd_backs(bin, ft_lstnew(str), data, bin);
@@ -42,7 +42,8 @@ t_data *data)
 	return (temp);
 }
 
-void	ft_doublequotes(t_token *token, t_list **bin, t_data *data, t_token *temp)//t_token *temp, t_token *stop)
+void	ft_doublequotes(t_token *token, t_list **bin, t_data *data,
+t_token *temp)
 {
 	while (token)
 	{
@@ -71,7 +72,8 @@ void	ft_doublequotes(t_token *token, t_list **bin, t_data *data, t_token *temp)/
 	}
 }
 
-void	ft_simplequotes(t_token *token, t_list **bin, t_data *data, t_token *temp)//t_token *temp, t_token *stop)
+void	ft_simplequotes(t_token *token, t_list **bin, t_data *data,
+t_token *temp)
 {
 	while (token)
 	{

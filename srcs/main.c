@@ -12,13 +12,13 @@
 
 #include "minishell.h"
 
-int g_exit_status;
+int	g_exit_status;
 
-int increment_shlvl(char ***env)
+int	increment_shlvl(char ***env)
 {
-	char *shlvl_str;
-	char *shlvl_var;
-	int shlvl;
+	char	*shlvl_str;
+	char	*shlvl_var;
+	int		shlvl;
 
 	shlvl_str = get_env_value("SHLVL", *env);
 	if (!shlvl_str)
@@ -47,38 +47,51 @@ int increment_shlvl(char ***env)
 	return (shlvl);
 }
 
+void	ft_initvars(t_token **token, t_data *data, t_list **bin, t_vars *vars)
+{
+	vars->cmd = token;
+	vars->env = data->env;
+	vars->bin = bin;
+	vars->cmd_line = data->cmd_line;
+}
+
+t_data	*ft_initdata(char ***env)
+{
+	t_data	*tmp;
+
+	tmp = malloc(sizeof(t_data));
+	if (!tmp)
+	{
+		free_strs_array(*env);
+		return (NULL);
+	}
+	tmp->env = env;
+	return (tmp);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
-	t_list	*bin;      // garbage collector, tout ce que je malloc, je le fous dedans
+	t_list	*bin;
 	t_token	*token;
 	t_data	*data;
-	char **env;
+	char	**env;
 
 	g_exit_status = 0;
 	ft_preparse(argc, argv, envp);
 	bin = NULL;
 	token = NULL;
-	data = malloc(sizeof(t_data));
-	if (!data)
-		return (1);
 	env = dup_env(envp);
 	if (!env)
 		exit(1);
 	if (increment_shlvl(&env) == 1)
 	{
 		free_strs_array(env);
-		free(data);
 		exit(1);
 	}
-	data->env = &env;
-	// if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
-	// {
-	// 	ft_prompt(&token, &bin, &env, argv[2]);
-	// 	// printf("g_exit_status=%d\n", g_exit_status);
-	// }
-	
-	ft_prompt(&token, &bin, data, argv[2]);
-	
+	data = ft_initdata(&env);
+	if (!data)
+		exit(1);
+	ft_prompt(&token, &bin, data);
 	free_strs_array(env);
 	free (data);
 	ft_garbage(&bin);

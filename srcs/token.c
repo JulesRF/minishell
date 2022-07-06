@@ -12,52 +12,60 @@
 
 #include "minishell.h"
 
-void	ft_parse_operator(t_token **token, t_list **bin, t_data *data, int i)//char c)
+void	ft_parse_operator(t_token **token, t_list **bin, t_data *data, int i)
 {
 	if (data->cmd_line[i] == '|')
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "|", 1), data, bin);//PROTECT
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "|", 1),
+			data, bin);
 	if (data->cmd_line[i] == '$')
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "$", 1), data, bin);//PROTECT
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "$", 1),
+			data, bin);
 }
 
-void	ft_parse_ponct(t_token **token, t_list **bin, t_data *data, int i)//char c)
+void	ft_parse_ponct(t_token **token, t_list **bin, t_data *data, int i)
 {
 	if (data->cmd_line[i] == 39)
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "\'", 3), data, bin);//PROTECT
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "\'", 3),
+			data, bin);
 	if (data->cmd_line[i] == 34)
-		ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "\"", 3), data, bin);//PROTECT
+		ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "\"", 3),
+			data, bin);
 }
 
-int	ft_parse_redir(t_token **token, t_list **bin, t_data *data, int i)//char c, char *str)
+int	ft_parse_redir(t_token **token, t_list **bin, t_data *data, int i)
 {
 	if (data->cmd_line[i] == '<')
 	{
 		if (data->cmd_line[i + 1] == '<')
 		{
-			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "<<", 5), data, bin);//PROTECT
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "<<", 5),
+				data, bin);
 			return (1);
 		}
 		else
-			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "<", 5), data, bin);//PROTECT
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "<", 5),
+				data, bin);
 	}
 	if (data->cmd_line[i] == '>')
 	{
 		if (data->cmd_line[i + 1] == '>')
 		{
-			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, ">>", 5), data, bin);//PROTECT
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, ">>", 5),
+				data, bin);
 			return (1);
 		}
 		else
-			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, ">", 5), data, bin);//PROTECT
+			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, ">", 5),
+				data, bin);
 	}
 	return (0);
 }
 
-int	ft_parse_word(t_token **token, t_list **bin, t_data *data, char *str)//char *str, char **env)
+int	ft_parse_word(t_token **token, t_list **bin, t_data *data, char *str)
 {
-	int	i;
-	int	j;
-	char *dest;
+	int		i;
+	int		j;
+	char	*dest;
 
 	i = 0;
 	j = 0;
@@ -72,7 +80,7 @@ int	ft_parse_word(t_token **token, t_list **bin, t_data *data, char *str)//char 
 		j++;
 	}
 	dest[j] = '\0';
-	ft_lstadd_back_token(token, ft_lstnew_token(bin, data, dest, 2), data, bin);//PROTECT
+	ft_lstadd_back_token(token, ft_lstnew_token(bin, data, dest, 2), data, bin);
 	return (i - 1);
 }
 
@@ -84,16 +92,16 @@ void	ft_token(t_token **token, t_list **bin, t_data *data)
 	while (data->cmd_line[i] != '\0')
 	{
 		if (data->cmd_line[i] == '|' || data->cmd_line[i] == '$')
-			ft_parse_operator(token, bin, data, i);//data->cmd_line[i]);
+			ft_parse_operator(token, bin, data, i);
 		else if (data->cmd_line[i] == '\'' || data->cmd_line[i] == '\"')
-			ft_parse_ponct(token, bin, data, i);//data->cmd_line[i]);
+			ft_parse_ponct(token, bin, data, i);
 		else if (data->cmd_line[i] == '<' || data->cmd_line[i] == '>')
-			i = i + ft_parse_redir(token, bin, data, i);//data->cmd_line[i], str + i);
+			i = i + ft_parse_redir(token, bin, data, i);
 		else if (data->cmd_line[i] == ' ')
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, " ", 4),
-			data, bin);//PROTECT
+				data, bin);
 		else
-			i = i + ft_parse_word(token, bin, data, data->cmd_line + i);//str + i, env);
+			i = i + ft_parse_word(token, bin, data, data->cmd_line + i);
 		i++;
 	}
 }

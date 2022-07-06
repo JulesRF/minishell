@@ -28,10 +28,10 @@
 
 # define BUFFER_SIZE 4096
 
-
+//1-operator, 2-word, 3-ponct, 4-space, 5-redir, 6-phantom
 typedef struct s_token
 {
-	int				type; //1-operator, 2-word, 3-ponct, 4-space, 5-redir, 6-phantom
+	int				type;
 	char			*content;
 	struct s_token	*next;
 }	t_token;
@@ -76,6 +76,7 @@ typedef struct s_redir
 extern int	g_exit_status;
 
 //	main.c
+void	ft_initvars(t_token **token, t_data *data, t_list **bin, t_vars *vars);
 int		main(int argc, char **argv, char **env);
 
 //	redir_and_exec.c
@@ -136,7 +137,7 @@ void	ft_lstadd_backs(t_list **alst, t_list *new, t_data *data, t_list **bin);
 t_token	*ft_lstnew_token(t_list **bin, t_data *data, char *content, int type);
 t_token	*ft_lstlast_token(t_token *lst);
 void	ft_lstadd_back_token(t_token **alst, t_token *new, t_data *data,
-t_list **bin);
+			t_list **bin);
 void	ft_delete_token(t_token **alst, t_token *to_del);
 void	ft_clean_token(t_token **token);
 
@@ -147,19 +148,23 @@ void	ft_preparse(int argc, char **argv, char **env);
 void	ft_print(t_token *token);
 
 //	token.c
-void	ft_parse_operator(t_token **token, t_list **bin, t_data *data, int i);//char c);
-void	ft_parse_ponct(t_token **token, t_list **bin, t_data *data, int i);//char c);
-int		ft_parse_redir(t_token **token, t_list **bin, t_data *data, int i);//char c, char *str);
-int		ft_parse_word(t_token **token, t_list **bin, t_data *data, char *str);//char *str, char **env);
-void	ft_token(t_token **token, t_list **bin, t_data *data);//char *str, char **env);
+void	ft_parse_operator(t_token **token, t_list **bin, t_data *data, int i);
+void	ft_parse_ponct(t_token **token, t_list **bin, t_data *data, int i);
+int		ft_parse_redir(t_token **token, t_list **bin, t_data *data, int i);
+int		ft_parse_word(t_token **token, t_list **bin, t_data *data, char *str);
+void	ft_token(t_token **token, t_list **bin, t_data *data);
 
 //	quotes.c
-t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin, t_data *data);
-void	ft_doublequotes(t_token *token, t_list **bin, t_data *data, t_token *temp);//t_token *temp, t_token *stop);
-void	ft_simplequotes(t_token *token, t_list **bin, t_data *data, t_token *temp);//t_token *temp, t_token *stop);
+t_token	*ft_joincontent(t_token *temp, t_token *token, t_list **bin,
+			t_data *data);
+void	ft_doublequotes(t_token *token, t_list **bin, t_data *data,
+			t_token *temp);
+void	ft_simplequotes(t_token *token, t_list **bin, t_data *data,
+			t_token *temp);
 
 //	dollar.c
-void	ft_dollarfind(t_token *token, char *to_find, t_data *data, t_list **bin);
+void	ft_dollarfind(t_token *token, char *to_find, t_data *data,
+			t_list **bin);
 t_token	*ft_isdollar(t_token *token, t_list **bin, t_data *data, int inf);
 void	ft_dollar(t_token *token, t_list **bin, t_data *data);
 t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_data *data);
@@ -177,12 +182,12 @@ int		ft_piperedir(t_token *token, t_list **bin);
 void	ft_rmvquotes(t_token **token, t_list **bin);
 void	ft_joinwords(t_token **token, t_list **bin, t_data *data);
 int		ft_first_quote(t_token *token);
-int		ft_simplify(t_token **token, t_list **bin, t_data *data);
+int		ft_simplify(t_token **token, t_list **bin, t_data *data, t_vars *vars);
 
 //	prompt.c
 int		ft_closed_quotes(char *str, int i);
 int		ft_syntax(char *str, t_list **bin);
-void	ft_prompt(t_token **token, t_list **bin, t_data *data, char *tester_cmd);
+void	ft_prompt(t_token **token, t_list **bin, t_data *data);
 char	**dup_env(char **envp);
 void	free_strs_array(char **strs);
 

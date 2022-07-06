@@ -36,7 +36,7 @@ void	ft_handleheredoc(t_token *token, t_list **bin, t_data *data)
 
 void	ft_ghostbuster(t_token **token, t_list **bin, t_data *data)
 {
-	t_token *tmp;
+	t_token	*tmp;
 
 	(void)bin;
 	(void)data;
