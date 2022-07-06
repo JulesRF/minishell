@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/05 18:53:38 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/06 17:58:24 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int	add_heredoc_eof_to_list(t_token **cur, t_token **commands, t_redir *redir)
 		free(heredoc_eof);
 		return (1);
 	}
+	node->qt = (*cur)->next->qt;
 	ft_lstadd_back(&(redir->heredoc_eofs), node);
 	redir->count_heredocs = redir->count_heredocs + 1;
 	return (0);
@@ -58,7 +59,7 @@ void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd,
 			heredoc_warning(&heredoc_eofs, &nb_eof);
 		if (line && nb_eof == (nb_heredocs - 1)
 			&& ft_strcmp(line, heredoc_eofs->content) != 0)
-			write_heredoc(pipe_fd, line, vars);
+			write_heredoc(pipe_fd, line, vars, heredoc_eofs->qt);
 		if (line && (ft_strcmp(line, heredoc_eofs->content) == 0))
 		{
 			nb_eof++;

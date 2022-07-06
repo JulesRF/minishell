@@ -6,7 +6,7 @@
 #    By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/04 14:03:48 by jroux-fo          #+#    #+#              #
-#    Updated: 2022/06/29 10:58:46 by vfiszbin         ###   ########.fr        #
+#    Updated: 2022/07/06 18:27:07 by vfiszbin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,7 +60,7 @@ OBJ_FILES = $(addprefix $(OBJ_DIR)/,$(SRCS_FILES:.c=.o))
 
 LIBFT_A = ./libft/libft.a
 
-all: $(NAME)
+all: LIBFT $(NAME)
 	
 
 $(OBJ_DIR)/%.o: $(POTH)/%.c
@@ -76,7 +76,7 @@ $(OBJ_DIR)/%.o: $(POTH)/%.c
 LIBFT:
 	${MAKE} -C ./libft
 
-$(NAME): LIBFT $(OBJ_FILES)
+$(NAME): header/minishell.h $(OBJ_FILES)
 	@$(shell gcc $(FLAGS) -I $(INCLUDES) -I $(INCLUDES_LIBFT) $(OBJ_FILES) $(LIBFT_A) -lreadline -o $(NAME))
 	@printf "Executable $@ created !\n"
 

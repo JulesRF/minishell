@@ -6,13 +6,13 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 10:41:30 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/05 18:53:03 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/06 17:51:33 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	write_heredoc(int pipe_fd[2], char *line, t_vars *vars)
+void	write_with_expansion(int pipe_fd[2], char *line, t_vars *vars)
 {
 	t_list	*bin;
 	t_data	data;
@@ -38,4 +38,16 @@ void	write_heredoc(int pipe_fd[2], char *line, t_vars *vars)
 	write(pipe_fd[1], "\n", 1);
 	free(new_line);
 	ft_garbage(&bin);
+}
+
+void	write_heredoc(int pipe_fd[2], char *line, t_vars *vars,
+	int quoted_delim)
+{
+	if (quoted_delim != 10)
+	{
+		write_with_expansion(pipe_fd, line, vars);
+		return ;
+	}
+	write(pipe_fd[1], line, ft_strlen(line));
+	write(pipe_fd[1], "\n", 1);
 }
