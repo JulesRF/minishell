@@ -24,12 +24,12 @@ int	ft_is_questionmark(char *str)
 void	ft_questionmark(t_token *token, t_list **bin, t_data *data)
 {
 	t_token	*stop;
-	t_token *temp;
+	t_token	*temp;
 
 	while (token)
 	{
 		if (!token->next)
-			return;
+			return ;
 		if (!ft_strcmp(token->content, "$") && token->type == 1)
 		{
 			stop = token->next;

@@ -14,7 +14,7 @@
 
 void	ft_supempty(t_token **token)
 {
-	t_token *cur;
+	t_token	*cur;
 
 	cur = *token;
 	while (cur)
@@ -27,7 +27,7 @@ void	ft_supempty(t_token **token)
 
 void	ft_supspace(t_token **token)
 {
-	t_token *cur;
+	t_token	*cur;
 
 	cur = *token;
 	while (cur)

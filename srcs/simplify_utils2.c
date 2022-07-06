@@ -34,9 +34,49 @@ void	ft_handleheredoc(t_token *token, t_list **bin, t_data *data)
 	}
 }
 
+int	ft_add(t_token *token)
+{
+	return (token->type + token->qt);
+}
+
+t_token	*ft_skipspace(t_token *token)
+{
+	while (token && token->type == 4)
+		token = token->next;
+	return (token);
+}
+
+void	ft_quotesbool(t_token *token)
+{
+	t_token	*temp;
+	t_token	*temp2;
+	t_token	*stop;
+
+	while (token)
+	{
+		stop = ft_skipspace(token);
+		if (!stop)
+			return ;
+		temp = stop;
+		stop = stop->next;
+		stop = ft_skipspace(stop);
+		if (!stop)
+			return ;
+		if (!ft_strcmp(stop->content, "\"") && stop->type == 3)
+		{
+			temp2 = ft_skipspace(stop->next);
+			if (!temp2)
+				return ;
+			temp->qt = 10;
+			temp2->qt = 10;
+		}
+		token = token->next;
+	}
+}
+
 void	ft_ghostbuster(t_token **token, t_list **bin, t_data *data)
 {
-	t_token *tmp;
+	t_token	*tmp;
 
 	(void)bin;
 	(void)data;
@@ -55,33 +95,3 @@ void	ft_ghostbuster(t_token **token, t_list **bin, t_data *data)
 			tmp = tmp->next;
 	}
 }
-
-// void	ft_ghostbuster(t_token **token, t_list **bin, t_data *data)
-// {
-// 	t_token *tmp;
-// 	t_token *stop;
-
-// 	tmp = *token;
-// 	while (tmp)
-// 	{
-// 		if (tmp->type != 5)
-// 		{
-// 			stop = tmp;
-// 			if (stop->next && stop->next->type == 6)
-// 			{
-// 				printf("la on delete celui la ->%s<-\n", stop->next->content);
-// 				ft_delete_token(token, stop->next);
-// 				stop = stop->next;
-// 				if (stop->type == 2 && stop->next && stop->next->type == 2)
-// 				{
-// 					stop = ft_joincontent(stop, stop->next, bin, data);
-// 					stop->next = stop->next->next;
-// 				}
-// 			}
-// 			else
-// 				tmp = tmp->next;
-// 		}
-// 		else
-// 			tmp = tmp->next;
-// 	}
-// }
