@@ -15,7 +15,7 @@
 int	ft_piperedir(t_token *token, t_list **bin)
 {
 	(void)bin;
-	if (!ft_strcmp(token->content, "|") && token->type == 1)
+	if (token && !ft_strcmp(token->content, "|") && token->type == 1)
 		return (printf("minishell: syntax error\n"), 1);
 	while (token)
 	{
