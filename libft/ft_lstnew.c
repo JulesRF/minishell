@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/25 19:34:55 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/05/26 09:55:29 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/06 18:02:39 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ t_list	*ft_lstnew(void *content)
 	if (!new_el)
 		return (NULL);
 	new_el->content = content;
+	new_el->qt = 0;
 	new_el->next = NULL;
 	return (new_el);
 }

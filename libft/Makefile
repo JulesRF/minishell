@@ -6,7 +6,7 @@
 #    By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/22 19:49:42 by vfiszbin          #+#    #+#              #
-#    Updated: 2022/05/30 19:42:18 by vfiszbin         ###   ########.fr        #
+#    Updated: 2022/07/06 18:25:15 by vfiszbin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -65,6 +65,8 @@ SRCS = 	ft_isdigit.c\
 
 OBJS = ${SRCS:.c=.o}
 
+INCLUDES = libft.h
+
 NAME = libft.a
 
 CC = gcc
@@ -78,7 +80,7 @@ CFLAGS = -Wall -Wextra -Werror
 	${CC} ${CFLAGS} -D BUFFER_SIZE=${BUFFER_SIZE} -c $ $< -o ${<:.c=.o}
 
 
-${NAME}: ${OBJS}
+${NAME}: ${INCLUDES} ${OBJS}
 	ar rc ${NAME} ${OBJS}
 
 all: ${NAME}

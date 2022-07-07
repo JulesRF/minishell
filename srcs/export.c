@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 11:24:42 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/19 08:41:16 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/06 18:24:25 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ int	set_var_in_env(char *s, char *var_name, int name_len, char ***env)
 		j = 0;
 		while (envv[i][j] && var_name[j] && envv[i][j] == var_name[j])
 			j++;
-		if (j == name_len && (envv[i][j] == '=' || envv[i][j] == '\0'))
+		if (j == name_len && (envv[i][j] == '=' || envv[i][j] == '\0')
+			&& s[j] != '\0')
 		{
 			free(envv[i]);
 			envv[i] = ft_strdup(s);

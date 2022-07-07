@@ -84,7 +84,6 @@ void	ft_prompt(t_token **token, t_list **bin, t_data *data)
 char	**dup_env(char **envp)
 {
 	int		i;
-	int		j;
 	char	**env;
 
 	i = 0;
@@ -99,13 +98,7 @@ char	**dup_env(char **envp)
 		env[i] = ft_strdup(envp[i]);
 		if (!env[i])
 		{
-			j = 0;
-			while (j < i)
-			{
-				free(env[j]);
-				j++;
-			}
-			free(env);
+			free_strs_array(env);
 			return (NULL);
 		}
 		i++;

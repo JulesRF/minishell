@@ -34,6 +34,7 @@ t_list	*ft_lstnew(void *content)
 	if (!newcell)
 		return (NULL);
 	newcell->content = content;
+	newcell->qt = 0;
 	newcell->next = NULL;
 	return (newcell);
 }

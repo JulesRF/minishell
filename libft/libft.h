@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/22 20:00:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/05/30 19:11:52 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/06 18:25:43 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ void	ft_print_uint_fd(unsigned int n, int fd, int *nb_char);
 typedef struct s_list
 {
 	void			*content;
+	int				qt;
 	struct s_list	*next;
 }	t_list;
 
