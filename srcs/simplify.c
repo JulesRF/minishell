@@ -82,7 +82,7 @@ int	ft_first_quote(t_token *token)
 	return (0);
 }
 
-int	ft_simplify(t_token **token, t_list **bin, t_data *data, t_vars *vars)
+int	ft_simplify(t_token **token, t_list **bin, t_data *data)
 {
 	data->temp = NULL;
 	data->stop = NULL;
@@ -106,6 +106,6 @@ int	ft_simplify(t_token **token, t_list **bin, t_data *data, t_vars *vars)
 	ft_ghostbuster(token, bin, data);
 	ft_joinwords(token, bin, data);
 	ft_supspace(token);
-	ft_initvars(token, data, bin, vars);
+	ft_initvars(token, data, bin);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/05 18:16:17 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 15:49:55 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int	set_output(t_redir *redir)
  * @param redir variables related to redirections
  * @return int 
  */
-int	restore_in_out_and_wait(t_vars *vars, t_redir *redir)
+int	restore_in_out_and_wait(t_data *vars, t_redir *redir)
 {
 	int	wait_ret;
 	int	ret_other_processes;
@@ -102,7 +102,7 @@ int	restore_in_out_and_wait(t_vars *vars, t_redir *redir)
 	return (0);
 }
 
-int	save_fd_and_init_vars(t_vars *vars, t_redir *redir)
+int	save_fd_and_init_vars(t_data *vars, t_redir *redir)
 {
 	int	ret;
 
@@ -133,7 +133,7 @@ int	save_fd_and_init_vars(t_vars *vars, t_redir *redir)
  * @param vars variables related to command execution
  * @return int 1 if error, the exit status of the last command otherwise
  */
-int	redir_and_exec(t_vars *vars)
+int	redir_and_exec(t_data *vars)
 {
 	t_redir	redir;
 

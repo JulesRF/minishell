@@ -49,8 +49,6 @@ int	ft_syntax(char *str, t_list **bin)
 
 void	ft_prompt(t_token **token, t_list **bin, t_data *data)
 {
-	t_vars	vars;
-
 	change_signals(2);
 	rl_outstream = stderr;
 	data->cmd_line = readline("\033[95mminishell$\033[0m ");
@@ -61,8 +59,8 @@ void	ft_prompt(t_token **token, t_list **bin, t_data *data)
 		if (!ft_syntax(data->cmd_line, bin))
 		{
 			ft_token(token, bin, data);
-			if (!ft_simplify(token, bin, data, &vars))
-				g_exit_status = redir_and_exec(&vars);
+			if (!ft_simplify(token, bin, data))
+				g_exit_status = redir_and_exec(data);
 		}
 		ft_garbage(bin);
 		ft_clean_token(token);

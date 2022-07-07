@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/29 10:08:36 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 15:49:55 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ int	exec_cmd(t_token *command, char **env, pid_t pid)
  * @param redir variables related to redirections
  * @return int 1 if error, should not return otherwise
  */
-int	fork_exec(t_vars *vars, t_redir *redir)
+int	fork_exec(t_data *vars, t_redir *redir)
 {
 	vars->pid = fork();
 	if (vars->pid == -1)

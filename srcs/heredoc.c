@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/06 17:58:24 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 15:49:55 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	heredoc_warning(t_list **heredoc_eofs, int *nb_eof)
 }
 
 void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd,
-	t_vars *vars)
+	t_data *vars)
 {
 	char	*line;
 	int		nb_eof;
@@ -82,7 +82,7 @@ void	start_heredoc(t_list *heredoc_eofs, int nb_heredocs, int *pipe_fd,
  * @return int 0 if no error, n > 0 otherwise
  */
 int	multiple_heredoc(t_list *heredoc_eofs, int *heredoc_redir, int nb_heredocs,
-	t_vars *vars)
+	t_data *vars)
 {
 	int		pipe_fd[2];
 	pid_t	pid;
@@ -118,7 +118,7 @@ int	multiple_heredoc(t_list *heredoc_eofs, int *heredoc_redir, int nb_heredocs,
  * @param redir variables related to redirections
  * @return int 
  */
-int	find_heredocs(t_token **commands, t_redir *redir, t_vars *vars)
+int	find_heredocs(t_token **commands, t_redir *redir, t_data *vars)
 {
 	t_token	*cur;
 	int		ret;

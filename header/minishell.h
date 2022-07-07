@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/07/06 18:27:50 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 15:51:09 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,18 +42,12 @@ typedef struct s_data {
 	char	***env;
 	t_token	*temp;
 	t_token	*stop;
+	t_token	**cmd;
+	t_list	**bin;
+	pid_t	pid;
 	int		i;
 	int		j;
 }	t_data;
-
-typedef struct s_vars
-{
-	t_token	**cmd;
-	char	***env;
-	t_list	**bin;
-	pid_t	pid;
-	char	*cmd_line;
-}	t_vars;
 
 typedef struct s_redir
 {
@@ -77,24 +71,24 @@ typedef struct s_redir
 extern int	g_exit_status;
 
 //	main.c
-void	ft_initvars(t_token **token, t_data *data, t_list **bin, t_vars *vars);
+void	ft_initvars(t_token **token, t_data *data, t_list **bin);
 int		main(int argc, char **argv, char **env);
 
 //	redir_and_exec.c
-int		redir_and_exec(t_vars *vars);
+int		redir_and_exec(t_data *vars);
 int		set_input(t_redir *redir);
 int		set_output(t_redir *redir);
 
 //	redir_and_exec2.c
-void	set_input_and_output(t_redir *redir, t_vars *vars);
+void	set_input_and_output(t_redir *redir, t_data *vars);
 
 //	heredoc.c
 int		multiple_heredoc(t_list *heredoc_eofs, int *input_redir,
-			int nb_heredocs, t_vars *vars);
-int		find_heredocs(t_token **commands, t_redir *redir, t_vars *vars);
+			int nb_heredocs, t_data *vars);
+int		find_heredocs(t_token **commands, t_redir *redir, t_data *vars);
 
 //	heredoc2.c
-void	write_heredoc(int pipe_fd[2], char *line, t_vars *vars,
+void	write_heredoc(int pipe_fd[2], char *line, t_data *vars,
 			int quoted_delim);
 
 //	redirections.c
@@ -103,10 +97,10 @@ int		find_in_out_files(t_token **commands, t_redir *redir);
 //	execution.c
 int		exec_cmd(t_token *command, char **env, pid_t pid);
 int		get_child_status(int pid, int *ret, int change_sig, int ignore_err);
-int		fork_exec(t_vars *vars, t_redir *redir);
+int		fork_exec(t_data *vars, t_redir *redir);
 
 //	search_cmd.c
-int		search_cmd(t_vars *vars);
+int		search_cmd(t_data *vars);
 
 //	signal.c
 void	handle_sigquit(int code);
@@ -187,7 +181,7 @@ int		ft_piperedir(t_token *token, t_list **bin);
 void	ft_rmvquotes(t_token **token, t_list **bin);
 void	ft_joinwords(t_token **token, t_list **bin, t_data *data);
 int		ft_first_quote(t_token *token);
-int		ft_simplify(t_token **token, t_list **bin, t_data *data, t_vars *vars);
+int		ft_simplify(t_token **token, t_list **bin, t_data *data);
 
 //	prompt.c
 int		ft_closed_quotes(char *str, int i);

@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/07/06 17:36:15 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 15:52:24 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,33 +50,17 @@ int	increment_shlvl(char ***env)
 	return (shlvl);
 }
 
-void	ft_initvars(t_token **token, t_data *data, t_list **bin, t_vars *vars)
+void	ft_initvars(t_token **token, t_data *data, t_list **bin)
 {
-	vars->cmd = token;
-	vars->env = data->env;
-	vars->bin = bin;
-	vars->cmd_line = data->cmd_line;
-}
-
-t_data	*ft_initdata(char ***env)
-{
-	t_data	*tmp;
-
-	tmp = malloc(sizeof(t_data));
-	if (!tmp)
-	{
-		free_strs_array(*env);
-		return (NULL);
-	}
-	tmp->env = env;
-	return (tmp);
+	data->cmd = token;
+	data->bin = bin;
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_list	*bin;
 	t_token	*token;
-	t_data	*data;
+	t_data	data;
 	char	**env;
 
 	g_exit_status = 0;
@@ -91,12 +75,9 @@ int	main(int argc, char **argv, char **envp)
 		free_strs_array(env);
 		exit(1);
 	}
-	data = ft_initdata(&env);
-	if (!data)
-		exit(1);
-	ft_prompt(&token, &bin, data);
+	data.env = &env;
+	ft_prompt(&token, &bin, &data);
 	free_strs_array(env);
-	free (data);
 	ft_garbage(&bin);
 	exit(g_exit_status);
 }

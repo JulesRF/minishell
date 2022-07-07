@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:20:08 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/29 10:07:08 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 15:49:55 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	check_builtin(t_token *command, char ***env, t_list **bin, char *cmd_line)
 	return (-1);
 }
 
-int	find_executable(t_vars *vars, char **paths, char *cmd_name)
+int	find_executable(t_data *vars, char **paths, char *cmd_name)
 {
 	char		*path_to_cmd;
 	int			i;
@@ -83,7 +83,7 @@ int	find_executable(t_vars *vars, char **paths, char *cmd_name)
  * @param vars variables related to command execution
  * @return int -1 if the search fails, the executed command status otherwise
  */
-int	check_path(t_vars *vars)
+int	check_path(t_data *vars)
 {
 	char		*cmd_name;
 	char		*path;
@@ -118,7 +118,7 @@ int	check_path(t_vars *vars)
  * @param vars variables related to command execution
  * @return int 0 if no error, >0 otherwise
  */
-int	search_cmd(t_vars *vars)
+int	search_cmd(t_data *vars)
 {
 	char	*cmd_name;
 	int		ret;
