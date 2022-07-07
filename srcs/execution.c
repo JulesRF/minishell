@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/07 18:55:31 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 20:01:47 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,8 @@ int	fork_exec(t_data *vars, t_redir *redir)
 		//
 		close (0);
 		close (1);
+		if (redir->heredoc_redir != -1)
+			close(redir->heredoc_redir);
 		clean_prog(vars, redir);
 		//
 		exit(redir->ret);

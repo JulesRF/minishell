@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/07/07 19:14:35 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 19:30:11 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,7 @@ int		set_output(t_redir *redir);
 void	set_input_and_output(t_redir *redir, t_data *vars);
 
 //	heredoc.c
-int		multiple_heredoc(t_list *heredoc_eofs, int *input_redir,
-			int nb_heredocs, t_data *vars);
+int		multiple_heredoc(t_redir *redir, t_data *vars);
 int		find_heredocs(t_token **commands, t_redir *redir, t_data *vars);
 
 //	heredoc2.c
