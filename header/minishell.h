@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/07/07 19:30:11 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 20:12:36 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ int		find_heredocs(t_token **commands, t_redir *redir, t_data *vars);
 //	heredoc2.c
 void	write_heredoc(int pipe_fd[2], char *line, t_data *vars,
 			int quoted_delim);
+void	clean_and_close_heredoc(int *pipe_fd, t_data *vars, t_redir *redir);
 
 //	redirections.c
 int		find_in_out_files(t_token **commands, t_redir *redir);
@@ -233,7 +234,7 @@ int		env_builtin(char **env);
 //	exit.c
 void	clean_prog(t_data *data, t_redir *redir);
 void	exit_prog(char *msg, int exit_status, t_redir *redir);
-int		exit_builtin(t_token *command,t_data *data, t_redir *redir);
+int		exit_builtin(t_token *command, t_data *data, t_redir *redir);
 
 //	unset.c
 int		unset(t_token *command, char ***env);

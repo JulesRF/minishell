@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/07 20:01:37 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 20:13:05 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,12 @@ void	heredoc_warning(t_list **heredoc_eofs, int *nb_eof)
 	(*heredoc_eofs) = (*heredoc_eofs)->next;
 }
 
-void	start_heredoc(t_redir *redir, int *pipe_fd, t_data *vars)
+void	start_heredoc(t_list	*heredoc_eof, t_redir *redir, int *pipe_fd,
+	t_data *vars)
 {
 	char	*line;
 	int		nb_eof;
-	t_list *heredoc_eof;
 
-	heredoc_eof = redir->heredoc_eofs;
 	signal(SIGINT, SIG_DFL);
 	nb_eof = 0;
 	close(pipe_fd[0]);
@@ -71,10 +70,7 @@ void	start_heredoc(t_redir *redir, int *pipe_fd, t_data *vars)
 		free (line);
 	}
 	free(line);
-	close(pipe_fd[1]);
-	clean_prog(vars, NULL);
-	ft_garbage(&(redir->heredoc_eofs));
-	exit(0);
+	clean_and_close_heredoc(pipe_fd, vars, redir);
 }
 
 /**
@@ -97,7 +93,7 @@ int	multiple_heredoc(t_redir *redir, t_data *vars)
 	if (pid == -1)
 		return (handle_errno("fork", 1, NULL, NULL));
 	if (pid == 0)
-		start_heredoc(redir, pipe_fd, vars);
+		start_heredoc(redir->heredoc_eofs, redir, pipe_fd, vars);
 	else
 	{
 		signal(SIGQUIT, handle_sigquit_heredoc);
@@ -108,11 +104,7 @@ int	multiple_heredoc(t_redir *redir, t_data *vars)
 			return (ret);
 	}
 	close(pipe_fd[1]);
-	// redir->heredoc_redir = dup(pipe_fd[0]);
 	redir->heredoc_redir = pipe_fd[0];
-	// close(redir->heredoc_redir);
-	// if (redir->heredoc_redir  == -1)
-	// 	return (handle_errno("dup", -1, NULL, NULL));
 	return (0);
 }
 

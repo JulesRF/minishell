@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 10:41:30 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/07 15:49:55 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 20:15:21 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,14 @@ void	write_heredoc(int pipe_fd[2], char *line, t_data *vars,
 	}
 	write(pipe_fd[1], line, ft_strlen(line));
 	write(pipe_fd[1], "\n", 1);
+}
+
+void	clean_and_close_heredoc(int *pipe_fd, t_data *vars, t_redir *redir)
+{
+	close(pipe_fd[1]);
+	clean_prog(vars, NULL);
+	ft_garbage(&(redir->heredoc_eofs));
+	close(0);
+	close(1);
+	exit(0);
 }
