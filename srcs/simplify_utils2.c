@@ -62,7 +62,7 @@ void	ft_quotesbool(t_token *token)
 		stop = ft_skipspace(stop);
 		if (!stop)
 			return ;
-		if (!ft_strcmp(stop->content, "\"") && stop->type == 3)
+		if (stop->type == 3)
 		{
 			temp2 = ft_skipspace(stop->next);
 			if (!temp2)
