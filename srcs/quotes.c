@@ -21,7 +21,7 @@ t_data *data)
 	data->j = 0;
 	if (temp == NULL)
 	{
-		if (token->type == 4 || token->type == 1 || token->type == 5)
+		if (token->type != 2 || token->type != 6)
 			return (ft_lstnew_token(bin, data, token->content, 2 + token->qt));
 		return (ft_lstnew_token(bin, data, token->content, ft_add(token)));
 	}
