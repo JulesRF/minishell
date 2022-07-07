@@ -100,7 +100,7 @@ t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_data *data)
 	t_token	*temp;
 	t_token	*stop;
 
-	if (!ft_strcmp(token->content, "$") && token->type == 1)
+	if (token->next && !ft_strcmp(token->content, "$") && token->type == 1)
 	{
 		if (!ft_strcmp(token->next->content, "?") || token->next->type != 2)
 			return (token->next);
