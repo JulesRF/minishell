@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/07 15:49:55 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 18:45:49 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ int	redir_and_exec(t_data *vars)
 				return (1);
 		}
 		else if (redir.ret == 0)
-			redir.ret = search_cmd(vars);
+			redir.ret = search_cmd(vars, &redir);
 	}
 	restore_in_out_and_wait(vars, &redir);
 	return (redir.ret);

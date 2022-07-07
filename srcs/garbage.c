@@ -48,14 +48,14 @@ t_list	*ft_lstlast(t_list *lst)
 	return (lst);
 }
 
-void	ft_lstadd_backs(t_list **alst, t_list *new, t_data *data, t_list **bin)
+void	ft_lstadd_backs(t_list **alst, t_list *new, t_data *data)
 {
 	t_list	*temp;
 
 	if (!new)
 	{
-		clean_prog(data->env, bin, data->cmd_line);
-		exit_prog("exit\nminishell: exit: bas malloc allocation", 2);
+		clean_prog(data, NULL);
+		exit_prog("exit\nminishell: exit: bas malloc allocation", 2, NULL);
 	}
 	if (!*alst)
 	{

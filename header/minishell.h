@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/07/07 15:51:09 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 19:14:35 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int		get_child_status(int pid, int *ret, int change_sig, int ignore_err);
 int		fork_exec(t_data *vars, t_redir *redir);
 
 //	search_cmd.c
-int		search_cmd(t_data *vars);
+int		search_cmd(t_data *vars, t_redir *redir);
 
 //	signal.c
 void	handle_sigquit(int code);
@@ -128,13 +128,12 @@ t_token	**split_commands(t_token *commands, int nb_cmd, int i);
 void	ft_garbage(t_list **bin);
 t_list	*ft_lstnew(void *content);
 t_list	*ft_lstlast(t_list *lst);
-void	ft_lstadd_backs(t_list **alst, t_list *new, t_data *data, t_list **bin);
+void	ft_lstadd_backs(t_list **alst, t_list *new, t_data *data);
 
 //	token_utils.c
 t_token	*ft_lstnew_token(t_list **bin, t_data *data, char *content, int type);
 t_token	*ft_lstlast_token(t_token *lst);
-void	ft_lstadd_back_token(t_token **alst, t_token *new, t_data *data,
-			t_list **bin);
+void	ft_lstadd_back_token(t_token **alst, t_token *new, t_data *data);
 void	ft_delete_token(t_token **alst, t_token *to_del);
 void	ft_clean_token(t_token **token);
 
@@ -197,7 +196,7 @@ void	ft_questionmark(t_token *token, t_list **bin, t_data *data);
 //	simplify_utils.c
 void	ft_supspace(t_token **token);
 void	ft_fucknorm(t_token *stop, char *str, t_list **bin, t_data *data);
-void	ft_getmeout(t_data *data, t_list **bin);
+void	ft_getmeout(t_data *data);
 t_token	*ft_addempty(t_token *token, t_token *stop, t_list **bin, t_data *data);
 
 ////	builtins	////
@@ -233,10 +232,9 @@ int		concat_to_env(t_token *command, char ***env, int name_len);
 int		env_builtin(char **env);
 
 //	exit.c
-void	clean_prog(char ***env, t_list **bin, char *cmd_line);
-void	exit_prog(char *msg, int exit_status);
-int		exit_builtin(t_token *command, char ***env, t_list **bin,
-			char *cmd_line);
+void	clean_prog(t_data *data, t_redir *redir);
+void	exit_prog(char *msg, int exit_status, t_redir *redir);
+int		exit_builtin(t_token *command,t_data *data, t_redir *redir);
 
 //	unset.c
 int		unset(t_token *command, char ***env);

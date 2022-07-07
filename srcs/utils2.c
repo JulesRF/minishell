@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:18:27 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/29 09:57:13 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 18:58:47 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ t_token	**split_commands(t_token *commands, int nb_cmd, int i)
 			tmp = commands;
 			commands = commands->next;
 			tmp->next = NULL;
-			ft_lstadd_back_token(&cmd_table[i], tmp, NULL, NULL);
+			ft_lstadd_back_token(&cmd_table[i], tmp, NULL);
 		}
 		else
 			commands = commands->next;

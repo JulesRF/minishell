@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 11:17:41 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/07 15:49:55 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 18:55:31 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,8 +122,19 @@ int	fork_exec(t_data *vars, t_redir *redir)
 		return (handle_errno("fork failed", 1, redir->cmd_table, NULL));
 	if (vars->pid == 0)
 	{
+		//
+		close(redir->tmpin);
+		close(redir->tmpout);
+		// close(redir.fdout);
+
 		close(redir->fdin);
-		redir->ret = search_cmd(vars);
+		redir->ret = search_cmd(vars, redir);
+
+		//
+		close (0);
+		close (1);
+		clean_prog(vars, redir);
+		//
 		exit(redir->ret);
 	}
 	return (0);

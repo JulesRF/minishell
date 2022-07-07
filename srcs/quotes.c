@@ -28,8 +28,8 @@ t_data *data)
 	str = malloc(sizeof(char) * (ft_strlen(temp->content)
 				+ ft_strlen(token->content)) + 1);
 	if (!str)
-		ft_getmeout(data, bin);
-	ft_lstadd_backs(bin, ft_lstnew(str), data, bin);
+		ft_getmeout(data);
+	ft_lstadd_backs(bin, ft_lstnew(str), data);
 	while (temp->content[data->i])
 	{
 		str[data->i] = temp->content[data->i];

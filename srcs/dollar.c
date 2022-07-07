@@ -34,7 +34,7 @@ void	ft_dollarfind(t_token *token, char *to_find, t_data *data, t_list **bin)
 	}
 	token->type = 6;
 	token->content = ft_strjoin(token->content, to_find);
-	ft_lstadd_backs(bin, ft_lstnew(token->content), data, bin);
+	ft_lstadd_backs(bin, ft_lstnew(token->content), data);
 }
 
 t_token	*ft_isdollar(t_token *token, t_list **bin, t_data *data, int inf)
@@ -56,7 +56,7 @@ t_token	*ft_isdollar(t_token *token, t_list **bin, t_data *data, int inf)
 			token->content = ft_itoa(g_exit_status);
 			if (!token->content)
 				return (NULL);
-			ft_lstadd_backs(bin, ft_lstnew(token->content), data, bin);
+			ft_lstadd_backs(bin, ft_lstnew(token->content), data);
 			token->type = 2;
 		}
 		else

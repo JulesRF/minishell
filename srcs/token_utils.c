@@ -19,7 +19,7 @@ t_token	*ft_lstnew_token(t_list **bin, t_data *data, char *content, int type)
 	newcell = malloc(sizeof(t_token));
 	if (!newcell)
 		return (NULL);
-	ft_lstadd_backs(bin, ft_lstnew(newcell), data, bin);
+	ft_lstadd_backs(bin, ft_lstnew(newcell), data);
 	if (type > 10)
 	{
 		newcell->qt = 10;
@@ -42,15 +42,14 @@ t_token	*ft_lstlast_token(t_token *lst)
 	return (lst);
 }
 
-void	ft_lstadd_back_token(t_token **alst, t_token *new, t_data *data,
-t_list **bin)
+void	ft_lstadd_back_token(t_token **alst, t_token *new, t_data *data)
 {
 	t_token	*temp;
 
 	if (!new)
 	{
-		clean_prog(data->env, bin, data->cmd_line);
-		exit_prog("exit\nminishell: exit: bas malloc allocation", 2);
+		clean_prog(data, NULL);
+		exit_prog("exit\nminishell: exit: bas malloc allocation", 2, NULL);
 	}
 	if (!*alst)
 	{

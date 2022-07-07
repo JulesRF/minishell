@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:10:11 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/07/07 15:52:24 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 18:52:38 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,5 +79,9 @@ int	main(int argc, char **argv, char **envp)
 	ft_prompt(&token, &bin, &data);
 	free_strs_array(env);
 	ft_garbage(&bin);
+
+	close(0);
+	close(1);
+
 	exit(g_exit_status);
 }

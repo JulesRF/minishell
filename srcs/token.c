@@ -16,20 +16,20 @@ void	ft_parse_operator(t_token **token, t_list **bin, t_data *data, int i)
 {
 	if (data->cmd_line[i] == '|')
 		ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "|", 1),
-			data, bin);
+			data);
 	if (data->cmd_line[i] == '$')
 		ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "$", 1),
-			data, bin);
+			data);
 }
 
 void	ft_parse_ponct(t_token **token, t_list **bin, t_data *data, int i)
 {
 	if (data->cmd_line[i] == 39)
 		ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "\'", 3),
-			data, bin);
+			data);
 	if (data->cmd_line[i] == 34)
 		ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "\"", 3),
-			data, bin);
+			data);
 }
 
 int	ft_parse_redir(t_token **token, t_list **bin, t_data *data, int i)
@@ -39,24 +39,24 @@ int	ft_parse_redir(t_token **token, t_list **bin, t_data *data, int i)
 		if (data->cmd_line[i + 1] == '<')
 		{
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "<<", 5),
-				data, bin);
+				data);
 			return (1);
 		}
 		else
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, "<", 5),
-				data, bin);
+				data);
 	}
 	if (data->cmd_line[i] == '>')
 	{
 		if (data->cmd_line[i + 1] == '>')
 		{
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, ">>", 5),
-				data, bin);
+				data);
 			return (1);
 		}
 		else
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, ">", 5),
-				data, bin);
+				data);
 	}
 	return (0);
 }
@@ -73,14 +73,14 @@ int	ft_parse_word(t_token **token, t_list **bin, t_data *data, char *str)
 		&& str[i] != ' ' && str[i] != '<' && str[i] != '>' && str[i])
 		i++;
 	dest = malloc(sizeof(char) * i + 1);
-	ft_lstadd_backs(bin, ft_lstnew(dest), data, bin);
+	ft_lstadd_backs(bin, ft_lstnew(dest), data);
 	while (j < i)
 	{
 		dest[j] = str[j];
 		j++;
 	}
 	dest[j] = '\0';
-	ft_lstadd_back_token(token, ft_lstnew_token(bin, data, dest, 2), data, bin);
+	ft_lstadd_back_token(token, ft_lstnew_token(bin, data, dest, 2), data);
 	return (i - 1);
 }
 
@@ -99,7 +99,7 @@ void	ft_token(t_token **token, t_list **bin, t_data *data)
 			i = i + ft_parse_redir(token, bin, data, i);
 		else if (data->cmd_line[i] == ' ')
 			ft_lstadd_back_token(token, ft_lstnew_token(bin, data, " ", 4),
-				data, bin);
+				data);
 		else
 			i = i + ft_parse_word(token, bin, data, data->cmd_line + i);
 		i++;

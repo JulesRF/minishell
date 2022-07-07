@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:20:08 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/07 15:49:55 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/07 18:47:44 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	cmd_not_found(t_token *command)
  * @param command Linked list of command (name) and arguments
  * @return int -1 if the search fails, 1 if execution fails, 0 if no error
  */
-int	check_builtin(t_token *command, char ***env, t_list **bin, char *cmd_line)
+int	check_builtin(t_token *command, t_data *data, t_redir *redir)
 {
 	char	*cmd_name;
 
@@ -37,17 +37,17 @@ int	check_builtin(t_token *command, char ***env, t_list **bin, char *cmd_line)
 	if (ft_strcmp(cmd_name, "echo") == 0)
 		return (echo(command));
 	if (ft_strcmp(cmd_name, "cd") == 0)
-		return (cd(command, env));
+		return (cd(command, data->env));
 	if (ft_strcmp(cmd_name, "pwd") == 0)
 		return (pwd());
 	if (ft_strcmp(cmd_name, "export") == 0)
-		return (export(command, env));
+		return (export(command, data->env));
 	if (ft_strcmp(cmd_name, "unset") == 0)
-		return (unset(command, env));
+		return (unset(command, data->env));
 	if (ft_strcmp(cmd_name, "env") == 0)
-		return (env_builtin(*env));
+		return (env_builtin(*(data->env)));
 	if (ft_strcmp(cmd_name, "exit") == 0)
-		return (exit_builtin(command, env, bin, cmd_line));
+		return (exit_builtin(command, data, redir));
 	return (-1);
 }
 
@@ -118,7 +118,7 @@ int	check_path(t_data *vars)
  * @param vars variables related to command execution
  * @return int 0 if no error, >0 otherwise
  */
-int	search_cmd(t_data *vars)
+int	search_cmd(t_data *vars, t_redir *redir)
 {
 	char	*cmd_name;
 	int		ret;
@@ -131,7 +131,7 @@ int	search_cmd(t_data *vars)
 	{
 		if (ft_strlen(cmd_name) == 0)
 			return (cmd_not_found(*(vars->cmd)));
-		ret = check_builtin(*(vars->cmd), vars->env, vars->bin, vars->cmd_line);
+		ret = check_builtin(*(vars->cmd), vars, redir);
 		if (ret != -1)
 			return (ret);
 		ret = check_path(vars);

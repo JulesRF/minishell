@@ -43,16 +43,16 @@ void	ft_fucknorm(t_token *stop, char *str, t_list **bin, t_data *data)
 	stop->content = ft_strdup(str);
 	if (!stop->content)
 	{
-		clean_prog(data->env, bin, data->cmd_line);
-		exit_prog("exit\nminishell: exit: bas malloc allocation", 2);
+		clean_prog(data, NULL);
+		exit_prog("exit\nminishell: exit: bas malloc allocation", 2, NULL);
 	}
-	ft_lstadd_backs(bin, ft_lstnew(stop->content), data, bin);
+	ft_lstadd_backs(bin, ft_lstnew(stop->content), data);
 }
 
-void	ft_getmeout(t_data *data, t_list **bin)
+void	ft_getmeout(t_data *data)
 {
-	clean_prog(data->env, bin, data->cmd_line);
-	exit_prog("exit\nminishell: exit: bas malloc allocation", 2);
+	clean_prog(data, NULL);
+	exit_prog("exit\nminishell: exit: bas malloc allocation", 2, NULL);
 }
 
 t_token	*ft_addempty(t_token *token, t_token *stop, t_list **bin, t_data *data)
