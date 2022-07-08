@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/07/08 11:33:59 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/08 12:15:41 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void	clean_and_close_heredoc(int *pipe_fd, t_data *vars, t_redir *redir);
 int		find_in_out_files(t_token **commands, t_redir *redir);
 
 //	execution.c
-int		exec_cmd(t_token *command, char **env, pid_t pid);
+int		exec_cmd(t_data *vars, pid_t pid, t_redir *redir);
 int		get_child_status(int pid, int *ret, int change_sig, int ignore_err);
 int		fork_exec(t_data *vars, t_redir *redir);
 

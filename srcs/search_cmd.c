@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:20:08 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/07 18:47:44 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/08 12:17:04 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	check_builtin(t_token *command, t_data *data, t_redir *redir)
 	return (-1);
 }
 
-int	find_executable(t_data *vars, char **paths, char *cmd_name)
+int	find_executable(t_data *vars, char **paths, char *cmd_name, t_redir *redir)
 {
 	char		*path_to_cmd;
 	int			i;
@@ -69,7 +69,7 @@ int	find_executable(t_data *vars, char **paths, char *cmd_name)
 				return (-1);
 			ft_lstadd_back(vars->bin, node);
 			(*(vars->cmd))->content = path_to_cmd;
-			return (exec_cmd((*(vars->cmd)), *(vars->env), vars->pid));
+			return (exec_cmd(vars, vars->pid, redir));
 		}
 		i++;
 		free(path_to_cmd);
@@ -83,7 +83,7 @@ int	find_executable(t_data *vars, char **paths, char *cmd_name)
  * @param vars variables related to command execution
  * @return int -1 if the search fails, the executed command status otherwise
  */
-int	check_path(t_data *vars)
+int	check_path(t_data *vars, t_redir *redir)
 {
 	char		*cmd_name;
 	char		*path;
@@ -106,7 +106,7 @@ int	check_path(t_data *vars)
 		free(cmd_name);
 		return (-1);
 	}
-	ret = find_executable(vars, paths, cmd_name);
+	ret = find_executable(vars, paths, cmd_name, redir);
 	free(cmd_name);
 	free_strs(paths);
 	return (ret);
@@ -134,14 +134,14 @@ int	search_cmd(t_data *vars, t_redir *redir)
 		ret = check_builtin(*(vars->cmd), vars, redir);
 		if (ret != -1)
 			return (ret);
-		ret = check_path(vars);
+		ret = check_path(vars, redir);
 		if (ret != -1)
 			return (ret);
 		return (cmd_not_found(*(vars->cmd)));
 	}
 	else
 	{
-		ret = exec_cmd(*(vars->cmd), *(vars->env), vars->pid);
+		ret = exec_cmd(vars, vars->pid, redir);
 	}
 	return (ret);
 }
