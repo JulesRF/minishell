@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/25 15:35:33 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/25 15:58:52 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/08 11:28:40 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,14 @@ int	path_exists(char *path)
 
 int	set_new_dir(char **path, char **old_pwd, char **env)
 {
+	char	*prev_path;
+
 	*old_pwd = get_env_value("PWD", env);
 	if (chdir(*path) == -1)
 	{
+		prev_path = *path;
 		*path = ft_strjoin("cd: ", *path);
+		free(prev_path);
 		handle_errno(*path, 1, NULL, NULL);
 		return (1);
 	}
