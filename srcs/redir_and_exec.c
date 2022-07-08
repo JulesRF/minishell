@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/07 18:45:49 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/08 10:05:14 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ int	restore_in_out_and_wait(t_data *vars, t_redir *redir)
 			wait_ret = get_child_status(-1, &ret_other_processes, 0, 1);
 	}
 	signal(SIGINT, handle_sigint);
+	close(redir->fdin);
 	return (0);
 }
 
