@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/07/07 20:12:36 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/08 11:33:59 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,8 @@ int		cd(t_token *command, char ***env);
 int		unset_oldpwd(char ***env);
 int		get_current_pwd(char **new_str);
 int		path_exists(char *path);
-int		set_new_dir(char **path, char **old_pwd, char **env);
+int		set_new_dir(char **path, char **old_pwd, char **env,
+			int path_allocated);
 
 //	pwd.c
 int		pwd(void);

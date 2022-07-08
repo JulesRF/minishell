@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 10:06:53 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/08 11:27:32 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/08 11:34:11 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ int	cd(t_token *command, char ***env)
 		path = command->content;
 	if (path_exists(path) == 0)
 		return (free_path(path, path_allocated, 1, NULL));
-	if (set_new_dir(&path, &old_pwd, *env) == 1)
+	if (set_new_dir(&path, &old_pwd, *env, path_allocated) == 1)
 		return (free_path(path, 1, 1, old_pwd));
 	if (update_pwd("PWD", 3, env, NULL) == 1
 		|| update_pwd("OLDPWD", 6, env, old_pwd) == 1)
