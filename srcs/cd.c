@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 10:06:53 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/08 11:34:11 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/09 17:56:05 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,16 @@
  */
 int	cd_oldpwd(char **path, char **env, int *path_allocated)
 {
-	char	*oldpwd;
+	char		*oldpwd;
+	struct stat	sb;
+
 
 	oldpwd = get_env_value("OLDPWD", env);
 	if (!oldpwd)
 		return (handle_error("cd: OLDPWD not set", 1, NULL, NULL));
 	*path = oldpwd;
-	printf("%s\n", *path);
+	if (stat(*path, &sb) == 0 && S_ISDIR(sb.st_mode))
+		printf("%s\n", *path);
 	*path_allocated = 1;
 	return (0);
 }
