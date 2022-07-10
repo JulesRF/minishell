@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 14:38:50 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/14 15:17:16 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/10 09:47:12 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ int	unset(t_token *command, char ***env)
 	if (command != NULL)
 		command = command->next;
 	if (command == NULL)
-		return (handle_error("unset: not enough arguments", 1, NULL, NULL));
+		return (0);
 	while (command)
 	{
 		if (command->type == 2)
