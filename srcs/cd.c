@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 10:06:53 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/09 17:56:05 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/10 10:08:09 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int	cd_oldpwd(char **path, char **env, int *path_allocated)
 {
 	char		*oldpwd;
 	struct stat	sb;
-
 
 	oldpwd = get_env_value("OLDPWD", env);
 	if (!oldpwd)
