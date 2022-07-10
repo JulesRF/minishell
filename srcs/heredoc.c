@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/07 20:13:05 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/10 22:33:56 by jroux-fo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ int	add_heredoc_eof_to_list(t_token **cur, t_token **commands, t_redir *redir)
 	t_list	*node;
 
 	(void)commands;
-	heredoc_eof = ft_strdup((*cur)->next->content);
+	if ((*cur)->next)
+		heredoc_eof = ft_strdup((*cur)->next->content);
 	if (!heredoc_eof)
 		return (1);
 	node = ft_lstnew(heredoc_eof);
@@ -27,7 +28,8 @@ int	add_heredoc_eof_to_list(t_token **cur, t_token **commands, t_redir *redir)
 		free(heredoc_eof);
 		return (1);
 	}
-	node->qt = (*cur)->next->qt;
+	if ((*cur)->next)
+		node->qt = (*cur)->next->qt;
 	ft_lstadd_back(&(redir->heredoc_eofs), node);
 	redir->count_heredocs = redir->count_heredocs + 1;
 	return (0);
