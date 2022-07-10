@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/05 11:17:10 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/07 19:14:10 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/10 09:52:56 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,15 +86,15 @@ int	exit_builtin(t_token *command, t_data *data, t_redir *redir)
 		clean_prog(data, redir);
 		exit_prog("exit", 0, redir);
 	}
+	if (command != NULL && ft_isnum(command->content) == 0)
+	{
+		clean_prog(data, redir);
+		exit_prog("exit\nminishell: exit: numeric argument required", 2, redir);
+	}
 	if (command != NULL && command->next != NULL)
 	{
 		if (exit_too_many_args(command, data, redir) == 1)
 			return (1);
-	}
-	if (ft_isnum(command->content) == 0)
-	{
-		clean_prog(data, redir);
-		exit_prog("exit\nminishell: exit: numeric argument required", 2, redir);
 	}
 	exit_status = ft_atoi(command->content);
 	clean_prog(data, redir);
