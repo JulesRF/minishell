@@ -30,16 +30,26 @@ int	ft_dollarcheck(t_token *token, char *to_find, char **env, t_list **bin)
 	return (0);
 }
 
+void	ft_cleantype(t_token *token)
+{
+	while (token)
+	{
+		if (token->type == 3)
+			token->type = 2;
+		token = token->next;
+	}
+}
+
 void	ft_dollardoc(t_token *token, t_list **bin, t_data *data)
 {
+	ft_cleantype(token);
 	while (token)
 	{
 		if (token && (!ft_strcmp(token->content, "$") && token->type == 1))
 		{
-			while (token && token->type == 3)
 			if (!token->next)
 				return ;
-			if (!ft_strcmp(token->content, "?"))
+			if (!ft_strcmp(token->next->content, "?"))
 			{
 				token->content = ft_itoa(g_exit_status);
 				if (!token->content)
@@ -54,3 +64,25 @@ void	ft_dollardoc(t_token *token, t_list **bin, t_data *data)
 		token = token->next;
 	}
 }
+
+// int	ft_isspace(char *str)
+// {
+// 	int i;
+
+// 	if (!str)
+// 		return (-5);
+// 	while (str[i])
+// 	{
+// 		if (str[i] == ' ')
+// 			return
+// 	}
+// }
+
+// void	ft_splitres(t_token *token, t_list **bin, t_data *data)
+// {
+// 	int	i;
+// 	while (token)
+// 	{
+// 		i = ft_isspace(token->content);
+// 	}
+// }
