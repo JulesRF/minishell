@@ -27,7 +27,9 @@ void	write_with_expansion(int pipe_fd[2], char *line, t_data *vars)
 	ft_questionmark(token, &bin, &data);
 	ft_sepdollar(token, &bin, &data);
 	ft_supempty(&token);
-	ft_dollar(token, &bin, &data);
+	// ft_print(token);
+	ft_dollardoc(token, &bin, &data);
+	// ft_print(token);
 	new_line = cmd_to_str(token);
 	if (!new_line)
 	{

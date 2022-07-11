@@ -29,3 +29,28 @@ int	ft_dollarcheck(t_token *token, char *to_find, char **env, t_list **bin)
 	}
 	return (0);
 }
+
+void	ft_dollardoc(t_token *token, t_list **bin, t_data *data)
+{
+	while (token)
+	{
+		if (token && (!ft_strcmp(token->content, "$") && token->type == 1))
+		{
+			while (token && token->type == 3)
+			if (!token->next)
+				return ;
+			if (!ft_strcmp(token->content, "?"))
+			{
+				token->content = ft_itoa(g_exit_status);
+				if (!token->content)
+					return ;
+				ft_lstadd_backs(bin, ft_lstnew(token->content), data);
+				token->type = 2;
+			}
+			else
+				ft_dollarfind(token, token->next->content, data, bin);
+			token->next = token->next->next;
+		}
+		token = token->next;
+	}
+}

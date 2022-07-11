@@ -31,7 +31,7 @@ int	ft_piperedir(t_token *token, t_list **bin)
 			if (!token->next)
 				return (printf("minishell: syntax error\n"), 1);
 			if (token->next->type != 2 && token->next->type != 3
-				&& token->next->type != 5 && token->next->type != 6)
+				&& token->next->type != 6)
 				return (printf("minishell: syntax error\n"), 1);
 		}
 		token = token->next;

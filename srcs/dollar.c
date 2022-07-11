@@ -110,7 +110,7 @@ t_token	*ft_splitdollar(t_token *token, t_list **bin, int i, t_data *data)
 			if (stop->content[i] && !ft_isalnum(stop->content[i]))
 			{
 				str = stop->content;
-				ft_fucknorm(stop, ft_strdup(str + i), bin, data);
+				ft_fucknorm(stop, str + i, bin, data);
 				str[i] = '\0';
 				temp = ft_lstnew_token(bin, data, str, 2);
 				temp->next = stop;

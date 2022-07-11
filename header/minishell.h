@@ -170,6 +170,7 @@ void	ft_sepdollar(t_token *token, t_list **bin, t_data *data);
 
 //	dollar2.c
 int		ft_dollarcheck(t_token *token, char *to_find, char **env, t_list **bin);
+void	ft_dollardoc(t_token *token, t_list **bin, t_data *data);
 
 //	simplify_utils2.c
 void	ft_handleheredoc(t_token *token, t_list **bin, t_data *data);
