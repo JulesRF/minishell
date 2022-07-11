@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/07/08 12:15:41 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/11 10:10:13 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ typedef struct s_redir
 	t_list	*heredoc_eofs;
 	int		nb_heredocs;
 	int		count_heredocs;
+	int		missing_heredoc_delim;
 }	t_redir;
 
 extern int	g_exit_status;
@@ -90,6 +91,7 @@ int		find_heredocs(t_token **commands, t_redir *redir, t_data *vars);
 void	write_heredoc(int pipe_fd[2], char *line, t_data *vars,
 			int quoted_delim);
 void	clean_and_close_heredoc(int *pipe_fd, t_data *vars, t_redir *redir);
+int		close_pipe_and_ret(int *pipe_fd, int ret);
 
 //	redirections.c
 int		find_in_out_files(t_token **commands, t_redir *redir);

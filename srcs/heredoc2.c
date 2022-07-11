@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 10:41:30 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/07 20:15:21 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/11 10:10:01 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,11 @@ void	clean_and_close_heredoc(int *pipe_fd, t_data *vars, t_redir *redir)
 	close(0);
 	close(1);
 	exit(0);
+}
+
+int	close_pipe_and_ret(int *pipe_fd, int ret)
+{
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
+	return (ret);
 }

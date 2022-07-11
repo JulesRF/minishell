@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jroux-fo <jroux-fo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:29:43 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/10 22:33:56 by jroux-fo         ###   ########.fr       */
+/*   Updated: 2022/07/11 10:10:17 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,11 @@ int	add_heredoc_eof_to_list(t_token **cur, t_token **commands, t_redir *redir)
 	t_list	*node;
 
 	(void)commands;
+	if ((*cur)->next == NULL || (*cur)->next->type != 2)
+	{
+		redir->missing_heredoc_delim = 1;
+		return (0);
+	}
 	if ((*cur)->next)
 		heredoc_eof = ft_strdup((*cur)->next->content);
 	if (!heredoc_eof)
@@ -102,8 +107,8 @@ int	multiple_heredoc(t_redir *redir, t_data *vars)
 		get_child_status(pid, &ret, 1, 0);
 		signal(SIGINT, handle_sigint);
 		signal(SIGQUIT, handle_sigquit);
-		if (ret != 0)
-			return (ret);
+		if (ret != 0 || redir->missing_heredoc_delim == 1)
+			return (close_pipe_and_ret(pipe_fd, ret));
 	}
 	close(pipe_fd[1]);
 	redir->heredoc_redir = pipe_fd[0];
@@ -125,9 +130,10 @@ int	find_heredocs(t_token **commands, t_redir *redir, t_data *vars)
 	redir->heredoc_redir = -1;
 	redir->heredoc_eofs = NULL;
 	redir->count_heredocs = 0;
+	redir->missing_heredoc_delim = 0;
 	ret = 0;
 	cur = *commands;
-	while (cur)
+	while (cur && redir->missing_heredoc_delim == 0)
 	{
 		if (cur->type == 5 && ft_strcmp(cur->content, "<<") == 0)
 			if (add_heredoc_eof_to_list(&cur, commands, redir) == 1)
