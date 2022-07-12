@@ -94,7 +94,6 @@ int	ft_simplify(t_token **token, t_list **bin, t_data *data)
 	ft_sepdollar(*token, bin, data);
 	ft_supempty(token);
 	ft_dollar(*token, bin, data);
-	// ft_print(*token);
 	if (ft_first_quote(*token))
 	{
 		ft_doublequotes(*token, bin, data, NULL);
@@ -105,12 +104,13 @@ int	ft_simplify(t_token **token, t_list **bin, t_data *data)
 		ft_simplequotes(*token, bin, data, NULL);
 		ft_doublequotes(*token, bin, data, NULL);
 	}
-	// ft_splitres(*token, bin, data);
-	// ft_print(*token);
 	ft_rmvquotes(token, bin);
 	ft_ghostbuster(token, bin, data);
 	ft_joinwords(token, bin, data);
 	ft_supspace(token);
+	ft_print(*token);
+	ft_splitres(*token, bin, data);
+	ft_print(*token);
 	ft_initvars(token, data, bin);
 	return (0);
 }
