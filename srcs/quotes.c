@@ -54,7 +54,7 @@ t_token *temp)
 				token = ft_addempty(token, data->stop, bin, data);
 			else
 			{
-				while (data->stop && ft_strcmp(data->stop->content, "\""))
+				while (data->stop && !ft_is_quotes(data->stop))
 				{
 					if (data->stop->type != 6)
 						temp = ft_joincontent(temp, data->stop, bin, data);

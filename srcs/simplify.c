@@ -105,7 +105,8 @@ int	ft_simplify(t_token **token, t_list **bin, t_data *data)
 		ft_simplequotes(*token, bin, data, NULL);
 		ft_doublequotes(*token, bin, data, NULL);
 	}
-	// ft_splitres
+	// ft_splitres(*token, bin, data);
+	// ft_print(*token);
 	ft_rmvquotes(token, bin);
 	ft_ghostbuster(token, bin, data);
 	ft_joinwords(token, bin, data);

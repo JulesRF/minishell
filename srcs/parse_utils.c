@@ -78,3 +78,10 @@ void	ft_print(t_token *token)
 		token = token->next;
 	}
 }
+
+int	ft_is_quotes(t_token *token)
+{
+	if (!ft_strcmp(token->content, "\"") && token->type == 3)
+		return (1);
+	return (0);
+}

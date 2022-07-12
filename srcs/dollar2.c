@@ -74,8 +74,10 @@ void	ft_dollardoc(t_token *token, t_list **bin, t_data *data)
 // 	while (str[i])
 // 	{
 // 		if (str[i] == ' ')
-// 			return
+// 			return (i);
+// 		i++;
 // 	}
+// 	return (-5);
 // }
 
 // void	ft_splitres(t_token *token, t_list **bin, t_data *data)
@@ -83,6 +85,10 @@ void	ft_dollardoc(t_token *token, t_list **bin, t_data *data)
 // 	int	i;
 // 	while (token)
 // 	{
-// 		i = ft_isspace(token->content);
+// 		if (token->qt == 0)
+// 		{
+// 			i = ft_isspace(token->content);
+
+// 		}
 // 	}
 // }

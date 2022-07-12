@@ -144,6 +144,7 @@ char	*ft_strdup(const char *s1);
 int		ft_strcmp(char *s1, char *s2);
 void	ft_preparse(int argc, char **argv, char **env);
 void	ft_print(t_token *token);
+int		ft_is_quotes(t_token *token);
 
 //	token.c
 void	ft_parse_operator(t_token **token, t_list **bin, t_data *data, int i);
@@ -201,6 +202,9 @@ void	ft_supspace(t_token **token);
 void	ft_fucknorm(t_token *stop, char *str, t_list **bin, t_data *data);
 void	ft_getmeout(t_data *data);
 t_token	*ft_addempty(t_token *token, t_token *stop, t_list **bin, t_data *data);
+
+//	split.c
+void	ft_splitres(t_token *token, t_list **bin, t_data *data);
 
 ////	builtins	////
 //	echo.c
