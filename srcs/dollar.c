@@ -26,7 +26,8 @@ void	ft_dollarfind(t_token *token, char *to_find, t_data *data, t_list **bin)
 		if ((!ft_strncmp(env[i], to_find, ft_strlen(to_find)))
 			&& (env[i][ft_strlen(to_find)] == '='))
 		{
-			token->content = (env[i] + (ft_strlen(to_find) + 1));
+			token->content = ft_strdup((env[i] + (ft_strlen(to_find) + 1)));
+			ft_lstadd_backs(bin, ft_lstnew(token->content), data);
 			token->type = 2;
 			return ;
 		}

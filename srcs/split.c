@@ -78,12 +78,13 @@ void	ft_splitres(t_token *token, t_list **bin, t_data *data)
 	int		i;
 	int		j;
 
-	i = 0;
-	j = 0;
 	while (token)
 	{
+		i = 0;
+		j = 0;
 		if (token && token->qt == 0 && token->type == 2 && ft_isspace(token->content))
 		{
+			printf("ON CHERCHE A SPLIT CA ->%s<-\n", token->content);
 			j = ft_skip_space(token->content);
 			while (token->content[i + j] && token->content[i + j] != ' ')
 				i++;
@@ -92,9 +93,12 @@ void	ft_splitres(t_token *token, t_list **bin, t_data *data)
 			i++;
 			while (token->content[i + j] && token->content[i + j] == ' ')
 				i++;
-			data->temp = ft_lstnew_token(bin, data, token->content + i, 2);
+			data->temp = ft_lstnew_token(bin, data, token->content + i + j, 2);
+			if (!ft_strcmp(data->temp->content, ""))
+				data->temp = NULL;
+			else
+				data->temp->next = token->next;
 			token->content = str;
-			data->temp->next = token->next;
 			token->next = data->temp;
 		}
 		token = token->next;
