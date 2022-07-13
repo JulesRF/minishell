@@ -160,6 +160,7 @@ void	ft_doublequotes(t_token *token, t_list **bin, t_data *data,
 			t_token *temp);
 void	ft_simplequotes(t_token *token, t_list **bin, t_data *data,
 			t_token *temp);
+void	ft_quotesbool(t_token *token, t_data *data);
 
 //	dollar.c
 void	ft_dollarfind(t_token *token, char *to_find, t_data *data,
@@ -176,11 +177,10 @@ void	ft_dollardoc(t_token *token, t_list **bin, t_data *data);
 //	simplify_utils2.c
 void	ft_handleheredoc(t_token *token, t_list **bin, t_data *data);
 int		ft_add(t_token *token);
-void	ft_quotesbool(t_token *token);
 void	ft_ghostbuster(t_token **token, t_list **bin, t_data *data);
 
 //	simplify.c
-int		ft_piperedir(t_token *token, t_list **bin);
+int		ft_piperedir(t_token *token);
 void	ft_rmvquotes(t_token **token, t_list **bin);
 void	ft_joinwords(t_token **token, t_list **bin, t_data *data);
 int		ft_first_quote(t_token *token);

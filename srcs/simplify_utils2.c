@@ -75,41 +75,6 @@ t_token	*ft_skipspace(t_token *token)
 // 	}
 // }
 
-void	ft_quotesbool(t_token *token)
-{
-	// t_token *temp2;
-	t_token	*temp;
-
-	while (token)
-	{
-		temp = token;
-		while(temp && temp->type == 4)
-			temp = temp->next;
-		if (temp->type == 3)
-		{
-			temp = temp->next;
-			if (!temp)
-				return ;
-			while (temp && temp->type != 3)
-			{
-				temp->qt = 10;
-				temp = temp->next;
-			}
-			temp = temp->next;
-			if (!temp)
-				return ;
-			while (temp && temp->type == 4)
-				temp = temp->next;
-			if (!temp)
-				return ;
-			temp->qt = 10;
-			token = temp;
-		}
-		else
-			token = token->next;
-	}
-}
-
 void	ft_ghostbuster(t_token **token, t_list **bin, t_data *data)
 {
 	t_token	*tmp;

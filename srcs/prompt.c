@@ -60,10 +60,7 @@ void	ft_prompt(t_token **token, t_list **bin, t_data *data)
 		{
 			ft_token(token, bin, data);
 			if (!ft_simplify(token, bin, data))
-			{
-				// ft_print(*token);
 				g_exit_status = redir_and_exec(data);
-			}
 		}
 		ft_garbage(bin);
 		ft_clean_token(token);

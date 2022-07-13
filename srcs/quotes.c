@@ -101,3 +101,45 @@ t_token *temp)
 		token = token->next;
 	}
 }
+
+t_token	*ft_quotessuite(t_token *token, t_data *data)
+{
+	token->qt = 10;
+	data->temp = data->temp->next;
+	if (!data->temp)
+		return (NULL);
+	while (data->temp && data->temp->type != 3)
+	{
+		data->temp->qt = 10;
+		data->temp = data->temp->next;
+	}
+	if (!data->temp)
+		return (NULL);
+	data->temp = data->temp->next;
+	while (data->temp && data->temp->type == 4)
+		data->temp = data->temp->next;
+	if (!data->temp)
+		return (NULL);
+	data->temp->qt = 10;
+	return (data->temp);
+}
+
+void	ft_quotesbool(t_token *token, t_data *data)
+{
+	while (token)
+	{
+		data->temp = token->next;
+		if (token && token->type == 3)
+			data->temp = token;
+		while (data->temp && data->temp->type == 4)
+			data->temp = data->temp->next;
+		if (data->temp && data->temp->type == 3)
+		{
+			token = ft_quotessuite(token, data);
+			if (!token)
+				return ;
+		}
+		else
+			token = token->next;
+	}
+}
