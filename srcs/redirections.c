@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 10:50:48 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/07 19:53:10 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/13 17:10:26 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,6 @@ int	find_in_out_files(t_token **commands, t_redir *redir)
 {
 	t_token	*cur;
 
-	redir->input_redir = -1;
-	redir->output_redir = -1;
 	cur = *commands;
 	while (cur)
 	{
@@ -117,6 +115,7 @@ int	find_in_out_files(t_token **commands, t_redir *redir)
 			close(redir->input_redir);
 		redir->input_redir = dup(redir->heredoc_redir);
 		close(redir->heredoc_redir);
+		redir->heredoc_redir = -1;
 	}
 	return (0);
 }

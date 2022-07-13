@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 09:31:52 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/07/08 10:05:14 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/13 17:05:38 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,8 @@ int	restore_in_out_and_wait(t_data *vars, t_redir *redir)
 	}
 	signal(SIGINT, handle_sigint);
 	close(redir->fdin);
+	if (redir->heredoc_redir != -1)
+		close (redir->heredoc_redir);
 	return (0);
 }
 
