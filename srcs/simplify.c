@@ -89,6 +89,7 @@ int	ft_simplify(t_token **token, t_list **bin, t_data *data)
 	data->temp = NULL;
 	data->stop = NULL;
 	ft_quotesbool(*token);
+	// ft_print(*token);
 	ft_questionmark(*token, bin, data);
 	ft_handleheredoc(*token, bin, data);
 	ft_sepdollar(*token, bin, data);
@@ -108,9 +109,8 @@ int	ft_simplify(t_token **token, t_list **bin, t_data *data)
 	ft_ghostbuster(token, bin, data);
 	ft_joinwords(token, bin, data);
 	ft_supspace(token);
-	ft_print(*token);
 	ft_splitres(*token, bin, data);
-	ft_print(*token);
+	// ft_print(*token);
 	ft_initvars(token, data, bin);
 	return (0);
 }

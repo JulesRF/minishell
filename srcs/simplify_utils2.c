@@ -47,31 +47,66 @@ t_token	*ft_skipspace(t_token *token)
 	return (token);
 }
 
+// void	ft_quotesbool(t_token *token)
+// {
+// 	t_token	*temp;
+// 	t_token	*temp2;
+// 	t_token	*stop;
+
+// 	while (token)
+// 	{
+// 		stop = ft_skipspace(token);
+// 		if (!stop)
+// 			return ;
+// 		temp = stop;
+// 		stop = stop->next;
+// 		stop = ft_skipspace(stop);
+// 		if (!stop)
+// 			return ;
+// 		if (stop->type == 3)
+// 		{
+// 			temp2 = ft_skipspace(stop->next);
+// 			if (!temp2)
+// 				return ;
+// 			temp->qt = 10;
+// 			temp2->qt = 10;
+// 		}
+// 		token = token->next;
+// 	}
+// }
+
 void	ft_quotesbool(t_token *token)
 {
+	// t_token *temp2;
 	t_token	*temp;
-	t_token	*temp2;
-	t_token	*stop;
 
 	while (token)
 	{
-		stop = ft_skipspace(token);
-		if (!stop)
-			return ;
-		temp = stop;
-		stop = stop->next;
-		stop = ft_skipspace(stop);
-		if (!stop)
-			return ;
-		if (stop->type == 3)
+		temp = token;
+		while(temp && temp->type == 4)
+			temp = temp->next;
+		if (temp->type == 3)
 		{
-			temp2 = ft_skipspace(stop->next);
-			if (!temp2)
+			temp = temp->next;
+			if (!temp)
+				return ;
+			while (temp && temp->type != 3)
+			{
+				temp->qt = 10;
+				temp = temp->next;
+			}
+			temp = temp->next;
+			if (!temp)
+				return ;
+			while (temp && temp->type == 4)
+				temp = temp->next;
+			if (!temp)
 				return ;
 			temp->qt = 10;
-			temp2->qt = 10;
+			token = temp;
 		}
-		token = token->next;
+		else
+			token = token->next;
 	}
 }
 
