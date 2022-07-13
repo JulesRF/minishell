@@ -205,9 +205,6 @@ void	ft_fucknorm(t_token *stop, char *str, t_list **bin, t_data *data);
 void	ft_getmeout(t_data *data);
 t_token	*ft_addempty(t_token *token, t_token *stop, t_list **bin, t_data *data);
 
-//	split.c
-void	ft_splitres(t_token *token, t_list **bin, t_data *data);
-
 ////	builtins	////
 //	echo.c
 int		echo(t_token *command);

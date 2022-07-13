@@ -110,7 +110,6 @@ int	ft_simplify(t_token **token, t_list **bin, t_data *data)
 	ft_ghostbuster(token, bin, data);
 	ft_joinwords(token, bin, data);
 	ft_supspace(token);
-	ft_splitres(*token, bin, data);
 	ft_initvars(token, data, bin);
 	return (0);
 }

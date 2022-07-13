@@ -46,7 +46,6 @@ SRCS_FILES	=	main.c	\
 				simplify_utils.c\
 				simplify_utils2.c\
 				questionmark.c\
-				split.c\
 				
 FLAGS = -Wall -Werror -Wextra -g3
 
