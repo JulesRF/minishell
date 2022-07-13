@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 09:57:45 by vfiszbin          #+#    #+#             */
-/*   Updated: 2022/06/14 10:02:30 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/13 17:28:32 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ int	echo(t_token *command)
 	while (command && (command->type == 4
 			|| check_n_option(command->content, &n_option)))
 		command = command->next;
+	signal(SIGPIPE, handle_sigpipe);
 	while (command && (command->type == 2))
 	{
 		ft_putstr_fd(command->content, 1);
@@ -61,5 +62,6 @@ int	echo(t_token *command)
 	}
 	if (n_option == 0)
 		ft_putchar_fd('\n', 1);
+	signal(SIGPIPE, SIG_DFL);
 	return (0);
 }

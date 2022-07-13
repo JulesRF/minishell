@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/04 14:05:03 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/07/11 10:10:13 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/13 17:27:25 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ void	handle_sigint(int code);
 void	handle_sigint_no_prompt(int code);
 void	handle_sigquit_heredoc(int code);
 void	change_signals(int i);
+void	handle_sigpipe(int code);
 
 //	utils
 char	*get_env_value(char *key, char **env);
