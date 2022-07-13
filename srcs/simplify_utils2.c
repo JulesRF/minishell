@@ -6,7 +6,7 @@
 /*   By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/05 16:50:45 by jroux-fo          #+#    #+#             */
-/*   Updated: 2022/07/13 16:33:32 by vfiszbin         ###   ########.fr       */
+/*   Updated: 2022/07/13 18:01:33 by vfiszbin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,66 +47,31 @@ t_token	*ft_skipspace(t_token *token)
 	return (token);
 }
 
-void	ft_quotesbool(t_token *token)
-{
-	t_token	*temp;
-	t_token	*temp2;
-	t_token	*stop;
-
-	while (token)
-	{
-		stop = ft_skipspace(token);
-		if (!stop)
-			return ;
-		temp = stop;
-		stop = stop->next;
-		stop = ft_skipspace(stop);
-		if (!stop)
-			return ;
-		if (stop->type == 3)
-		{
-			temp2 = ft_skipspace(stop->next);
-			if (!temp2)
-				return ;
-			temp->qt = 10;
-			temp2->qt = 10;
-		}
-		token = token->next;
-	}
-}
-
 // void	ft_quotesbool(t_token *token)
 // {
-// 	// t_token *temp2;
 // 	t_token	*temp;
+// 	t_token	*temp2;
+// 	t_token	*stop;
 
 // 	while (token)
 // 	{
-// 		temp = token;
-// 		while(temp && temp->type == 4)
-// 			temp = temp->next;
-// 		if (temp->type == 3)
+// 		stop = ft_skipspace(token);
+// 		if (!stop)
+// 			return ;
+// 		temp = stop;
+// 		stop = stop->next;
+// 		stop = ft_skipspace(stop);
+// 		if (!stop)
+// 			return ;
+// 		if (stop->type == 3)
 // 		{
-// 			temp = temp->next;
-// 			if (!temp)
-// 				return ;
-// 			while (temp && temp->type != 3)
-// 			{
-// 				temp->qt = 10;
-// 				temp = temp->next;
-// 			}
-// 			temp = temp->next;
-// 			if (!temp)
-// 				return ;
-// 			while (temp && temp->type == 4)
-// 				temp = temp->next;
-// 			if (!temp)
+// 			temp2 = ft_skipspace(stop->next);
+// 			if (!temp2)
 // 				return ;
 // 			temp->qt = 10;
-// 			token = temp;
+// 			temp2->qt = 10;
 // 		}
-// 		else
-// 			token = token->next;
+// 		token = token->next;
 // 	}
 // }
 
