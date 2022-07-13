@@ -114,7 +114,8 @@ int	find_in_out_files(t_token **commands, t_redir *redir)
 		if (redir->input_redir != -1)
 			close(redir->input_redir);
 		redir->input_redir = dup(redir->heredoc_redir);
-		close(redir->heredoc_redir);
+		if (redir->heredoc_redir != -1)
+			close(redir->heredoc_redir);
 		redir->heredoc_redir = -1;
 	}
 	return (0);
