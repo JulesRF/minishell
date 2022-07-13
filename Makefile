@@ -6,7 +6,7 @@
 #    By: vfiszbin <vfiszbin@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/04 14:03:48 by jroux-fo          #+#    #+#              #
-#    Updated: 2022/07/11 09:38:31 by vfiszbin         ###   ########.fr        #
+#    Updated: 2022/07/13 18:04:27 by vfiszbin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,7 @@ SRCS_FILES	=	main.c	\
 				heredoc2.c\
 				redirections.c\
 				signals.c\
+				signals2.c\
 				utils.c\
 				utils2.c\
 				garbage.c\
